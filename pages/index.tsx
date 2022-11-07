@@ -259,7 +259,7 @@ const Home = () => {
             <h2 className="text-white">Technologies</h2>
             <div className="flex flex-wrap gap-2 mt-6">
               <span className="text-pink-300 text-xs sm:text-sm font-semibold">
-                Proficient in
+                Proficient with
               </span>
               <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
                 Typescript
