@@ -71,6 +71,11 @@ body::-webkit-scrollbar {
   animation-delay: calc(0.4s * 3);
 }
 
+.fade-in-4 {
+  animation: stagger 0.7s both;
+  animation-delay: calc(0.4s * 4);
+}
+
 /* background of the scrollbar except button or resizer */
 body::-webkit-scrollbar-track {
   background-color: rgba(0, 0, 0, 0);

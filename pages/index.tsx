@@ -320,7 +320,7 @@ const Home = () => {
               </span>
             </div>
           </div>
-          <div className="sm:max-w-[314px] w-[314px] mt-12 sm:mt-4 text-white">
+          <div className="sm:max-w-[314px] w-full sm:w-[314px] mt-12 sm:mt-4 text-white">
             <h2 className="mb-4 w-full">Contact</h2>
             {sent ? (
               <div className="w-full text-sm text-pink-300">
@@ -367,7 +367,7 @@ const Home = () => {
             )}
           </div>
         </section>
-        <footer className="flex items-center justify-between border-t border-dashed border-gray-500 mt-36 sm:mt-48 py-12 sm:py-16">
+        <footer className="flex items-center justify-between border-t border-dashed border-gray-500 mt-36 sm:mt-48 py-12 sm:py-16 fade-in-4">
           <div className="reg-marks flex gap-2">
             <div className="w-4 h-4 rounded-full bg-pink-300"></div>
             <div className="w-4 h-4 rounded-full bg-red-800"></div>
