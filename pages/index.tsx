@@ -109,7 +109,7 @@ const Home = () => {
                     <div className="w-1 h-1 rounded-full bg-gray-500"></div>
                   </span>
                   <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
-                    2019 - 2023
+                    2022 - 2025
                   </span>
                 </div>
                 <span className="text-gray-300 text-xs sm:text-sm mt-1">
@@ -133,13 +133,15 @@ const Home = () => {
                     <div className="w-1 h-1 rounded-full bg-gray-500"></div>
                   </span>
                   <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
-                    2020 - 2023
+                    2020 - 2022
                   </span>
                 </div>
                 <span className="text-gray-300 text-xs sm:text-sm mt-1">
                   BE Software Engineering (Double Major)
                 </span>
-                {/* <p className="text-gray-500 text-sm mt-2 sm:h-[100px] "></p> */}
+                <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">
+                  Dropped out
+                </p>
               </div>
               <div className="flex flex-col mt-6 sm:mt-8">
                 <div className="flex">
@@ -155,13 +157,15 @@ const Home = () => {
                     <div className="w-1 h-1 rounded-full bg-gray-500"></div>
                   </span>
                   <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
-                    2019 - 2023
+                    2019 - 2022
                   </span>
                 </div>
                 <span className="text-gray-300 text-xs sm:text-sm mt-1">
                   BE Information Systems Engineering
                 </span>
-                <p className="text-gray-500 text-sm mt-2 sm:h-[100px] "></p>
+                <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">
+                  Dropped out
+                </p>
               </div>
             </div>
           </div>
