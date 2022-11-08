@@ -69,9 +69,9 @@ const Home = () => {
         <meta name="description" content="Baha Erarslan's Resume" />
       </Head>
 
-      <div className="fixed z-50 top-0 w-full h-32 bg-gradient-to-b from-[#161616] to-transparent transition-all duration-1000"></div>
+      <div className="fixed z-50 top-0 w-full h-32 bg-gradient-to-b from-[#161616] to-transparent transition-all duration-1000 pointer-events-none"></div>
       <div
-        className="fixed z-50 bottom-0 w-full h-32 bg-gradient-to-t from-[#161616] to-transparent transition-all duration-1000"
+        className="fixed z-50 bottom-0 w-full h-32 bg-gradient-to-t from-[#161616] to-transparent transition-all duration-1000 pointer-events-none"
         ref={bottomBlur}
       ></div>
 
