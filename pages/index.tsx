@@ -37,6 +37,36 @@ const Home = () => {
       });
   };
 
+  const useAutosizeTextArea = (
+    textAreaRef: HTMLTextAreaElement | null,
+    value: string
+  ) => {
+    useEffect(() => {
+      if (textAreaRef) {
+        // We need to reset the height momentarily to get the correct scrollHeight for the textarea
+        textAreaRef.style.height = "0px";
+        const scrollHeight = textAreaRef.scrollHeight;
+
+        // We then set the height directly, outside of the render loop
+        // Trying to set this with state or a ref will product an incorrect value.
+        textAreaRef.style.height = scrollHeight + "px";
+      }
+    }, [textAreaRef, value]);
+  };
+
+  const [textAreaValue, setTextAreaValue] = useState("");
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  useAutosizeTextArea(textAreaRef.current, textAreaValue);
+
+  const handleTextAreaChange = (
+    evt: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const val = evt.target?.value;
+
+    setTextAreaValue(val);
+  };
+
   const getDateString = () => {
     const date = new Date();
     return `${date.toLocaleString("default", {
@@ -320,7 +350,7 @@ const Home = () => {
               </span>
             </div>
           </div>
-          <div className="sm:max-w-[314px] w-full sm:w-[314px] mt-12 sm:mt-4 text-white">
+          <div className="sm:max-w-[314px] w-full sm:w-[314px] h-[400px] mt-12 sm:mt-4 text-white">
             <h2 className="mb-4 w-full">Contact</h2>
             {sent ? (
               <div className="w-full text-sm text-pink-300">
@@ -348,7 +378,10 @@ const Home = () => {
                   name="message"
                   id="message"
                   maxLength={1000}
-                  className="w-full border-b border-dashed border-gray-500 text-gray-400 outline-pink-400 bg-transparent max-h-[200px] h-[25px] min-h-[25px]"
+                  onChange={handleTextAreaChange}
+                  className="w-full border-b border-dashed border-gray-500 text-gray-400 outline-pink-400 bg-transparent max-h-[200px] h-[25px] resize-none min-h-[25px]"
+                  value={textAreaValue}
+                  ref={textAreaRef}
                 ></textarea>
                 <div className="w-full flex justify-end">
                   <button
@@ -367,7 +400,7 @@ const Home = () => {
             )}
           </div>
         </section>
-        <footer className="flex items-center justify-between border-t border-dashed border-gray-500 mt-36 sm:mt-48 py-12 sm:py-16 fade-in-4">
+        <footer className="flex items-center justify-between border-t border-dashed border-gray-500 mt-4 sm:mt-12 py-12 sm:py-16 fade-in-4">
           <div className="reg-marks flex gap-2">
             <div className="w-4 h-4 rounded-full bg-pink-300"></div>
             <div className="w-4 h-4 rounded-full bg-red-800"></div>
