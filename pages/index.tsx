@@ -8,6 +8,7 @@ const Home = () => {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const sendEmail = (e: any) => {
     e.preventDefault();
@@ -68,13 +69,15 @@ const Home = () => {
   };
 
   const getDateString = () => {
+    // get english month name
     const date = new Date();
-    return `${date.toLocaleString("default", {
+    return `${date.toLocaleString("EN", {
       month: "long",
     })} ${date.getDate()}, ${date.getFullYear()}`;
   };
 
   useEffect(() => {
+    setMounted(true);
     if (localStorage.getItem("sent") === "true") setSent(true);
     window.addEventListener("scroll", () => {
       if (
@@ -90,6 +93,10 @@ const Home = () => {
         bottomBlur.current.style.opacity = "1";
       }
     });
+
+    return () => {
+      window.removeEventListener("scroll", () => {});
+    };
   }, []);
 
   return (
@@ -408,7 +415,7 @@ const Home = () => {
             <div className="w-4 h-4 rounded-full bg-gray-400"></div>
           </div>
           <div className="text-gray-500 text-sm italic ml-6">
-            {getDateString()}
+            {mounted && getDateString()}
           </div>
         </footer>
       </main>
