@@ -160,7 +160,7 @@ const Home = () => {
                 date="2019 - 2022"
                 degree="BE Information Systems Engineering"
                 description={`Dropped out ${
-                  location !== "tr" ? "due to forced displacement" : ""
+                  location !== "TR" ? "due to forced displacement" : ""
                 }`}
               />
             </div>
