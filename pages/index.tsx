@@ -1,6 +1,7 @@
 import Head from "next/head";
 import React, { useEffect, useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
+import { GetServerSideProps } from "next";
 
 const Home = () => {
   const form = useRef<HTMLFormElement>(null);
@@ -9,6 +10,18 @@ const Home = () => {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [location, setLocation] = useState("TR");
+
+  useEffect(() => {
+    fetch("https://ipapi.co/json/")
+      .then((response) => response.json())
+      .then((data) => {
+        setLocation(data?.country || "TR");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const sendEmail = (e: any) => {
     e.preventDefault();
@@ -127,167 +140,63 @@ const Home = () => {
           <hr className="border-t border-dashed border-gray-500 mt-4 mb-12 sm:mb-20" />
         </section>
 
-        {/* Education */}
         <section className="flex gap-16 sm:gap-0 flex-wrap-reverse justify-between fade-in-2">
+          {/* Education */}
           <div className="sm:max-w-[314px]">
             <h2 className="text-white mb-4">Education</h2>
             <div className="">
-              <div className="flex flex-col">
-                <div className="flex">
-                  <a
-                    href="https://vu.nl/en/"
-                    target="__blank"
-                    rel="noreferrer"
-                    className="text-white hover:text-pink-300 transition-all duration-150 cursor-pointer  decoration-dashed text-sm"
-                  >
-                    Vrije University Amsterdam
-                  </a>
-                  <span className="mx-2 sm:mx-3 flex justify-center items-center">
-                    <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-                  </span>
-                  <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
-                    2022 - 2025
-                  </span>
-                </div>
-                <span className="text-gray-300 text-xs sm:text-sm mt-1">
-                  BSc Computer Science
-                </span>
-                <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">
-                  Exempted from some courses due to my previous education.
-                </p>
-              </div>
-              <div className="flex flex-col mt-6 sm:mt-8">
-                <div className="flex">
-                  <a
-                    href="https://atilim.edu.tr/en/"
-                    target="__blank"
-                    rel="noreferrer"
-                    className="text-white hover:text-pink-300 transition-all duration-150 cursor-pointer  decoration-dashed text-sm"
-                  >
-                    Atilim University
-                  </a>
-                  <span className="mx-2 sm:mx-3 flex justify-center items-center">
-                    <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-                  </span>
-                  <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
-                    2020 - 2022
-                  </span>
-                </div>
-                <span className="text-gray-300 text-xs sm:text-sm mt-1">
-                  BE Software Engineering (Double Major)
-                </span>
-                <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">
-                  Dropped out
-                </p>
-              </div>
-              <div className="flex flex-col mt-6 sm:mt-8">
-                <div className="flex">
-                  <a
-                    href="https://atilim.edu.tr/en/"
-                    target="__blank"
-                    rel="noreferrer"
-                    className="text-white hover:text-pink-300 transition-all duration-150 cursor-pointer  decoration-dashed text-sm"
-                  >
-                    Atilim University
-                  </a>
-                  <span className="mx-2 sm:mx-3 flex justify-center items-center">
-                    <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-                  </span>
-                  <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
-                    2019 - 2022
-                  </span>
-                </div>
-                <span className="text-gray-300 text-xs sm:text-sm mt-1">
-                  BE Information Systems Engineering
-                </span>
-                <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">
-                  Dropped out
-                </p>
-              </div>
+              <Education
+                institution="Atilim University"
+                link="https://atilim.edu.tr/en/se"
+                date="2020 - 2022"
+                degree="BE Software Engineering (Double Major)"
+                description={`Dropped out ${
+                  location !== "TR" ? "due to forced displacement" : ""
+                }`}
+              />
+              <Education
+                institution="Atilim University"
+                link="https://atilim.edu.tr/en/ise"
+                date="2019 - 2022"
+                degree="BE Information Systems Engineering"
+                description={`Dropped out ${
+                  location !== "tr" ? "due to forced displacement" : ""
+                }`}
+              />
             </div>
           </div>
+          {/* Work experience */}
           <div className="sm:max-w-[314px]">
             <h2 className="text-white mb-4">Work Experience</h2>
             <div className="">
-              <div className="flex flex-col">
-                <div className="flex">
-                  <a
-                    href="https://jotform.com/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-white hover:text-pink-300 transition-all duration-150 cursor-pointer  decoration-dashed text-sm"
-                  >
-                    Jotform
-                  </a>
-                  <span className="mx-2 sm:mx-3 flex justify-center items-center">
-                    <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-                  </span>
-                  <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
-                    Sep 2021 - Oct 2021
-                  </span>
-                </div>
-                <span className="text-gray-300 text-xs sm:text-sm mt-1">
-                  Fullstack Developer Intern
-                </span>
-                <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">
-                  Took part in a team of 3. We have successfully completed a new
-                  internal feature project with the help of our mentors. I have
-                  mostly worked on Frontend Development of the project.
-                </p>
-              </div>
-              <div className="flex flex-col mt-6 sm:mt-8">
-                <div className="flex">
-                  <a
-                    href="https://ikas.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-white hover:text-pink-300 transition-all duration-150 cursor-pointer  decoration-dashed text-sm"
-                  >
-                    ikas
-                  </a>
-                  <span className="mx-2 sm:mx-3 flex justify-center items-center">
-                    <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-                  </span>
-                  <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
-                    Jun 2021 - Aug 2021
-                  </span>
-                </div>
-                <span className="text-gray-300 text-xs sm:text-sm mt-1">
-                  Frontend Developer Intern
-                </span>
-                <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">
-                  I was responsible for development of React components and
-                  their integration with ikas storefront API for a theme. I have
-                  developed a full theme by the end of my internship.
-                </p>
-              </div>
-              <div className="flex flex-col mt-6 sm:mt-8">
-                <div className="flex">
-                  <a
-                    href="https://marktscout.de/"
-                    target="__blank"
-                    rel="noreferrer"
-                    className="text-white hover:text-pink-300 transition-all duration-150 cursor-pointer  decoration-dashed text-sm"
-                  >
-                    Marktscout
-                  </a>
-                  <span className="mx-2 sm:mx-3 flex justify-center items-center">
-                    <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-                  </span>
-                  <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
-                    Feb 2021 - Jul 2021
-                  </span>
-                </div>
-                <span className="text-gray-300 text-xs sm:text-sm mt-1">
-                  Fullstack Developer (Contract)
-                </span>
-                <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">
-                  I was responsible for development of a supplier dashboard,
-                  integration of supplier data and Storefront API&apos;s
-                  (Shopify, real). I have also deployed and monitored the
-                  backend application.
-                </p>
-              </div>
+              <WorkExperience
+                company="Freelance"
+                link=""
+                date="Present"
+                position="Software Developer"
+                description="Providing frontend development mentorship while designing and developing web solutions for a diverse range of clients."
+              />
+              <WorkExperience
+                company="Jotform"
+                link="https://jotform.com/"
+                date="Sep 2021 - Oct 2021"
+                position="Fullstack Developer Intern"
+                description="Took part in a team of 3. We have successfully completed a new internal feature project with the help of our mentors. I have mostly worked on Frontend Development of the project."
+              />
+              <WorkExperience
+                company="ikas"
+                link="https://ikas.com"
+                date="Jun 2021 - Aug 2021"
+                position="Frontend Developer Intern"
+                description="I was responsible for development of React components and their integration with ikas storefront API for a theme. I have developed a full theme by the end of my internship."
+              />
+              <WorkExperience
+                company="Marktscout"
+                link="https://marktscout.de/"
+                date="Feb 2021 - Jul 2021"
+                position="Fullstack Developer (Contract)"
+                description="I was responsible for development of a supplier dashboard, integration of supplier data and Storefront API's (Shopify, real). I have also deployed and monitored the backend application."
+              />
             </div>
           </div>
         </section>
@@ -298,63 +207,29 @@ const Home = () => {
               <span className="text-pink-300 text-xs sm:text-sm font-semibold">
                 Proficient with
               </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Typescript
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Javascript
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                React
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Next.js
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Node.js
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Express.js
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Prisma
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                MongoDB
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                PostgreSQL
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Firebase
-              </span>
-
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Tailwind CSS
-              </span>
+              <Technology name="Typescript" />
+              <Technology name="Javascript" />
+              <Technology name="React" />
+              <Technology name="Next.js" />
+              <Technology name="Node.js" />
+              <Technology name="Express.js" />
+              <Technology name="Prisma" />
+              <Technology name="MongoDB" />
+              <Technology name="PostgreSQL" />
+              <Technology name="Firebase" />
+              <Technology name="Tailwind CSS" />
+              <Technology name="GraphQL" />
             </div>
             <div className="flex flex-wrap gap-2 mt-8">
               <span className="text-pink-300 text-xs sm:text-sm font-semibold ">
                 Familiar with
               </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                React Native
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Supabase
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Heroku
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                Github CI/CD (Actions)
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                MongoDB
-              </span>
-              <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
-                SASS
-              </span>
+              <Technology name="React Native" />
+              <Technology name="Supabase" />
+              <Technology name="Heroku" />
+              <Technology name="Github CI/CD (Actions)" />
+              <Technology name="SASS" />
+              <Technology name="Python" />
             </div>
           </div>
           <div className="sm:max-w-[314px] w-full sm:w-[314px] h-[400px] mt-12 sm:mt-4 text-white">
@@ -419,6 +294,84 @@ const Home = () => {
           </div>
         </footer>
       </main>
+    </div>
+  );
+};
+
+const Technology = (props: { name: string }) => {
+  const { name } = props;
+  return (
+    <span className="text-gray-300 text-xs sm:text-sm hover:text-pink-300 cursor-pointer">
+      {name}
+    </span>
+  );
+};
+
+type WorkExperienceProps = {
+  company: string;
+  link: string;
+  date: string;
+  position: string;
+  description: string;
+};
+
+const WorkExperience = (props: WorkExperienceProps) => {
+  const { company, link, date, position, description } = props;
+  return (
+    <div className="flex flex-col">
+      <div className="flex">
+        <a
+          href={link}
+          onClick={(e) => !link && e.preventDefault()}
+          target="_blank"
+          rel="noreferrer"
+          className="text-white hover:text-pink-300 transition-all duration-150 cursor-pointer  decoration-dashed text-sm"
+        >
+          {company}
+        </a>
+        <span className="mx-2 sm:mx-3 flex justify-center items-center">
+          <div className="w-1 h-1 rounded-full bg-gray-500"></div>
+        </span>
+        <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
+          {date}
+        </span>
+      </div>
+      <span className="text-gray-300 text-xs sm:text-sm mt-1">{position}</span>
+      <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">{description}</p>
+    </div>
+  );
+};
+
+type EducationProps = {
+  institution: string;
+  link: string;
+  date: string;
+  degree: string;
+  description: string;
+};
+
+const Education = (props: EducationProps) => {
+  const { institution, link, date, degree, description } = props;
+  return (
+    <div className="flex flex-col mt-6">
+      <div className="flex">
+        <a
+          href={link}
+          target="__blank"
+          rel="noreferrer"
+          className="text-white hover:text-pink-300 transition-all duration-150 cursor-pointer  decoration-dashed text-sm"
+        >
+          {institution}
+        </a>
+        <span className="mx-2 sm:mx-3 flex justify-center items-center">
+          <div className="w-1 h-1 rounded-full bg-gray-500"></div>
+        </span>
+        <span className="italic flex items-center text-right text-xs sm:text-sm text-gray-500">
+          {date}
+        </span>
+      </div>
+      <span className="text-gray-300 text-xs sm:text-sm mt-1">{degree}</span>
+      <p className="text-gray-500 text-sm mt-2 sm:h-[100px] ">{description}</p>
     </div>
   );
 };
