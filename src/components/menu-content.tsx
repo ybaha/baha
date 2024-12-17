@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { NavigationLink } from "@/components/navigation-link";
-import { PROFILES, LINKS, COLORS } from "@/lib/constants";
+import { SOCIALS, LINKS, COLORS, CV } from "@/lib/constants";
 import { Button } from "./ui/button";
 import { Icons } from "./icons";
 import { cn } from "@/lib/utils";
@@ -144,13 +144,13 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
         </div>
       </div>
       <hr className="bg-background text-background" />
-      <div className="flex flex-col gap-2 text-sm flex-1">
+      <div className="flex flex-col text-sm flex-1 gap-2">
         <div className="flex flex-col flex-1">
           <span className="px-2 text-xs font-medium leading-relaxed text-gray-600">
             Socials
           </span>
           <div className="flex flex-col gap-1 mt-2">
-            {PROFILES.map((profile) => (
+            {SOCIALS.map((profile) => (
               <NavigationLink
                 key={profile.url}
                 href={profile.url}
@@ -159,6 +159,12 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
               />
             ))}
           </div>
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="px-2 text-xs font-medium leading-relaxed text-gray-600">
+            Resume
+          </span>
+          <NavigationLink href={CV} label="My Resume" icon="File" />
         </div>
         <div className="flex flex-1 h-full mt-4 lg:mt-0 lg:items-end">
           <div className="flex justify-between w-full gap-3">

@@ -8,7 +8,7 @@ type Profile = {
   icon: IconsType;
 };
 
-export const PROFILES: Profile[] = [
+export const SOCIALS: Profile[] = [
   {
     label: "Twitter",
     username: "bahaerarslan",
@@ -34,6 +34,8 @@ export const PROFILES: Profile[] = [
     url: "mailto:ybahaerarslan@gmail.com",
   },
 ];
+
+export const CV = `https://docs.google.com/document/d/1DMLHdW6D9c-Wy13KYntoTqrmeyLi02LXfO2IC5ecDos/edit?usp=sharing`;
 
 export const sharedTitle = "Yusuf Baha Erarslan";
 export const sharedDescription =

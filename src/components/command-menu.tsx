@@ -28,7 +28,7 @@ import {
 import { allLogs, allWritings } from "contentlayer2/generated";
 import { useRouter } from "next/navigation";
 import { IconsType } from "./icons";
-import { LINKS, PROFILES } from "@/lib/constants";
+import { LINKS, SOCIALS } from "@/lib/constants";
 import { Icons } from "./icons";
 
 type Props = {
@@ -142,7 +142,7 @@ export function CommandMenu({ open, setOpen }: Props) {
           </CommandGroup>
           <CommandSeparator />
           <CommandGroup heading="Socials">
-            {PROFILES.map((profile) => (
+            {SOCIALS.map((profile) => (
               <CommandItem
                 key={profile.label}
                 onSelect={() => {

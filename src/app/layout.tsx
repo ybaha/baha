@@ -5,7 +5,7 @@ import { Cormorant } from "next/font/google";
 
 import { SideMenu } from "@/components/side-menu";
 import { MenuContent } from "@/components/menu-content";
-import { PROFILES, sharedDescription, sharedTitle } from "@/lib/constants";
+import { SOCIALS, sharedDescription, sharedTitle } from "@/lib/constants";
 import MainLayout from "@/components/main-layout";
 import { FloatingHeader } from "@/components/floating-header";
 import { ScrollArea } from "@/components/scroll-area";
@@ -116,10 +116,10 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     site: `@${
-      PROFILES.find((profile) => profile.url.includes("twitter"))?.username
+      SOCIALS.find((profile) => profile.url.includes("twitter"))?.username
     }`,
     creator: `@${
-      PROFILES.find((profile) => profile.url.includes("twitter"))?.username
+      SOCIALS.find((profile) => profile.url.includes("twitter"))?.username
     }`,
   },
   other: {
