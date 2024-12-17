@@ -1,0 +1,35 @@
+---
+title: Discovering the "is" Keyword in TypeScript
+slug: typescript-is-keyword
+date: "2024-11-3 21:30:00"
+description: "How I stumbled upon TypeScript's 'is' keyword and why it's a game-changer for type safety."
+author: Yusuf Baha Erarslan
+aiGenerated: false
+---
+
+## Discovering the "is" Keyword in TypeScript
+
+I’ve been using TypeScript for a while now, but I never needed the `is` keyword—until recently. In a project, I had to handle different object types in a single function. TypeScript couldn’t figure out the types on its own, so I finally learned about user-defined type guards.
+
+Here’s what I found:  
+
+### What’s the `is` Keyword?  
+
+The `is` keyword is used in type guard functions to narrow down types. For example:
+
+```typescript
+function isCat(animal: Cat | Dog): animal is Cat {
+  return (animal as Cat).meow !== undefined;
+}
+```
+
+This checks if the `animal` has a `meow` method. Inside the `if` block, TypeScript treats `animal` as a `Cat`. No more type confusion.
+
+### Why It’s Useful  
+
+- Handles complex union types easily.  
+- Ensures type safety while simplifying your code.  
+
+Honestly, it’s one of those features you don’t think about until you need it.
+
+Here's the official documentation for it: <Link href="https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates">TypeScript Handbook</Link>

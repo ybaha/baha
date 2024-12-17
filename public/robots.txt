@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://baha.vercel.app
+
+# Sitemaps
+Sitemap: https://baha.vercel.app/sitemap.xml
