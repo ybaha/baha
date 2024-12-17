@@ -5,7 +5,6 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import remarkGfm from "remark-gfm";
 import rehypeCodeTitles from "rehype-code-titles";
 import rehypePrism from "rehype-prism-plus";
-import highlight from "rehype-highlight";
 
 export const Writing = defineDocumentType(() => ({
   name: "Writing",
@@ -101,8 +100,7 @@ export default makeSource({
     rehypePlugins: [
       rehypeSlug,
       rehypeCodeTitles,
-      rehypePrism,
-      highlight,
+      [rehypePrism, { showLineNumbers: true }],
       [
         rehypeAutolinkHeadings,
         {

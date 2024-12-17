@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { useMDXComponent } from "next-contentlayer2/hooks";
 import { cn } from "@/lib/utils";
@@ -27,15 +26,33 @@ const mdxComponents = {
   p: (props: any) => (
     <p {...props} className="text-sm sm:text-base mb-4 lg:mb-6" />
   ),
-  pre: (props: any) => (
-    <pre
-      {...props}
-      className={cn(
-        "border rounded-lg font-medium dark:bg-zinc-900 dark:border-border p-4 mb-4",
-        props.className
-      )}
-    />
-  ),
+  pre: ({ children, className, ...props }: any) => {
+    const hasLang = /language-(\w+)/.exec(className || "");
+    return (
+      <pre
+        className={cn(
+          "border rounded-lg font-medium dark:bg-zinc-900 dark:border-border p-4 mb-4 overflow-x-auto relative",
+          className
+        )}
+        {...props}
+      >
+        {hasLang && (
+          <div className="absolute right-4 top-4 text-xs text-gray-400">
+            {hasLang[1]}
+          </div>
+        )}
+        {children}
+      </pre>
+    );
+  },
+  code: ({ className, children, ...props }: any) => {
+    const hasLang = /language-(\w+)/.exec(className || "");
+    return (
+      <code className={cn("font-mono text-sm", className)} {...props}>
+        {children}
+      </code>
+    );
+  },
 };
 
 interface MdxProps {
