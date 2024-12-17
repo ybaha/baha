@@ -21,6 +21,7 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-slot": "^1.0.2",
     "@tailwindcss/container-queries": "^0.1.1",
+    "axios": "^1.7.9",
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.0",
     "classix": "^2.1.35",
