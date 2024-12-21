@@ -22,9 +22,7 @@ export function LoginDialog({ children }: { children: React.ReactNode }) {
     // const scope = "read:user user:email";
     // const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${pathname}`;
     // window.location.href = authUrl;
-    signIn("github", {
-      redirectTo: `${window.location.origin}/api/auth/github`,
-    });
+    signIn("github");
   };
 
   const handleGoogleSignIn = () => {
