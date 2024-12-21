@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 
+
 .env
 prisma/node_modules
 
