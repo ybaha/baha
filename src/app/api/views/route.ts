@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { PostView } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -23,7 +24,7 @@ export async function GET(request: Request) {
 
     // Create a map of slug to view count, defaulting to 0 for posts without views
     const viewsMap = slugs.reduce((acc, slug) => {
-      const view = views.find((v) => v.slug === slug);
+      const view = views.find((v: PostView) => v.slug === slug);
       acc[slug] = view?.count ?? 0;
       return acc;
     }, {} as Record<string, number>);

@@ -6,6 +6,7 @@
 .pnp.js
 
 .env
+prisma/node_modules
 
 # contentlayer
 .contentlayer/
