@@ -5,22 +5,22 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getFormattedDate(date: string, format?: "short" | "long") {
-  const dateObj = new Date(date);
-
+export function getFormattedDate(
+  date: string,
+  format: "short" | "long" = "short"
+) {
+  const d = new Date(date);
   if (format === "long") {
-    return dateObj.toLocaleString("en-UK", {
-      day: "numeric",
-      month: "long",
+    return d.toLocaleDateString("en-US", {
+      weekday: "long",
       year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
+      month: "long",
+      day: "numeric",
     });
   }
-
-  return dateObj.toLocaleDateString("en-UK", {
-    day: "numeric",
-    month: "short",
+  return d.toLocaleDateString("en-US", {
     year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 }

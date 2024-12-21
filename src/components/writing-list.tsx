@@ -1,6 +1,8 @@
+"use client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Writing } from "contentlayer2/generated";
+import { useEffect, useState } from "react";
 
 type Props = {
   writings: Writing[];
@@ -8,6 +10,20 @@ type Props = {
 };
 
 export const WritingList = ({ writings }: Props) => {
+  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const fetchViews = async () => {
+      const slugs = writings.map((writing) => writing.slug);
+      const response = await fetch(`/api/views?slugs=${slugs.join(",")}`);
+      const { data, error } = await response.json();
+      if (data && !error) {
+        setViewCounts(data);
+      }
+    };
+    fetchViews();
+  }, [writings]);
+
   const writingsByYear = writings
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .reduce((acc, item) => {
@@ -19,6 +35,16 @@ export const WritingList = ({ writings }: Props) => {
       acc[year].push(item);
       return acc;
     }, {} as Record<string, Writing[]>);
+
+  const formatViewCount = (count: number) => {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    }
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
+  };
 
   return (
     <div className="text-sm">
@@ -56,6 +82,9 @@ export const WritingList = ({ writings }: Props) => {
                   " " +
                   dateObj.getFullYear();
 
+                const viewCount = viewCounts[item.slug] ?? 0;
+                const formattedViews = formatViewCount(viewCount);
+
                 return (
                   <li
                     key={slug}
@@ -70,7 +99,7 @@ export const WritingList = ({ writings }: Props) => {
                       {itemIndex === 0 ? year : ""}
                     </span>
                     <Link
-                      href={`/${slug}`}
+                      href={`/writings/${item.slug}`}
                       className="col-span-12 group-hover/list-item:text-foreground md:col-span-10"
                     >
                       <span className="grid grid-cols-5 items-center gap-2 border-t border-foreground/20 py-4 md:grid-cols-12">
@@ -85,25 +114,8 @@ export const WritingList = ({ writings }: Props) => {
                         <span className="col-span-3 line-clamp-4 md:col-span-5">
                           {title}
                         </span>
-                        {/* <span className="col-span-1">
-                          {formattedViews ? (
-                            <motion.span
-                              key={`${slug}-views`}
-                              className="flex justify-end"
-                              title={`${formattedViews} views`}
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              {formattedViews}
-                            </motion.span>
-                          ) : (
-                            <motion.span key={`${slug}-views-loading`} />
-                          )}
-                        </span> */}
                         <span className="col-span-1 md:col-span-5 text-right">
-                          0
+                          {formattedViews}
                         </span>
                       </span>
                     </Link>

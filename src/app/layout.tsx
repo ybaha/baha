@@ -9,9 +9,9 @@ import { SOCIALS, sharedDescription, sharedTitle } from "@/lib/constants";
 import MainLayout from "@/components/main-layout";
 import { FloatingHeader } from "@/components/floating-header";
 import { ScrollArea } from "@/components/scroll-area";
-import { CommandMenu } from "@/components/command-k";
 import { cookies } from "next/headers";
 import { Metadata } from "next";
+import { Toaster } from "react-hot-toast";
 
 type Props = {
   children: React.ReactNode;
@@ -32,6 +32,7 @@ const cormorant = Cormorant({
 export default async function RootLayout({ children }: Props) {
   const cookieStore = await cookies();
   const theme = cookieStore.get("theme");
+  const isDark = cookieStore.get("is-dark")?.value === "true";
 
   return (
     <html
@@ -67,6 +68,17 @@ export default async function RootLayout({ children }: Props) {
             </div>
           </MainLayout>
         </main>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              background: isDark ? "#27272a" : "white",
+              color: isDark ? "white" : "black",
+              borderRadius: "8px",
+              border: `1px solid ${isDark ? "#3f3f46" : "#e4e4e7"}`,
+            },
+          }}
+        />
       </body>
     </html>
   );
