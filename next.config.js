@@ -5,6 +5,14 @@ const { withContentlayer } = require("next-contentlayer2");
 const nextConfig = {
   reactStrictMode: true,
   experimental: { mdxRs: false },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "49.13.116.247",
+      },
+    ],
+  },
 };
 
 module.exports = withContentlayer(nextConfig);
