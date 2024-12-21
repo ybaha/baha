@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Writing } from "contentlayer2/generated";
 import { useEffect, useState } from "react";
+import { getViews } from "@/queries/getViews";
 
 type Props = {
   writings: Writing[];
@@ -15,8 +16,7 @@ export const WritingList = ({ writings }: Props) => {
   useEffect(() => {
     const fetchViews = async () => {
       const slugs = writings.map((writing) => writing.slug);
-      const response = await fetch(`/api/views?slugs=${slugs.join(",")}`);
-      const { data, error } = await response.json();
+      const { data, error } = await getViews(slugs);
       if (data && !error) {
         setViewCounts(data);
       }
