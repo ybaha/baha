@@ -17,11 +17,14 @@ export function LoginDialog({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const handleGitHubSignIn = () => {
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_ID;
-    const redirectUri = `${window.location.origin}/api/auth/github`;
-    const scope = "read:user user:email";
-    const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${pathname}`;
-    window.location.href = authUrl;
+    // const clientId = process.env.NEXT_PUBLIC_GITHUB_ID;
+    // const redirectUri = `${window.location.origin}/api/auth/github`;
+    // const scope = "read:user user:email";
+    // const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${pathname}`;
+    // window.location.href = authUrl;
+    signIn("github", {
+      redirectTo: `${window.location.origin}/api/auth/github`,
+    });
   };
 
   const handleGoogleSignIn = () => {
