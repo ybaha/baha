@@ -26,10 +26,12 @@ const Page = () => {
                 <span className="text-foreground/50">
                   {getDateFormat(writing.date)}
                 </span>
-                <div className="text-primary flex items-center justify-center">
-                  <span className="md:block hidden">Created with magic</span>
-                  <Sparkles size={16} className="text-primary" />
-                </div>
+                {writing.aiGenerated && (
+                  <div className="text-primary flex items-center justify-center">
+                    <span className="md:block hidden">Created with magic</span>
+                    <Sparkles size={16} className="text-primary" />
+                  </div>
+                )}
               </div>
             </Link>
           ))}

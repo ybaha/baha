@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Writing } from "contentlayer2/generated";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getViews } from "@/queries/getViews";
 
 type Props = {
@@ -13,38 +13,50 @@ type Props = {
 export const WritingList = ({ writings }: Props) => {
   const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
 
+  const slugs = useMemo(
+    () => writings.map((writing) => writing.slug),
+    [writings]
+  );
+
   useEffect(() => {
     const fetchViews = async () => {
-      const slugs = writings.map((writing) => writing.slug);
       const { data, error } = await getViews(slugs);
       if (data && !error) {
         setViewCounts(data);
       }
     };
+
     fetchViews();
-  }, [writings]);
+  }, [slugs]);
 
-  const writingsByYear = writings
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .reduce((acc, item) => {
-      const dateObj = new Date(item.date);
-      const year = dateObj.getFullYear();
-      if (!acc[year]) {
-        acc[year] = [];
+  const writingsByYear = useMemo(
+    () =>
+      writings
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .reduce((acc, item) => {
+          const dateObj = new Date(item.date);
+          const year = dateObj.getFullYear();
+          if (!acc[year]) {
+            acc[year] = [];
+          }
+          acc[year].push(item);
+          return acc;
+        }, {} as Record<string, Writing[]>),
+    [writings]
+  );
+
+  const formatViewCount = useMemo(
+    () => (count: number) => {
+      if (count >= 1000000) {
+        return `${(count / 1000000).toFixed(1)}M`;
       }
-      acc[year].push(item);
-      return acc;
-    }, {} as Record<string, Writing[]>);
-
-  const formatViewCount = (count: number) => {
-    if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
-    }
-    if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`;
-    }
-    return count.toString();
-  };
+      if (count >= 1000) {
+        return `${(count / 1000).toFixed(1)}K`;
+      }
+      return count.toString();
+    },
+    []
+  );
 
   return (
     <div className="text-sm">
