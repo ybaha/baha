@@ -11,6 +11,10 @@ const nextConfig = {
         protocol: "http",
         hostname: "49.13.116.247",
       },
+      {
+        protocol: "https",
+        hostname: "poshet.nl",
+      },
     ],
   },
 };
