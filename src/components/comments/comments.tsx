@@ -256,15 +256,9 @@ export function Comments({
                   onClick={handleLoadMore}
                   disabled={isLoadingMore}
                   className="min-w-[100px]"
+                  loading={isLoadingMore}
                 >
-                  {isLoadingMore ? (
-                    <div className="flex items-center space-x-2">
-                      <Loader className="h-4 w-4 animate-spin" />
-                      <span>Loading...</span>
-                    </div>
-                  ) : (
-                    "Load More"
-                  )}
+                  Load More
                 </Button>
               </div>
             )}
@@ -287,15 +281,9 @@ export function Comments({
               variant="outline"
               disabled={isSubmitting}
               className="min-w-[120px]"
+              loading={isSubmitting}
             >
-              {isSubmitting ? (
-                <div className="flex items-center space-x-2">
-                  <Loader className="h-4 w-4 animate-spin" />
-                  <span>Posting...</span>
-                </div>
-              ) : (
-                "Post Comment"
-              )}
+              Post Comment
             </Button>
             <p className="text-sm text-gray-500">{newComment.length} / 1000</p>
           </div>

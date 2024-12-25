@@ -60,8 +60,8 @@ const FloatingHeaderComponent = ({
         <div className="flex w-full items-center justify-between gap-2">
           <div className="flex flex-1 items-center gap-1">
             {goBackLink ? (
-              <Button variant="ghost" className="shrink-0" asChild>
-                <Link href={goBackLink} title="Go back">
+              <Button variant="ghost" className="shrink-0 flex" asChild>
+                <Link href={goBackLink} title="Go back" className="flex">
                   <ArrowLeftIcon size={16} />
                   <span
                     className={cn(
