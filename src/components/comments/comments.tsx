@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Loader, MessageCircle } from "lucide-react";
 import { cn, getFormattedDate } from "@/lib/utils";
 import { LoginDialog } from "@/components/auth/login-dialog";
 import { Session } from "next-auth";
@@ -40,16 +40,20 @@ export function Comments({
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cursor, setCursor] = useState<string | undefined>(undefined);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchComments();
-    setIsLoading(false);
+    (async () => {
+      setIsLoading(true);
+      await fetchComments();
+      setIsLoading(false);
+      setInitialLoadDone(true);
+    })();
   }, [postSlug]);
 
   useEffect(() => {
@@ -67,7 +71,7 @@ export function Comments({
       const response = await getComments({
         postSlug,
         cursor: loadMore ? cursor : undefined,
-        limit: 10,
+        limit: 5,
       });
 
       if (loadMore) {
@@ -140,12 +144,32 @@ export function Comments({
 
   const votes = comments.flatMap((comment) => comment.votes);
 
+  if (isLoading && !initialLoadDone) {
+    return (
+      <div className="space-y-8 mb-8">
+        <h2 className="text-2xl font-normal font-serif italic">Comments</h2>
+        <div className="flex flex-col items-center justify-center py-6 space-y-4 text-foreground/50">
+          <Loader className="h-6 w-6 animate-spin" />
+          {/* <p>Loading comments...</p> */}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 mb-8">
       <h2 className="text-2xl font-normal font-serif italic">Comments</h2>
       <div className="space-y-6">
-        {isLoading ? (
-          <p className="text-gray-500">Loading comments...</p>
+        {initialLoadDone && comments.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 space-y-4 text-foreground/50">
+            <MessageCircle className="h-8 w-8" />
+            <p className="text-center">
+              No comments yet.{" "}
+              {session
+                ? "Be the first to comment!"
+                : "Sign in to be the first to comment!"}
+            </p>
+          </div>
         ) : (
           <>
             {comments.map((comment) => {
@@ -164,7 +188,10 @@ export function Comments({
               return (
                 <div
                   key={comment.id}
-                  className="flex space-x-4"
+                  className={cn(
+                    "flex space-x-4",
+                    isSubmitting && "opacity-50 pointer-events-none"
+                  )}
                   id="comments-section"
                 >
                   <Avatar>
@@ -222,18 +249,19 @@ export function Comments({
                 </div>
               );
             })}
-            {hasMore && (
+            {comments.length > 0 && hasMore && (
               <div className="flex justify-center pt-4">
                 <Button
                   variant="outline"
                   onClick={handleLoadMore}
                   disabled={isLoadingMore}
+                  className="min-w-[100px]"
                 >
                   {isLoadingMore ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Loading...
-                    </>
+                    <div className="flex items-center space-x-2">
+                      <Loader className="h-4 w-4 animate-spin" />
+                      <span>Loading...</span>
+                    </div>
                   ) : (
                     "Load More"
                   )}
@@ -251,10 +279,23 @@ export function Comments({
             placeholder="Write a comment..."
             required
             maxLength={1000}
+            disabled={isSubmitting}
           />
-          <div className="flex justify-between">
-            <Button type="submit" variant="outline" disabled={isSubmitting}>
-              {isSubmitting ? "Posting..." : "Post Comment"}
+          <div className="flex justify-between items-center">
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={isSubmitting}
+              className="min-w-[120px]"
+            >
+              {isSubmitting ? (
+                <div className="flex items-center space-x-2">
+                  <Loader className="h-4 w-4 animate-spin" />
+                  <span>Posting...</span>
+                </div>
+              ) : (
+                "Post Comment"
+              )}
             </Button>
             <p className="text-sm text-gray-500">{newComment.length} / 1000</p>
           </div>

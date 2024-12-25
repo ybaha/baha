@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Writing } from "contentlayer2/generated";
 import { useEffect, useState, useMemo } from "react";
 import { getViews } from "@/queries/getViews";
+import { Loader } from "lucide-react";
 
 type Props = {
   writings: Writing[];
@@ -12,6 +13,7 @@ type Props = {
 
 export const WritingList = ({ writings }: Props) => {
   const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const slugs = useMemo(
     () => writings.map((writing) => writing.slug),
@@ -24,6 +26,7 @@ export const WritingList = ({ writings }: Props) => {
       if (data && !error) {
         setViewCounts(data);
       }
+      setIsLoading(false);
     };
 
     fetchViews();
@@ -127,7 +130,13 @@ export const WritingList = ({ writings }: Props) => {
                           {title}
                         </span>
                         <span className="col-span-1 md:col-span-5 text-right">
-                          {formattedViews}
+                          {isLoading ? (
+                            <div className="flex items-center justify-end">
+                              <Loader className="h-4 w-4 animate-spin" />
+                            </div>
+                          ) : (
+                            formattedViews
+                          )}
                         </span>
                       </span>
                     </Link>
