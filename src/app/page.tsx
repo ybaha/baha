@@ -7,6 +7,7 @@ import { PageTitle } from "@/components/page-title";
 import { allWritings } from "contentlayer2/generated";
 import { allLogs } from "contentlayer2/generated";
 import { sendTelegramMessage } from "@/lib/sendTelegramMessage";
+import Link from "@/components/link";
 
 export default async function Home() {
   await sendTelegramMessage("Hello");
@@ -21,7 +22,8 @@ export default async function Home() {
           </p>
 
           <p>
-            Currently at Miyagami, working on different projects and products.
+            Currently at <Link href="https://miyagami.com">Miyagami</Link>,
+            working on different projects and products.
           </p>
 
           <Suspense fallback={<LoadingSpinner />}>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { useMDXComponent } from "next-contentlayer2/hooks";
 import { cn } from "@/lib/utils";
 
@@ -6,12 +6,7 @@ const mdxComponents = {
   Image: (props: any) => (
     <img className={cn(props.className, "rounded-lg")} {...props} />
   ),
-  Link: (props: any) => (
-    <Link
-      {...props}
-      className="underline decoration-primary hover:bg-primary hover:text-white hover:no-underline transition-all duration-100 px-0.5 -mx-0.5"
-    />
-  ),
+  Link: (props: any) => <Link {...props} />,
   ul: (props: any) => <ul {...props} className="mb-8 list-disc pl-7" />,
   ol: (props: any) => <ol {...props} className="mb-8 list-decimal pl-6" />,
   h2: (props: any) => (
