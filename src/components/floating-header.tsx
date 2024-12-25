@@ -1,10 +1,9 @@
 "use client";
 
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
 import { ArrowLeftIcon } from "lucide-react";
-
 import { MobileDrawer } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { MOBILE_SCROLL_THRESHOLD } from "@/lib/constants";
@@ -18,6 +17,20 @@ type Props = {
   children?: React.ReactNode;
 };
 
+function throttle<T extends (...args: any[]) => any>(
+  func: T,
+  limit: number
+): (...args: Parameters<T>) => void {
+  let inThrottle: boolean;
+  return function (this: any, ...args: Parameters<T>) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+}
+
 const FloatingHeaderComponent = ({
   scrollTitle: scrollTitleProp,
   title,
@@ -25,9 +38,7 @@ const FloatingHeaderComponent = ({
 }: Props) => {
   const pathname = usePathname();
   const includesWritings = pathname.includes("/writings/");
-
   const goBackLink = includesWritings ? "/writings" : undefined;
-
   const writingPath = pathname.split("/").slice(2).join("/");
 
   const scrollTitle =
@@ -43,39 +54,34 @@ const FloatingHeaderComponent = ({
     set: false,
   });
 
+  const handleScroll = useCallback((scrollY: number) => {
+    const translateY = Math.min(Math.max(100 - scrollY / 2, 0), 100);
+    const opacity = Math.min(
+      Math.max((scrollY - MOBILE_SCROLL_THRESHOLD) / 50, 0),
+      1
+    );
+
+    setTransformValues({ translateY, opacity, set: true });
+  }, []);
+
   useEffect(() => {
     const scrollAreaElem = document.querySelector(`#scroll-area`);
 
-    const onScroll = (e: any) => {
+    if (!scrollTitle || !scrollAreaElem) return;
+
+    const throttledScroll = throttle((e: any) => {
       const scrollY = e.target.scrollTop;
+      handleScroll(scrollY);
+    }, 16); // ~60fps
 
-      const translateY = Math.max(100 - scrollY, 0);
+    scrollAreaElem.addEventListener("scroll", throttledScroll, {
+      passive: true,
+    });
 
-      const position = Math.max(
-        parseInt(
-          (
-            (scrollY -
-              MOBILE_SCROLL_THRESHOLD *
-                (MOBILE_SCROLL_THRESHOLD / (scrollY ** 2 / 100))) /
-            100
-          ).toFixed(2)
-        ),
-        0
-      );
+    setTransformValues({ translateY: 100, opacity: 0, set: true });
 
-      const opacity = Math.min(position, 1) || 0;
-
-      setTransformValues({ translateY, opacity, set: true });
-    };
-
-    if (scrollTitle) {
-      scrollAreaElem?.addEventListener("scroll", onScroll, {
-        passive: true,
-      });
-      setTransformValues({ translateY: 100, opacity: 0, set: true });
-    }
-    return () => scrollAreaElem?.removeEventListener("scroll", onScroll);
-  }, [scrollTitle]);
+    return () => scrollAreaElem.removeEventListener("scroll", throttledScroll);
+  }, [scrollTitle, handleScroll]);
 
   const writingsTextOpacity = !transformValues.set
     ? 0
@@ -86,7 +92,8 @@ const FloatingHeaderComponent = ({
   return (
     <header
       className={cn(
-        "sticky inset-x-0 top-0 z-10 mx-auto flex h-12 w-full shrink-0 items-center overflow-hidden border-b border-primary/10 text-sm font-medium lg:hidden backdrop-blur-md bg-zinc-100 dark:bg-zinc-900 dark:border-zinc-800"
+        "sticky inset-x-0 top-0 z-10 mx-auto flex h-12 w-full shrink-0 items-center overflow-hidden border-b border-primary/10 text-sm font-medium lg:hidden backdrop-blur-md bg-zinc-100/90 dark:bg-zinc-900/90 dark:border-zinc-800",
+        "will-change-transform"
       )}
     >
       <div className="flex h-full w-full items-center px-3">
@@ -97,11 +104,11 @@ const FloatingHeaderComponent = ({
                 <Link href={goBackLink} title="Go back">
                   <ArrowLeftIcon size={16} />
                   <span
-                    className="font-serif italic transition-all absolute left-14"
+                    className="font-serif italic transition-all absolute left-14 will-change-transform"
                     style={{
-                      transform: `translateY(${
+                      transform: `translate3d(0, ${
                         100 - transformValues.translateY
-                      }%)`,
+                      }%, 0)`,
                       opacity: writingsTextOpacity,
                     }}
                   >
@@ -115,10 +122,10 @@ const FloatingHeaderComponent = ({
             {scrollTitle && (
               <span
                 className={cn(
-                  "line-clamp-2 font-bold text-foreground transition-all"
+                  "line-clamp-2 font-bold text-foreground transition-all will-change-transform"
                 )}
                 style={{
-                  transform: `translateY(${transformValues.translateY}%)`,
+                  transform: `translate3d(0, ${transformValues.translateY}%, 0)`,
                   opacity: transformValues.opacity,
                 }}
               >

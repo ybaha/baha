@@ -175,18 +175,22 @@ export function Comments({
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center space-x-2">
-                      <span className="font-semibold">{comment.user.name}</span>
+                      <span className="font-semibold text-sm sm:text-base">
+                        {comment.user.name}
+                      </span>
                       <span className="text-gray-500">•</span>
-                      <time className="text-gray-500">
+                      <time className="text-gray-500 text-xs sm:text-sm">
                         {getFormattedDate(
                           comment.createdAt.toISOString(),
-                          "long"
+                          "comment"
                         )}
                       </time>
                     </div>
-                    <p className="mt-1">{comment.text}</p>
+                    <p className="mt-1 text-sm md:text-base mb-0 sm:mb-2">
+                      {comment.text}
+                    </p>
                     {session && (
-                      <div className="mt-2 flex items-center space-x-2 -ml-2">
+                      <div className="sm:mt-2 flex items-center space-x-2 -ml-3">
                         <Button
                           variant="ghost"
                           size="sm"

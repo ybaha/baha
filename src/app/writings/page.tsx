@@ -1,11 +1,7 @@
-import { LoadingSpinner } from "@/components/loading-spinner";
-import { PageTitle } from "@/components/page-title";
-import { ScrollArea } from "@/components/scroll-area";
-import { WritingList } from "@/components/writing-list";
 import { allWritings } from "contentlayer2/generated";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import React, { Suspense } from "react";
+import React from "react";
 
 const Page = () => {
   return (

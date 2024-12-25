@@ -7,9 +7,18 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getFormattedDate(
   date: string,
-  format: "short" | "long" = "short"
+  format: "short" | "long" | "comment" = "short"
 ) {
   const d = new Date(date);
+  if (format === "comment") {
+    return d.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    });
+  }
   if (format === "long") {
     return d.toLocaleDateString("en-US", {
       weekday: "long",
