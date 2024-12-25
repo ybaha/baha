@@ -25,7 +25,7 @@ const FloatingHeaderComponent = ({
 }: Props) => {
   const pathname = usePathname();
   const includesWritings = pathname.includes("/writings/");
-  const goBackLink = includesWritings ? "/writings" : "/";
+  const goBackLink = includesWritings ? "/writings" : false;
   const writingPath = pathname.split("/").slice(2).join("/");
 
   const scrollTitle =
