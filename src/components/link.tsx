@@ -4,7 +4,7 @@ import { Url } from "url";
 
 type Props = {
   children: React.ReactNode;
-  href: Url;
+  href: Url | string;
 } & AnchorHTMLAttributes<HTMLAnchorElement>;
 
 export default function Link(props: Props) {
