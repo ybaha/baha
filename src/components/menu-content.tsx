@@ -23,7 +23,12 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [currentColorIndex, setCurrentColorIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const colorEntries = Object.entries(COLORS);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>;
@@ -174,22 +179,26 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
                 setTheme(theme === "dark" ? "light" : "dark");
               }}
             >
-              <Icons
-                name="Sun"
-                size={16}
-                className={cn(
-                  "absolute",
-                  theme === "dark" ? "opacity-0" : "opacity-100"
-                )}
-              />
-              <Icons
-                name="MoonStar"
-                size={16}
-                className={cn(
-                  "absolute",
-                  theme === "dark" ? "opacity-100" : "opacity-0"
-                )}
-              />
+              {mounted && (
+                <>
+                  <Icons
+                    name="Sun"
+                    size={16}
+                    className={cn(
+                      "absolute",
+                      theme === "dark" ? "opacity-0" : "opacity-100"
+                    )}
+                  />
+                  <Icons
+                    name="MoonStar"
+                    size={16}
+                    className={cn(
+                      "absolute",
+                      theme === "dark" ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                </>
+              )}
             </Button>
             <Popover
               modal

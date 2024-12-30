@@ -1,5 +1,6 @@
 "use client";
 import { ThemeProvider } from "next-themes";
+import { SessionProvider } from "next-auth/react";
 
 type Props = {
   children: React.ReactNode;
@@ -7,12 +8,14 @@ type Props = {
 
 export default function MainLayout({ children }: Props) {
   return (
-    <ThemeProvider
-      defaultTheme="system"
-      disableTransitionOnChange
-      themes={["light", "dark"]}
-    >
-      {children}
-    </ThemeProvider>
+    <SessionProvider>
+      <ThemeProvider
+        defaultTheme="system"
+        disableTransitionOnChange
+        themes={["light", "dark"]}
+      >
+        {children}
+      </ThemeProvider>
+    </SessionProvider>
   );
 }

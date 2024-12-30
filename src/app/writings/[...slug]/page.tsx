@@ -6,10 +6,7 @@ import { Mdx } from "@/components/mdx-components";
 import { cn, getFormattedDate } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import { Comments } from "@/components/comments/comments";
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import { incrementPostView } from "@/queries/incrementPostView";
+import { ClientComments } from "./client-comments";
 
 type Params = Promise<{
   slug: string[];
@@ -49,17 +46,13 @@ export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
   }));
 }
 
-export default async function Writing(p: Props) {
-  const params = await p.params;
+export default async function Writing(props: Props) {
+  const params = await props.params;
   const writing = await getWritingFromParams(params);
 
   if (!writing) {
     return notFound();
   }
-
-  await incrementPostView(writing.slug);
-
-  const session = await getServerSession(authOptions);
 
   return (
     <div className="flex flex-1 bg-background h-full">
@@ -102,7 +95,7 @@ export default async function Writing(p: Props) {
           )}
           <Mdx code={writing.body.code} />
           <hr className="my-16" />
-          <Comments postSlug={writing.slug} session={session} />
+          <ClientComments slug={writing.slug} />
         </article>
       </div>
     </div>
