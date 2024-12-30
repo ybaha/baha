@@ -115,7 +115,7 @@ export function MobileDrawer() {
       open={isDrawerOpen}
       onOpenChange={(val) => setDrawerOpen(val)}
     >
-      <Button variant="ghost" title="Toggle drawer" asChild>
+      <Button variant="ghost" title="Toggle drawer">
         <DrawerTrigger className="rounded-none">
           {/* <CommandIcon size={16} className="" /> */}
           {/* <img

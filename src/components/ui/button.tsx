@@ -71,15 +71,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
       >
-        <div>
-          <Loader
-            className={cn(
-              "animate-spin transition-all",
-              loading ? "mr-2 h-4 w-4 opacity-100" : "mr-0 h-0 w-0 opacity-0"
-            )}
-          />
-          {children}
-        </div>
+        <Loader
+          className={cn(
+            "animate-spin transition-all",
+            loading ? "mr-2 h-4 w-4 opacity-100" : "mr-0 h-0 w-0 opacity-0"
+          )}
+        />
+        {children}
       </Comp>
     );
   }

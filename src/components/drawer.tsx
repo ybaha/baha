@@ -15,7 +15,7 @@ export function MobileDrawer() {
       onOpenChange={(val) => setDrawerOpen(val)}
       snapPoints={[1]}
     >
-      <Button variant="ghost" title="Toggle drawer" asChild>
+      <Button variant="ghost" title="Toggle drawer">
         <Drawer.Trigger>
           <CommandIcon size={16} />
         </Drawer.Trigger>
