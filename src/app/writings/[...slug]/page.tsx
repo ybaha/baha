@@ -64,7 +64,7 @@ export default async function Writing(props: Props) {
               <section className="flex justify-between items-center">
                 <time
                   dateTime={writing.date}
-                  className="text-foreground/50 text-sm md:text-lg"
+                  className="text-foreground/50 text-sm md:text-base"
                 >
                   {getFormattedDate(writing.date, "long")}
                 </time>
