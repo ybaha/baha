@@ -2,9 +2,8 @@ import { Suspense } from "react";
 
 import { SideMenu } from "@/components/side-menu";
 import { LoadingSpinner } from "@/components/loading-spinner";
-import { SidebarLink } from "@/components/writing-link";
-import { allWritings } from "contentlayer2/generated";
 import { ScrollArea } from "@/components/scroll-area";
+import LinkList from "@/components/link-list";
 
 type Props = {
   children: React.ReactNode;
@@ -18,14 +17,7 @@ export default async function WritingLayout(props: Props) {
       <SideMenu title="Writings" isInner>
         <Suspense fallback={<LoadingSpinner />}>
           <div className="flex flex-col gap-1 text-sm">
-            {allWritings
-              .sort(
-                (a, b) =>
-                  new Date(b.date).getTime() - new Date(a.date).getTime()
-              )
-              .map((writing) => (
-                <SidebarLink key={writing.slug} writing={writing} />
-              ))}
+            <LinkList />
           </div>
         </Suspense>
       </SideMenu>

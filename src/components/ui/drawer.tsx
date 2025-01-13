@@ -115,23 +115,13 @@ export function MobileDrawer() {
       open={isDrawerOpen}
       onOpenChange={(val) => setDrawerOpen(val)}
     >
-      <Button variant="ghost" title="Toggle drawer">
-        <DrawerTrigger className="rounded-none">
-          {/* <CommandIcon size={16} className="" /> */}
-          {/* <img
-            src="/favicon.png"
-            alt="Toggle drawer"
-            className="w-6 h-6 rounded-none border-none "
-          /> */}
-          {/* <div className="font-serif italic bg-primary/80 h-[26px] w-[26px] text-base flex items-center justify-center rounded-lg">
-            <CommandIcon size={16} />
-          </div> */}
-          <div className="flex gap-2 justify-center items-center">
-            <AlignJustify size={14} />
-            {/* <span className="font-serif italic ">Menu</span> */}
-          </div>
-        </DrawerTrigger>
-      </Button>
+      <DrawerTrigger className="rounded-none p-3" title="Toggle drawer">
+        <div className="flex gap-2 justify-center items-center">
+          <AlignJustify size={14} />
+          {/* <span className="font-serif italic ">Menu</span> */}
+        </div>
+      </DrawerTrigger>
+
       <DrawerPortal>
         <DrawerContent className="fixed bottom-0 left-0 right-0 mt-24 flex h-[80vh] flex-col rounded-t-lg bg-background/80">
           <div className="flex-1 overflow-y-auto rounded-t-[10px] bg-background p-4">

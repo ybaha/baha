@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { allWritings } from "contentlayer2/generated";
+import SidebarFilter from "@/components/sidebar-filter";
 
 type Props = {
   scrollTitle?: string;
@@ -25,6 +26,7 @@ const FloatingHeaderComponent = ({
 }: Props) => {
   const pathname = usePathname();
   const includesWritings = pathname.includes("/writings/");
+  const isWritingsPage = pathname === "/writings";
   const goBackLink = includesWritings ? "/writings" : false;
   const writingPath = pathname.split("/").slice(2).join("/");
 
@@ -60,21 +62,23 @@ const FloatingHeaderComponent = ({
         <div className="flex w-full items-center justify-between gap-2">
           <div className="flex flex-1 items-center gap-1">
             {goBackLink ? (
-              <Button variant="ghost" className="shrink-0 flex">
-                <Link href={goBackLink} title="Go back" className="flex">
-                  <ArrowLeftIcon size={16} />
-                  <span
-                    className={cn(
-                      "font-serif italic absolute left-16 transition-all duration-200",
-                      isScrolled
-                        ? "opacity-0 -translate-y-6"
-                        : "opacity-100 translate-y-0"
-                    )}
-                  >
-                    Writings
-                  </span>
-                </Link>
-              </Button>
+              <Link
+                href={goBackLink}
+                title="Go back"
+                className="flex shrink-0 p-3"
+              >
+                <ArrowLeftIcon size={16} />
+                <span
+                  className={cn(
+                    "font-serif italic absolute left-16 transition-all duration-200",
+                    isScrolled
+                      ? "opacity-0 -translate-y-6"
+                      : "opacity-100 translate-y-0"
+                  )}
+                >
+                  Writings
+                </span>
+              </Link>
             ) : (
               <MobileDrawer />
             )}
@@ -98,7 +102,10 @@ const FloatingHeaderComponent = ({
               </Balancer>
             )}
           </div>
-          <div className="flex min-w-[50px] justify-end">{children}</div>
+          <div className="flex min-w-[50px] justify-end items-center gap-2">
+            {isWritingsPage && <SidebarFilter type="writings" />}
+            {children}
+          </div>
         </div>
       </div>
     </header>
