@@ -1,5 +1,6 @@
 import { ScrollArea } from "@/components/scroll-area";
 import { cn } from "@/lib/utils";
+import SidebarFilter from "./sidebar-filter";
 
 type SideMenuProps = {
   children: React.ReactNode;
@@ -14,19 +15,13 @@ export const SideMenu = ({
   title,
   isInner,
   className,
-  rightElement,
 }: SideMenuProps) => {
-  // scrollable-area relative w-full flex-col hidden bg-zinc-50 lg:flex lg:flex-col lg:border-r lg:w-80 xl:w-96
   return (
     <ScrollArea
-      // className={cn(
-      //   "hidden lg:flex lg:flex-col lg:border-r border-border",
-      //   isInner ? "lg:w-80 xl:w-96" : "lg:w-60 xl:w-72",
-      //   className
-      // )}
       className={cn(
         "hidden bg-background-tertiary border-border lg:flex lg:flex-col lg:border-r",
-        isInner ? "lg:w-80 xl:w-96" : "lg:w-60 xl:w-72"
+        isInner ? "lg:w-80 xl:w-96" : "lg:w-60 xl:w-72",
+        className
       )}
     >
       {title && (
@@ -37,7 +32,7 @@ export const SideMenu = ({
           )}
         >
           <span className="text-sm  font-serif italic">{title}</span>
-          {rightElement}
+          {title === "Writings" && <SidebarFilter type="writings" />}
         </div>
       )}
       <div
