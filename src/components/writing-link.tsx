@@ -3,8 +3,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn, getFormattedDate } from "@/lib/utils";
 import { Writing } from "contentlayer2/generated";
-import { Loader, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
+import Tags from "@/components/tags";
 
 type Props = {
   writing?: Writing;
@@ -13,7 +14,7 @@ type Props = {
 export const SidebarLink = ({ writing }: Props) => {
   const { slug, title, date, url, aiGenerated, tags } = writing || {};
   const pathname = usePathname();
-  const isActive = slug && pathname.includes(slug);
+  const isActive = !!(slug && pathname.includes(slug));
   const [visibleTags, setVisibleTags] = useState<string[]>([]);
   const [overflowCount, setOverflowCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,64 +97,7 @@ export const SidebarLink = ({ writing }: Props) => {
           {date && getFormattedDate(date, "short")}
         </span>
         {tags && tags.length > 0 ? (
-          <div ref={containerRef} className="w-[200px] relative">
-            <div ref={tagsRef} className="flex gap-1 items-center">
-              {visibleTags.length > 0 ? (
-                visibleTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className={cn(
-                      "text-[11px] px-1.5 py-[1px] rounded-full whitespace-nowrap font-serif italic",
-                      isActive
-                        ? "bg-white/20 text-white"
-                        : "bg-primary/10 text-primary"
-                    )}
-                  >
-                    {tag}
-                  </span>
-                ))
-              ) : (
-                <div className="flex items-center gap-1">
-                  {tags.length > 0 && (
-                    <>
-                      <span
-                        className={cn(
-                          "text-[11px] px-1.5 py-[1px] rounded-full whitespace-nowrap font-serif italic",
-                          isActive
-                            ? "bg-white/20 text-white"
-                            : "bg-primary/10 text-primary"
-                        )}
-                      >
-                        {tags[0]}
-                      </span>
-                      <span
-                        className={cn(
-                          "text-[11px] px-1.5 py-[5px] rounded-full whitespace-nowrap font-serif italic",
-                          isActive
-                            ? "bg-white/20 text-white"
-                            : "bg-primary/10 text-primary"
-                        )}
-                      >
-                        <Loader size={12} className="animate-spin" />
-                      </span>
-                    </>
-                  )}
-                </div>
-              )}
-              {overflowCount > 0 && (
-                <span
-                  className={cn(
-                    "text-[11px] px-1.5 py-[1px] rounded-full whitespace-nowrap font-medium font-serif",
-                    isActive
-                      ? "bg-white/20 text-white"
-                      : "bg-primary/10 text-primary"
-                  )}
-                >
-                  +{overflowCount}
-                </span>
-              )}
-            </div>
-          </div>
+          <Tags tags={tags} isActive={isActive} />
         ) : (
           <span className="text-xs text-foreground/50 p-1 invisible">
             No tags

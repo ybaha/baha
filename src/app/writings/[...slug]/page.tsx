@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { Mdx } from "@/components/mdx-components";
 import { cn, getFormattedDate } from "@/lib/utils";
 import { ClientComments } from "./client-comments";
+import Tags from "@/components/tags";
 
 type Params = Promise<{
   slug: string[];
@@ -72,23 +73,7 @@ export default async function Writing(props: Props) {
                     </span>
                   </Link>
                 )} */}
-                {writing.tags && writing.tags.length > 0 && (
-                  <div className="overflow-hidden">
-                    <div className="flex gap-1 flex-wrap">
-                      {writing.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className={cn(
-                            "text-[11px] px-1.5 py-[0px] rounded-full whitespace-nowrap font-serif italic",
-                            "bg-primary/10 text-primary"
-                          )}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <Tags tags={writing.tags ?? []} isStatic />
                 <time
                   dateTime={writing.date}
                   className="text-foreground/50 text-xs md:text-sm"

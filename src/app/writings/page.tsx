@@ -4,6 +4,7 @@ import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import Tags from "@/components/tags";
 
 type WritingWithTags = (typeof allWritings)[number] & {
   tags?: string[];
@@ -124,7 +125,7 @@ const Page = () => {
                   )}
                 </div>
                 {writing.tags && writing.tags.length > 0 && (
-                  <WritingTags tags={writing.tags} />
+                  <Tags tags={writing.tags} />
                 )}
               </div>
             </Link>
