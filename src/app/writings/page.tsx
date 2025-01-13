@@ -1,12 +1,95 @@
+"use client";
 import { allWritings } from "contentlayer2/generated";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/scroll-area";
 
 type WritingWithTags = (typeof allWritings)[number] & {
   tags?: string[];
+};
+
+const WritingTags = ({
+  tags,
+  isActive,
+}: {
+  tags: string[];
+  isActive?: boolean;
+}) => {
+  const [visibleTags, setVisibleTags] = useState<string[]>([]);
+  const [overflowCount, setOverflowCount] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tagsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!tags || !containerRef.current || !tagsRef.current) return;
+
+    const calculateVisibleTags = () => {
+      const containerWidth = containerRef.current?.offsetWidth || 0;
+      let currentWidth = 0;
+      const visibleTags: string[] = [];
+
+      // Create a temporary span to measure tag widths
+      const tempSpan = document.createElement("span");
+      tempSpan.style.visibility = "hidden";
+      tempSpan.style.position = "absolute";
+      tempSpan.className =
+        "text-xs px-1.5 py-0.5 rounded-full whitespace-nowrap";
+      document.body.appendChild(tempSpan);
+
+      for (const tag of tags) {
+        tempSpan.textContent = tag;
+        const tagWidth = tempSpan.offsetWidth + 4; // 4px for gap
+        const hasNextTag = tags.indexOf(tag) < tags.length - 1;
+        const totalContainerWidth = hasNextTag
+          ? containerWidth - 32
+          : containerWidth;
+
+        if (currentWidth + tagWidth < totalContainerWidth) {
+          currentWidth += tagWidth;
+          visibleTags.push(tag);
+        } else {
+          break;
+        }
+      }
+
+      document.body.removeChild(tempSpan);
+      setVisibleTags(visibleTags);
+      setOverflowCount(tags.length - visibleTags.length);
+    };
+
+    calculateVisibleTags();
+    window.addEventListener("resize", calculateVisibleTags);
+    return () => window.removeEventListener("resize", calculateVisibleTags);
+  }, [tags]);
+
+  return (
+    <div ref={containerRef} className="max-w-full relative">
+      <div ref={tagsRef} className="flex gap-1">
+        {visibleTags.map((tag) => (
+          <span
+            key={tag}
+            className={cn(
+              "text-xs px-1.5 py-0.5 rounded-full whitespace-nowrap",
+              "bg-primary/10 text-primary"
+            )}
+          >
+            {tag}
+          </span>
+        ))}
+        {overflowCount > 0 && (
+          <span
+            className={cn(
+              "text-xs px-1.5 py-0.5 rounded-full whitespace-nowrap font-medium",
+              "bg-primary/20 text-primary"
+            )}
+          >
+            +{overflowCount}
+          </span>
+        )}
+      </div>
+    </div>
+  );
 };
 
 const Page = () => {
@@ -41,21 +124,7 @@ const Page = () => {
                   )}
                 </div>
                 {writing.tags && writing.tags.length > 0 && (
-                  <ScrollArea className="max-w-full">
-                    <div className="flex gap-1">
-                      {writing.tags.map((tag: string) => (
-                        <span
-                          key={tag}
-                          className={cn(
-                            "text-xs px-1.5 py-0.5 rounded-full whitespace-nowrap",
-                            "bg-primary/10 text-primary"
-                          )}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </ScrollArea>
+                  <WritingTags tags={writing.tags} />
                 )}
               </div>
             </Link>
