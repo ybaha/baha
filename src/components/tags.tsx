@@ -63,7 +63,7 @@ const Tags: React.FC<TagsProps> = ({ tags, isActive, isStatic }) => {
   const staticTagStyle = cn("py-0 dark:bg-primary/70 dark:text-white");
 
   const dynamicTagStyle = cn(
-    "text-[11px] px-1.5 rounded-full whitespace-nowrap font-serif italic",
+    "text-[11px] px-1.5 rounded-full h-[22px] flex items-center justify-center whitespace-nowrap font-serif italic",
     isActive
       ? "bg-white/30 text-white dark:bg-white/30 dark:text-white/90"
       : "bg-primary/10 text-primary dark:bg-primary/60 dark:text-white/90",
@@ -86,7 +86,7 @@ const Tags: React.FC<TagsProps> = ({ tags, isActive, isStatic }) => {
                 {tags.length > 0 && (
                   <>
                     <span className={dynamicTagStyle}>{tags[0]}</span>
-                    <span className={cn(dynamicTagStyle, "py-1.5")}>
+                    <span className={cn(dynamicTagStyle)}>
                       <Loader size={12} className="animate-spin" />
                     </span>
                   </>
@@ -101,7 +101,7 @@ const Tags: React.FC<TagsProps> = ({ tags, isActive, isStatic }) => {
           </div>
         </div>
       ) : (
-        <span className="text-xs text-foreground/50 p-1 invisible">
+        <span className="text-xs text-foreground/50 h-[22px] invisible">
           No tags
         </span>
       )}
