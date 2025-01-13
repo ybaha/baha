@@ -4,9 +4,8 @@ import { SideMenu } from "@/components/side-menu";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { SidebarLink } from "@/components/writing-link";
 import { allWritings } from "contentlayer2/generated";
-import { cn } from "@/lib/utils";
-import { Scroll } from "lucide-react";
 import { ScrollArea } from "@/components/scroll-area";
+import SidebarFilter from "@/components/sidebar-filter";
 
 type Props = {
   children: React.ReactNode;
@@ -15,7 +14,11 @@ type Props = {
 export default async function WritingLayout({ children }: Props) {
   return (
     <>
-      <SideMenu title="Writings" isInner>
+      <SideMenu
+        title="Writings"
+        isInner
+        rightElement={<SidebarFilter type="writings" />}
+      >
         <Suspense fallback={<LoadingSpinner />}>
           <div className="flex flex-col gap-1 text-sm">
             {allWritings
@@ -33,7 +36,6 @@ export default async function WritingLayout({ children }: Props) {
         <ScrollArea className="lg:block hidden bg-background">
           {children}
         </ScrollArea>
-        <div className="lg:hidden block">{children}</div>
       </div>
     </>
   );

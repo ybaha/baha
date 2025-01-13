@@ -40,8 +40,6 @@ const Tags: React.FC<TagsProps> = ({ tags, isActive, isStatic }) => {
           ? containerWidth - 32
           : containerWidth;
 
-        console.log({ tagWidth, totalContainerWidth, currentWidth });
-
         if (currentWidth + tagWidth < totalContainerWidth) {
           currentWidth += tagWidth;
           visibleTags.push(tag);

@@ -6,6 +6,7 @@ type SideMenuProps = {
   title?: string;
   isInner?: boolean;
   className?: string;
+  rightElement?: React.ReactNode;
 };
 
 export const SideMenu = ({
@@ -13,6 +14,7 @@ export const SideMenu = ({
   title,
   isInner,
   className,
+  rightElement,
 }: SideMenuProps) => {
   // scrollable-area relative w-full flex-col hidden bg-zinc-50 lg:flex lg:flex-col lg:border-r lg:w-80 xl:w-96
   return (
@@ -30,11 +32,12 @@ export const SideMenu = ({
       {title && (
         <div
           className={cn(
-            "sticky top-0 z-10 px-5 py-3 border-border text-foreground",
+            "sticky top-0 z-10 px-5 py-3 border-border text-foreground flex justify-between items-center",
             isInner ? "bg-background/10" : "bg-background-tertiary"
           )}
         >
           <span className="text-sm  font-serif italic">{title}</span>
+          {rightElement}
         </div>
       )}
       <div
