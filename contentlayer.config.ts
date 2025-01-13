@@ -19,6 +19,7 @@ export const Writing = defineDocumentType(() => ({
     aiGenerated: { type: "boolean", required: false },
     author: { type: "string", required: false },
     slug: { type: "string", required: true },
+    tags: { type: "list", of: { type: "string" }, required: false },
   },
   computedFields: {
     url: {

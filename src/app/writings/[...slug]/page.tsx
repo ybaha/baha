@@ -4,8 +4,6 @@ import { type Writing, allWritings } from "contentlayer2/generated";
 import { Metadata } from "next";
 import { Mdx } from "@/components/mdx-components";
 import { cn, getFormattedDate } from "@/lib/utils";
-import { Sparkles } from "lucide-react";
-import Link from "next/link";
 import { ClientComments } from "./client-comments";
 
 type Params = Promise<{
@@ -60,15 +58,10 @@ export default async function Writing(props: Props) {
         <article className="content">
           <PageTitle
             title={writing.title}
+            tags={writing.tags}
             subtitle={
-              <section className="flex justify-between items-center">
-                <time
-                  dateTime={writing.date}
-                  className="text-foreground/50 text-sm md:text-base"
-                >
-                  {getFormattedDate(writing.date, "long")}
-                </time>
-                {writing.aiGenerated && (
+              <section className="flex gap-4 items-center flex-wrap-reverse justify-between">
+                {/* {writing.aiGenerated && (
                   <Link
                     href={`/writings/how-my-blog-works`}
                     className="text-primary flex items-center justify-center text-sm gap-1"
@@ -78,7 +71,30 @@ export default async function Writing(props: Props) {
                       See how this post was generated
                     </span>
                   </Link>
+                )} */}
+                {writing.tags && writing.tags.length > 0 && (
+                  <div className="overflow-hidden">
+                    <div className="flex gap-1 flex-wrap">
+                      {writing.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className={cn(
+                            "text-[11px] px-1.5 py-[0px] rounded-full whitespace-nowrap font-serif italic",
+                            "bg-primary/10 text-primary"
+                          )}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 )}
+                <time
+                  dateTime={writing.date}
+                  className="text-foreground/50 text-xs md:text-sm"
+                >
+                  {getFormattedDate(writing.date, "long")}
+                </time>
               </section>
             }
             className="mb-6 flex flex-col gap-3 text-foreground"
