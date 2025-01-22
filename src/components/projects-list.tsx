@@ -5,26 +5,28 @@ import { cn } from "@/lib/utils";
 const projects = [
   {
     name: "stellarzen",
-    description: "A meditation and mindfulness app for space enthusiasts.",
+    description:
+      "stellarzen offers personalized astrological insights, interpreting your birth chart to guide personal growth and important life decisions.",
     image: "/projects/stellarzen.png",
     url: "https://stellarzen.co",
   },
   {
     name: "Botguise",
     description:
-      "AI-powered chatbot platform for seamless customer interactions.",
+      "BotGuise creates AI-powered chatbots that bring your favorite personalities to life, blending entertainment and engagement.",
     image: "/projects/botguise.png",
     url: "https://botguise.com",
   },
   {
     name: "Poshet",
-    description: "Dutch language learning platform with interactive exercises.",
+    description:
+      "Poshet crafts tailored, SEO-first digital experiences that transform businesses with expertly designed websites, e-commerce solutions, and web apps to drive customer conversions.",
     image: "/projects/poshet.png",
     url: "https://poshet.co",
   },
   {
     name: "Personal Website",
-    description: "My digital garden where I share thoughts and experiments.",
+    description: "My digital garden where I share my thoughts and experiences.",
     image: "/projects/baha.png",
     url: "https://baha.vercel.app",
   },
