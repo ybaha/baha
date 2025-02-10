@@ -10,51 +10,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
-const projects = [
-  {
-    name: "stellarzen",
-    description:
-      "stellarzen offers personalized astrological insights, interpreting your birth chart to guide personal growth and important life decisions.",
-    image: "/projects/stellarzen.png",
-    url: "https://stellarzen.co",
-  },
-  {
-    name: "Botguise",
-    description:
-      "BotGuise creates AI-powered chatbots that bring your favorite personalities to life, blending entertainment and engagement.",
-    image: "/projects/botguise.png",
-    url: "https://botguise.com",
-  },
-  {
-    name: "Poshet",
-    description:
-      "Poshet crafts tailored, SEO-first digital experiences that transform businesses with expertly designed websites, e-commerce solutions, and web apps to drive customer conversions.",
-    image: "/projects/poshet.png",
-    url: "https://poshet.co",
-  },
-  {
-    name: "Personal Website",
-    description: "My digital garden where I share my thoughts and experiences.",
-    image: "/projects/baha.png",
-    url: "https://baha.vercel.app",
-  },
-  {
-    name: "Fullsocial",
-    description:
-      "Fullsocial is a platform that helps you get image assets from spotify in high quality, album covers, artist images, user images, etc.",
-    image: "/projects/fullsocial.png",
-    url: "https://fullsocial.co",
-    abandoned: true,
-  },
-];
+import { PROJECTS } from "@/lib/constants";
 
 export function ProjectsList() {
   return (
     <>
       {/* Mobile View - Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:hidden">
-        {projects.map((project) => (
+        {PROJECTS.map((project) => (
           <ProjectCard key={project.name} project={project} />
         ))}
       </div>
@@ -68,8 +31,8 @@ export function ProjectsList() {
           }}
           className="w-full"
         >
-          <CarouselContent className="-ml-2 md:-ml-4">
-            {projects.map((project) => (
+          <CarouselContent className="">
+            {PROJECTS.map((project) => (
               <CarouselItem
                 key={project.name}
                 className="pl-2 md:pl-4 md:basis-1/2"
@@ -87,7 +50,7 @@ export function ProjectsList() {
 }
 
 // Extracted ProjectCard component for reuse
-function ProjectCard({ project }: { project: (typeof projects)[number] }) {
+function ProjectCard({ project }: { project: (typeof PROJECTS)[number] }) {
   return (
     <Link
       href={project.url}

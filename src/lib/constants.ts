@@ -55,6 +55,16 @@ export const LINKS = [
     icon: "PencilLine",
   },
   {
+    href: "/projects",
+    label: "Projects",
+    icon: "Code",
+  },
+  {
+    href: "/tech-stack",
+    label: "Tech Stack",
+    icon: "Wand",
+  },
+  {
     href: "/logs",
     label: "Logs",
     icon: "Waypoints",
@@ -84,9 +94,39 @@ export const MOBILE_SCROLL_THRESHOLD = 20;
 
 export const PROJECTS = [
   {
-    title: "Botguise",
-    description: "A platform to create and talk to AI powered custom chatbots.",
+    name: "stellarzen",
+    description:
+      "stellarzen offers personalized astrological insights, interpreting your birth chart to guide personal growth and important life decisions.",
+    image: "/projects/stellarzen.png",
+    url: "https://stellarzen.co",
+  },
+  {
+    name: "Botguise",
+    description:
+      "BotGuise creates AI-powered chatbots that bring your favorite personalities to life, blending entertainment and engagement.",
+    image: "/projects/botguise.png",
     url: "https://botguise.com",
+  },
+  {
+    name: "Poshet",
+    description:
+      "Poshet crafts tailored, SEO-first digital experiences that transform businesses with expertly designed websites, e-commerce solutions, and web apps to drive customer conversions.",
+    image: "/projects/poshet.png",
+    url: "https://poshet.co",
+  },
+  {
+    name: "Personal Website",
+    description: "My digital garden where I share my thoughts and experiences.",
+    image: "/projects/baha.png",
+    url: "https://baha.vercel.app",
+  },
+  {
+    name: "Fullsocial",
+    description:
+      "Fullsocial is a platform that helps you get image assets from spotify in high quality, album covers, artist images, user images, etc.",
+    image: "/projects/fullsocial.png",
+    url: "https://fullsocial.co",
+    abandoned: true,
   },
 ];
 

@@ -150,7 +150,7 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
       </div>
       <hr className="bg-background text-background" />
       <div className="flex flex-col text-sm flex-1 gap-2">
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-col">
           <span className="px-2 text-xs font-medium leading-relaxed text-gray-600">
             Socials
           </span>

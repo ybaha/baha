@@ -9,6 +9,7 @@ import { allWritings } from "contentlayer2/generated";
 import { allLogs } from "contentlayer2/generated";
 import { sendTelegramMessage } from "@/lib/sendTelegramMessage";
 import Link from "@/components/link";
+import { ArrowRight } from "lucide-react";
 
 export default async function Home() {
   await sendTelegramMessage("Hello");
@@ -31,11 +32,26 @@ export default async function Home() {
             <h2 className="mb-4 mt-8 text-foreground">Writings</h2>
             <WritingList writings={allWritings} header="Writing" />
 
-            <h2 className="mb-4 mt-8 text-foreground">Projects</h2>
+            {/* <h2 className="mb-4 mt-8 text-foreground">Projects</h2>
             <ProjectsList />
 
             <h2 className="mb-4 mt-8 text-foreground">Logs</h2>
-            <LogsList logs={allLogs} />
+            <LogsList logs={allLogs} /> */}
+
+            <div className="flex flex-col mt-4">
+              <p className="flex items-center gap-2">
+                <ArrowRight className="w-4 h-4" />
+                <Link href="/writing">View all writings</Link>
+              </p>
+              <p className="flex items-center gap-2">
+                <ArrowRight className="w-4 h-4" />
+                <Link href="/projects">View all projects</Link>
+              </p>
+              <p className="flex items-center gap-2">
+                <ArrowRight className="w-4 h-4" />
+                <Link href="/logs">Check out my tech stack</Link>
+              </p>
+            </div>
           </Suspense>
         </div>
       </div>
