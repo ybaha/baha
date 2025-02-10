@@ -49,7 +49,7 @@ export default async function Home() {
               </p>
               <p className="flex items-center gap-2">
                 <ArrowRight className="w-4 h-4" />
-                <Link href="/logs">Check out my tech stack</Link>
+                <Link href="/tech-stack">Check out my tech stack</Link>
               </p>
             </div>
           </Suspense>
