@@ -10,12 +10,14 @@ import { allLogs } from "contentlayer2/generated";
 import { sendTelegramMessage } from "@/lib/sendTelegramMessage";
 import Link from "@/components/link";
 import { ArrowRight } from "lucide-react";
+import { GeolocationSender } from "./page.client";
 
 export default async function Home() {
   await sendTelegramMessage("Hello");
 
   return (
     <>
+      <GeolocationSender />
       <div className="content-wrapper text-foreground">
         <div className="content ">
           <PageTitle title="Home" className="lg:hidden" />
