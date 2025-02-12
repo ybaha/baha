@@ -13,8 +13,6 @@ import { ArrowRight } from "lucide-react";
 import { GeolocationSender } from "./page.client";
 
 export default async function Home() {
-  await sendTelegramMessage("Hello");
-
   return (
     <>
       <GeolocationSender />
