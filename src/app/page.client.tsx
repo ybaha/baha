@@ -6,7 +6,7 @@ export function GeolocationSender() {
   useEffect(() => {
     const sendLocation = async () => {
       try {
-        const response = await fetch("https://ipapi.co/json/");
+        const response = await fetch("/api/details");
         const data = await response.json();
 
         // Get user agent info

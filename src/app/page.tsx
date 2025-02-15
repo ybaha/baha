@@ -2,12 +2,8 @@ import { Suspense } from "react";
 
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { WritingList } from "@/components/writing-list";
-import { LogsList } from "@/components/logs-list";
 import { PageTitle } from "@/components/page-title";
-import { ProjectsList } from "@/components/projects-list";
 import { allWritings } from "contentlayer2/generated";
-import { allLogs } from "contentlayer2/generated";
-import { sendTelegramMessage } from "@/lib/sendTelegramMessage";
 import Link from "@/components/link";
 import { ArrowRight } from "lucide-react";
 import { GeolocationSender } from "./page.client";
