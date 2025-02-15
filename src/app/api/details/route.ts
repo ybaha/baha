@@ -16,7 +16,11 @@ export async function GET() {
     const response = await fetch("https://ipapi.co/json/");
     const data = await response.json();
 
+    console.log(data);
+
     if (data.error && data.reason === "RateLimited") {
+      console.log("RateLimited");
+
       const response = await fetch("https://ipinfo.io/json");
       const data = await response.json();
 
