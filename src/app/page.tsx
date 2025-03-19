@@ -37,7 +37,7 @@ export default async function Home() {
             <div className="flex flex-col mt-4">
               <p className="flex items-center gap-2">
                 <ArrowRight className="w-4 h-4" />
-                <Link href="/writing">View all writings</Link>
+                <Link href="/writings">View all writings</Link>
               </p>
               <p className="flex items-center gap-2">
                 <ArrowRight className="w-4 h-4" />
