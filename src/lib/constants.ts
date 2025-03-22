@@ -96,7 +96,7 @@ export const PROJECTS = [
 
   {
     name: 'pico cards',
-    description: 'pico cards is a conversation-starting app designed to help people connect better with partners, friends, or family. It offers hundreds of fun, meaningful, and lighthearted questions (like "What’s your biggest dream?" or "What’s your go-to karaoke song?") to spark deeper talks, strengthen relationships, and keep interactions exciting. Free to try, with extra questions to unlock for those who want more!',
+    description: 'pico cards is a conversation-starting app designed to help people connect better with partners, friends, or family.',
     image: "/projects/pico.png",
     url: "https://poshet.co/apps/pico",
   },

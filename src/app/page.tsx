@@ -20,21 +20,22 @@ export default async function Home() {
           </p>
 
           <p>
-            Currently at <Link href="https://miyagami.com">Miyagami</Link>,
-            working on different projects and products.
+            Currently working at <Link href="https://teifi.com">Teifi</Link>,
+            building solutions for shopify plus brands.
+            <br />
+            Building <Link href="https://poshet.co/apps/pico">Pico Cards</Link>,
+            <Link href="#">homefoods</Link> and some other project on the side.
           </p>
 
           <Suspense fallback={<LoadingSpinner />}>
             <h2 className="mb-4 mt-8 text-foreground">Writings</h2>
             <WritingList writings={allWritings} header="Writing" />
 
-            {/* <h2 className="mb-4 mt-8 text-foreground">Projects</h2>
-            <ProjectsList />
-
-            <h2 className="mb-4 mt-8 text-foreground">Logs</h2>
-            <LogsList logs={allLogs} /> */}
-
             <div className="flex flex-col mt-4">
+              <p className="flex items-center gap-2">
+                <ArrowRight className="w-4 h-4" />
+                <Link href="/logs">Check out my journey</Link>
+              </p>
               <p className="flex items-center gap-2">
                 <ArrowRight className="w-4 h-4" />
                 <Link href="/writings">View all writings</Link>
