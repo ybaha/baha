@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function Page() {
   return (
     <div className="content-wrapper">
-      <div className="content">
+      <div className="content pb-8">
         <PageTitle title="Projects" />
         {PROJECTS.map((project) => (
           <ProjectCard key={project.name} {...project} />
