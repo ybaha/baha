@@ -37,7 +37,7 @@ const CategorySection = ({
 
 const TechBadge = ({ name }: { name: string }) => {
   return (
-    <span className="px-3 py-1 text-sm rounded-full border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 transition-all">
+    <span className="px-3 cursor-default py-1 text-sm rounded-full border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 transition-all">
       {name}
     </span>
   );
