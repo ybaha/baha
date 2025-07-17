@@ -11,7 +11,9 @@ import { PROJECTS } from '@/lib/constants';
 
 export default async function Home() {
   const picoCards = PROJECTS.find((project) => project.name === 'pico cards')!;
-
+  const projectCount = PROJECTS.filter(
+    (project) => project.year === new Date().getFullYear(),
+  ).length;
   return (
     <>
       <GeolocationSender />
@@ -33,11 +35,12 @@ export default async function Home() {
             Currently working at <Link href="https://teifi.com">Teifi</Link>, building solutions for
             shopify plus brands.
             <br />
-            Building{' '}
+            {/* Building{' '}
             <Link href={picoCards.url} image={picoCards.image}>
               Pico Cards
             </Link>
-            ,<Link href="#">homefoods</Link> and some other project on the side.
+            ,<Link href="#">homefoods</Link> and some other project on the side. */}
+            Built <Link href="/projects">{projectCount} projects</Link> this year.
           </p>
 
           <Suspense fallback={<LoadingSpinner />}>

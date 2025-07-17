@@ -22,9 +22,11 @@
 
     --color-border: 233 233 233;
     --color-input: 210 210 210;
+
+    --color-muted: 100 100 100;
   }
 
-  [data-theme="dark"] {
+  [data-theme='dark'] {
     --sh-class: #4c97f8;
     --sh-identifier: #white;
     --sh-sign: #8996a3;
@@ -40,6 +42,8 @@
     --color-foreground: 255 255 255;
 
     --color-background-tertiary: 24 24 24;
+
+    --color-muted: 100 100 100;
 
     --color-border: 36 36 36;
     --color-input: 64 64 64;
@@ -189,9 +193,8 @@
   }
 
   .thumbnail-shadow {
-    box-shadow: 0 0 0 0.5px #e2e8f0, 0 0 0 1px rgba(226, 232, 240, 0.5),
-      0 0 0 3px #f8fafc, 0 0 0 3.5px #f1f5f9,
-      0 10px 15px -3px rgb(59 130 246/5%), 0 4px 6px -4px rgb(59 130 246/5%);
+    box-shadow: 0 0 0 0.5px #e2e8f0, 0 0 0 1px rgba(226, 232, 240, 0.5), 0 0 0 3px #f8fafc,
+      0 0 0 3.5px #f1f5f9, 0 10px 15px -3px rgb(59 130 246/5%), 0 4px 6px -4px rgb(59 130 246/5%);
   }
 
   .scrollable-area {
@@ -274,7 +277,7 @@
       @apply bg-background bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px];
     } */
 
-    [data-theme="dark"] {
+    [data-theme='dark'] {
       .bg-dots {
         background-image: radial-gradient(#303030 1px, transparent 1px);
         background-size: 16px 16px;
@@ -337,8 +340,8 @@
     @apply text-yellow-500;
   }
 
-  code[class*="language-"],
-  pre[class*="language-"] {
+  code[class*='language-'],
+  pre[class*='language-'] {
     @apply text-gray-800 dark:text-gray-200;
   }
 

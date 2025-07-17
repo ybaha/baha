@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "@/components/link";
-import { cn } from "@/lib/utils";
+import Image from 'next/image';
+import Link from '@/components/link';
+import { cn } from '@/lib/utils';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
-import { PROJECTS } from "@/lib/constants";
+} from '@/components/ui/carousel';
+import { PROJECTS } from '@/lib/constants';
 
 export function ProjectsList() {
   return (
@@ -26,17 +26,14 @@ export function ProjectsList() {
       <div className="hidden md:block">
         <Carousel
           opts={{
-            align: "start",
+            align: 'start',
             loop: true,
           }}
           className="w-full"
         >
           <CarouselContent className="">
             {PROJECTS.map((project) => (
-              <CarouselItem
-                key={project.name}
-                className="pl-2 md:pl-4 md:basis-1/2"
-              >
+              <CarouselItem key={project.name} className="pl-2 md:pl-4 md:basis-1/2">
                 <ProjectCard project={project} />
               </CarouselItem>
             ))}
@@ -55,8 +52,8 @@ function ProjectCard({ project }: { project: (typeof PROJECTS)[number] }) {
     <Link
       href={project.url}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-xl border border-border p-3 hover:bg-background",
-        project.abandoned && "opacity-70 pointer-events-none cursor-not-allowed"
+        'group relative flex flex-col overflow-hidden rounded-xl border border-border p-3 hover:bg-background',
+        project.abandoned && 'opacity-70 pointer-events-none cursor-not-allowed',
       )}
       onClick={(e) => {
         if (project.abandoned) {
@@ -69,8 +66,8 @@ function ProjectCard({ project }: { project: (typeof PROJECTS)[number] }) {
           src={project.image}
           alt={project.name}
           fill
-          className={cn("object-cover border-border", {
-            "opacity-60": project.abandoned,
+          className={cn('object-cover border-border', {
+            'opacity-60': project.abandoned,
           })}
           priority
         />
@@ -82,15 +79,13 @@ function ProjectCard({ project }: { project: (typeof PROJECTS)[number] }) {
       </div>
       <div className="mt-4">
         <h3
-          className={cn("font-medium", {
-            "text-muted-foreground": project.abandoned,
+          className={cn('font-medium', {
+            'text-muted-foreground': project.abandoned,
           })}
         >
-          {project.name}
+          {project.year}
         </h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {project.description}
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">{project.description}</p>
       </div>
     </Link>
   );
