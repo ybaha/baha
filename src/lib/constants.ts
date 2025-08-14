@@ -94,7 +94,21 @@ export const MOBILE_SCROLL_THRESHOLD = 20;
 
 export const PROJECTS = [
   {
-    name: 'PicU',
+    name: 'VidGen3: AI Video Maker',
+    description: 'AI Video Maker that uses AI to help you create videos.',
+    image: '/projects/vidgen.png',
+    url: 'https://apps.apple.com/nl/app/vidgen3/id6749280633?l=en-GB',
+    year: 2025,
+  },
+  {
+    name: 'Math Help AI: Solve Questions',
+    description: 'Math problem solver that uses AI to help you solve math problems.',
+    image: '/projects/math.png',
+    url: 'https://apps.apple.com/nl/app/math-help-ai-solve-questions/id6740034105?l=en-GB',
+    year: 2025,
+  },
+  {
+    name: 'PicU: Transform Your Photos AI',
     description: 'PicU is a photo editing app that allows you to transform your photos with AI.',
     image: '/projects/picu.png',
     url: 'https://apps.apple.com/nl/app/picu-transform-your-photos-ai/id6745964976?l=en-GB',

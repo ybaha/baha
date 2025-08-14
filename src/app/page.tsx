@@ -40,7 +40,9 @@ export default async function Home() {
               Pico Cards
             </Link>
             ,<Link href="#">homefoods</Link> and some other project on the side. */}
-            Built <Link href="/projects">{projectCount} projects</Link> this year.
+          </p>
+          <p>
+            Built <Link href="/projects">{projectCount} projects</Link> this year. More on the way.
           </p>
 
           <Suspense fallback={<LoadingSpinner />}>
