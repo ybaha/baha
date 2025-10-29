@@ -18,6 +18,7 @@ type Props = {
 };
 
 export const fetchCache = 'default-cache';
+export const dynamic = 'force-static';
 
 const getTitle = (path: string) => {
   if (path === '/') return 'Home';
