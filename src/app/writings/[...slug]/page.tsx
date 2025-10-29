@@ -1,11 +1,12 @@
-import { notFound } from "next/navigation";
-import { PageTitle } from "@/components/page-title";
-import { type Writing, allWritings } from "contentlayer2/generated";
-import { Metadata } from "next";
-import { Mdx } from "@/components/mdx-components";
-import { cn, getFormattedDate } from "@/lib/utils";
-import { ClientComments } from "./client-comments";
-import Tags from "@/components/tags";
+import { notFound } from 'next/navigation';
+import { PageTitle } from '@/components/page-title';
+import { Metadata } from 'next';
+import { Mdx } from '@/components/mdx-components';
+import { cn, getFormattedDate } from '@/lib/utils';
+import { ClientComments } from './client-comments';
+import Tags from '@/components/tags';
+import { getAllWritings, getAllWritingSlugs, getWritingBySlug } from '@/queries/writings';
+import { type Writing } from 'contentlayer2/generated';
 
 type Params = Promise<{
   slug: string[];
@@ -16,11 +17,9 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-async function getWritingFromParams(params: {
-  slug: string[];
-}): Promise<Writing | null> {
-  const slug = params?.slug?.join("/");
-  const post = allWritings.find((post) => post.slug === slug);
+async function getWritingFromParams(params: { slug: string[] }): Promise<Writing | null> {
+  const slug = params?.slug?.join('/');
+  const post = await getWritingBySlug(slug);
 
   return post ?? null;
 }
@@ -40,8 +39,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
-  return allWritings?.map((post) => ({
-    slug: post.slug.split("/"),
+  const allWritingSlugs = await getAllWritingSlugs();
+  return allWritingSlugs.map((slug) => ({
+    slug,
   }));
 }
 
@@ -74,11 +74,8 @@ export default async function Writing(props: Props) {
                   </Link>
                 )} */}
                 <Tags tags={writing.tags ?? []} isStatic />
-                <time
-                  dateTime={writing.date}
-                  className="text-foreground/50 text-xs md:text-sm"
-                >
-                  {getFormattedDate(writing.date, "long")}
+                <time dateTime={writing.date} className="text-foreground/50 text-xs md:text-sm">
+                  {getFormattedDate(writing.date, 'long')}
                 </time>
               </section>
             }
@@ -88,15 +85,12 @@ export default async function Writing(props: Props) {
             <img
               src={writing.image}
               alt={writing.title}
-              className={cn(
-                "mb-6 h-[200px] md:h-[280px] object-fill",
-                writing.imageClassName
-              )}
+              className={cn('mb-6 h-[200px] md:h-[280px] object-fill', writing.imageClassName)}
             />
           )}
           <Mdx code={writing.body.code} />
           <hr className="my-16" />
-          <ClientComments slug={writing.slug} />
+          {/* <ClientComments slug={writing.slug} /> */}
         </article>
       </div>
     </div>

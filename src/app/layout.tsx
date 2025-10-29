@@ -1,38 +1,40 @@
-import "@/global.css";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
-import { Cormorant } from "next/font/google";
+import '@/global.css';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+import { Cormorant } from 'next/font/google';
 
-import { SideMenu } from "@/components/side-menu";
-import { MenuContent } from "@/components/menu-content";
-import { SOCIALS, sharedDescription, sharedTitle } from "@/lib/constants";
-import MainLayout from "@/components/main-layout";
-import { FloatingHeader } from "@/components/floating-header";
-import { ScrollArea } from "@/components/scroll-area";
-import { cookies } from "next/headers";
-import { Metadata } from "next";
-import { Toaster } from "react-hot-toast";
+import { SideMenu } from '@/components/side-menu';
+import { MenuContent } from '@/components/menu-content';
+import { SOCIALS, sharedDescription, sharedTitle } from '@/lib/constants';
+import MainLayout from '@/components/main-layout';
+import { FloatingHeader } from '@/components/floating-header';
+import { ScrollArea } from '@/components/scroll-area';
+import { cookies } from 'next/headers';
+import { Metadata } from 'next';
+import { Toaster } from 'react-hot-toast';
 
 type Props = {
   children: React.ReactNode;
 };
 
+export const fetchCache = 'default-cache';
+
 const getTitle = (path: string) => {
-  if (path === "/") return "Home";
-  if (path === "/writings") return "Writings";
-  if (path === "/about") return "About";
-  return "404";
+  if (path === '/') return 'Home';
+  if (path === '/writings') return 'Writings';
+  if (path === '/about') return 'About';
+  return '404';
 };
 
 const cormorant = Cormorant({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin", "latin-ext"],
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin', 'latin-ext'],
 });
 
 export default async function RootLayout({ children }: Props) {
   const cookieStore = await cookies();
-  const theme = cookieStore.get("theme");
-  const isDark = cookieStore.get("is-dark")?.value === "true";
+  const theme = cookieStore.get('theme');
+  const isDark = cookieStore.get('is-dark')?.value === 'true';
 
   return (
     <html
@@ -57,10 +59,7 @@ export default async function RootLayout({ children }: Props) {
                 <MenuContent />
               </SideMenu>
               <div className="flex flex-1">
-                <ScrollArea
-                  className="flex flex-col lg:flex-row bg-background"
-                  hasScrollTitle
-                >
+                <ScrollArea className="flex flex-col lg:flex-row bg-background" hasScrollTitle>
                   <FloatingHeader />
                   {children}
                 </ScrollArea>
@@ -72,10 +71,10 @@ export default async function RootLayout({ children }: Props) {
           position="top-center"
           toastOptions={{
             style: {
-              background: isDark ? "#27272a" : "white",
-              color: isDark ? "white" : "black",
-              borderRadius: "8px",
-              border: `1px solid ${isDark ? "#3f3f46" : "#e4e4e7"}`,
+              background: isDark ? '#27272a' : 'white',
+              color: isDark ? 'white' : 'black',
+              borderRadius: '8px',
+              border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`,
             },
           }}
         />
@@ -85,7 +84,7 @@ export default async function RootLayout({ children }: Props) {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://baha.vercel.app/"),
+  metadataBase: new URL('https://baha.vercel.app/'),
   robots: {
     index: true,
     follow: true,
@@ -102,7 +101,7 @@ export const metadata: Metadata = {
     // },
     {
       // media: '[data-theme="light"]',
-      url: "/favicon-light.ico",
+      url: '/favicon-light.ico',
     },
   ],
   openGraph: {
@@ -111,30 +110,26 @@ export const metadata: Metadata = {
       default: sharedTitle,
     },
     description: sharedDescription,
-    type: "website",
-    url: "/",
+    type: 'website',
+    url: '/',
     siteName: sharedTitle,
-    locale: "en_IE",
+    locale: 'en_IE',
   },
-  themeColor: "#ffffff",
+  themeColor: '#ffffff',
   alternates: {
-    canonical: "/",
+    canonical: '/',
   },
   viewport: {
-    width: "device-width",
+    width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
   },
   twitter: {
-    card: "summary_large_image",
-    site: `@${
-      SOCIALS.find((profile) => profile.url.includes("twitter"))?.username
-    }`,
-    creator: `@${
-      SOCIALS.find((profile) => profile.url.includes("twitter"))?.username
-    }`,
+    card: 'summary_large_image',
+    site: `@${SOCIALS.find((profile) => profile.url.includes('twitter'))?.username}`,
+    creator: `@${SOCIALS.find((profile) => profile.url.includes('twitter'))?.username}`,
   },
   other: {
-    pinterest: "nopin",
+    pinterest: 'nopin',
   },
 };

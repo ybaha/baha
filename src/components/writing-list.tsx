@@ -1,10 +1,10 @@
-"use client";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { Writing } from "contentlayer2/generated";
-import { useEffect, useState, useMemo } from "react";
-import { getViews } from "@/queries/getViews";
-import { Loader } from "lucide-react";
+'use client';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { Writing } from 'contentlayer2/generated';
+import { useEffect, useState, useMemo } from 'react';
+import { getViews } from '@/queries/getViews';
+import { Loader } from 'lucide-react';
 
 type Props = {
   writings: Writing[];
@@ -15,10 +15,7 @@ export const WritingList = ({ writings }: Props) => {
   const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const slugs = useMemo(
-    () => writings.map((writing) => writing.slug),
-    [writings]
-  );
+  const slugs = useMemo(() => writings.map((writing) => writing.slug), [writings]);
 
   useEffect(() => {
     const fetchViews = async () => {
@@ -45,7 +42,7 @@ export const WritingList = ({ writings }: Props) => {
           acc[year].push(item);
           return acc;
         }, {} as Record<string, Writing[]>),
-    [writings]
+    [writings],
   );
 
   const formatViewCount = useMemo(
@@ -58,7 +55,7 @@ export const WritingList = ({ writings }: Props) => {
       }
       return count.toString();
     },
-    []
+    [],
   );
 
   return (
@@ -85,16 +82,16 @@ export const WritingList = ({ writings }: Props) => {
                   _raw: { flattenedPath: slug },
                 } = item;
                 const dateObj = new Date(date);
-                const dateWithDayAndMonth = dateObj.toLocaleString("en-UK", {
-                  day: "numeric",
-                  month: "short",
+                const dateWithDayAndMonth = dateObj.toLocaleString('en-UK', {
+                  day: 'numeric',
+                  month: 'short',
                 });
 
                 const dateWithMonthAndYear =
-                  dateObj.toLocaleString("en-UK", {
-                    month: "short",
+                  dateObj.toLocaleString('en-UK', {
+                    month: 'short',
                   }) +
-                  " " +
+                  ' ' +
                   dateObj.getFullYear();
 
                 const viewCount = viewCounts[item.slug] ?? 0;
@@ -107,15 +104,16 @@ export const WritingList = ({ writings }: Props) => {
                   >
                     <span
                       className={cn(
-                        "pointer-events-none col-span-1 hidden items-center transition-colors group-hover/list:text-foreground md:grid",
-                        itemIndex === 0 && "border-t border-foreground/20"
+                        'pointer-events-none col-span-1 hidden items-center transition-colors group-hover/list:text-foreground md:grid',
+                        itemIndex === 0 && 'border-t border-foreground/20',
                       )}
                     >
-                      {itemIndex === 0 ? year : ""}
+                      {itemIndex === 0 ? year : ''}
                     </span>
                     <Link
                       href={`/writings/${item.slug}`}
                       className="col-span-12 group-hover/list-item:text-foreground md:col-span-10"
+                      prefetch={true}
                     >
                       <span className="grid grid-cols-5 items-center gap-2 border-t border-foreground/20 py-4 md:grid-cols-12">
                         <span className="col-span-1 md:col-span-2 text-left">
@@ -126,9 +124,7 @@ export const WritingList = ({ writings }: Props) => {
                             {dateWithMonthAndYear}
                           </time>
                         </span>
-                        <span className="col-span-3 line-clamp-4 md:col-span-5">
-                          {title}
-                        </span>
+                        <span className="col-span-3 line-clamp-4 md:col-span-5">{title}</span>
                         <span className="col-span-1 md:col-span-5 text-right">
                           {isLoading ? (
                             <div className="flex items-center justify-end">

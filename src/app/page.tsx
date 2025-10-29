@@ -3,17 +3,24 @@ import { Suspense } from 'react';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { WritingList } from '@/components/writing-list';
 import { PageTitle } from '@/components/page-title';
-import { allWritings } from 'contentlayer2/generated';
 import Link from '@/components/link';
 import { ArrowRight } from 'lucide-react';
 import { GeolocationSender } from './page.client';
 import { PROJECTS } from '@/lib/constants';
+import { getAllWritings } from '@/queries/writings';
+
+async function fetchData() {
+  const allWritings = await getAllWritings();
+  return { allWritings };
+}
 
 export default async function Home() {
-  const picoCards = PROJECTS.find((project) => project.name === 'pico cards')!;
+  const { allWritings } = await fetchData();
+
   const projectCount = PROJECTS.filter(
     (project) => project.year === new Date().getFullYear(),
   ).length;
+
   return (
     <>
       <GeolocationSender />
