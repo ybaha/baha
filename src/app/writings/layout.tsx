@@ -4,13 +4,20 @@ import { SideMenu } from '@/components/side-menu';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { ScrollArea } from '@/components/scroll-area';
 import LinkList from '@/components/link-list';
+import { WritingsRedirect } from '@/components/writings-redirect';
+import { getAllWritings } from '@/queries/writings';
 
 type Props = {
   children: React.ReactNode;
 };
 
-export default async function WritingLayout(props: Props) {
-  const { children } = props;
+async function fetchData() {
+  const allWritings = await getAllWritings();
+  return { allWritings };
+}
+
+export default async function WritingLayout({ children }: Props) {
+  const { allWritings } = await fetchData();
 
   return (
     <>
@@ -18,6 +25,7 @@ export default async function WritingLayout(props: Props) {
         <Suspense fallback={<LoadingSpinner />}>
           <div className="flex flex-col gap-1 text-sm">
             <LinkList />
+            <WritingsRedirect writings={allWritings} />
           </div>
         </Suspense>
       </SideMenu>

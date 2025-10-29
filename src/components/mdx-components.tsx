@@ -23,7 +23,7 @@ const mdxComponents = {
     return (
       <pre
         className={cn(
-          'border rounded-lg font-medium dark:bg-zinc-900 dark:border-border p-4 mb-4 overflow-x-auto relative',
+          'border rounded-lg font-medium bg-background-tertiary dark:bg-zinc-900 dark:border-border p-4 mb-4 overflow-x-auto relative',
           className,
         )}
         {...props}
@@ -38,7 +38,10 @@ const mdxComponents = {
   code: ({ className, children, ...props }: any) => {
     return (
       <code
-        className={cn('font-mono text-sm bg-[#f0f0f0] dark:bg-zinc-900 p-1 rounded-md', className)}
+        className={cn(
+          'font-mono text-sm bg-background-tertiary dark:bg-zinc-900 p-1 rounded-md',
+          className,
+        )}
         {...props}
       >
         {children}

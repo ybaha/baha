@@ -90,7 +90,7 @@ export default async function Writing(props: Props) {
           )}
           <Mdx code={writing.body.code} />
           <hr className="my-16" />
-          {/* <ClientComments slug={writing.slug} /> */}
+          <ClientComments slug={writing.slug} />
         </article>
       </div>
     </div>
