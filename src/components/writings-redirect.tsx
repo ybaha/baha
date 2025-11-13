@@ -14,7 +14,8 @@ export function WritingsRedirect({ writings = [] }: { writings: Writing[] }) {
   )[0];
 
   useEffect(() => {
-    if (pathname === '/writings') {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    if (pathname === '/writings' && !isMobile) {
       router.push(latestWriting?.url || '/writings');
     }
   }, [pathname, router]);
