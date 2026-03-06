@@ -94,6 +94,27 @@ export const MOBILE_SCROLL_THRESHOLD = 20;
 
 export const PROJECTS = [
   {
+    name: 'Rooma - AI Interior Design',
+    description: 'AI-powered interior design app that helps you visualize and redesign any room in seconds.',
+    image: '/projects/rooma.png',
+    url: 'https://apps.apple.com/nl/app/rooma-ai-interior-design/id6758413701?l=en-GB',
+    year: 2026,
+  },
+  {
+    name: 'GLB: 3D Model Generator',
+    description: 'AI-powered app that generates high quality 3D .glb and .stl models from text or images.',
+    image: '/projects/glb.png',
+    url: 'https://apps.apple.com/nl/app/glb-3d-model-generator/id6749620007?l=en-GB',
+    year: 2026,
+  },
+  {
+    name: 'Grip: Mens Health & Wellness',
+    description: 'Private guided app to help men last longer in bed and build real confidence.',
+    image: '/projects/grip.png',
+    url: 'https://apps.apple.com/nl/app/grip-mens-health-welness/id6755091590?l=en-GB',
+    year: 2026,
+  },
+  {
     name: 'VidGen3: AI Video Maker',
     description: 'AI Video Maker that uses AI to help you create videos.',
     image: '/projects/vidgen.png',
