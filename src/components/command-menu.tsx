@@ -25,7 +25,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { allLogs, allWritings } from "contentlayer2/generated";
+import { useContentMetadata } from "@/components/content-metadata-provider";
 import { useRouter } from "next/navigation";
 import { IconsType } from "./icons";
 import { LINKS, SOCIALS } from "@/lib/constants";
@@ -38,6 +38,7 @@ type Props = {
 
 export function CommandMenu({ open, setOpen }: Props) {
   const [query, setQuery] = React.useState("");
+  const { writings: allWritings, logs: allLogs } = useContentMetadata();
 
   const router = useRouter();
 

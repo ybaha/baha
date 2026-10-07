@@ -2,13 +2,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn, getFormattedDate } from "@/lib/utils";
-import { Writing } from "contentlayer2/generated";
+import type { WritingMeta } from "@/lib/content/types";
 import { Sparkles } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 import Tags from "@/components/tags";
 
 type Props = {
-  writing?: Writing;
+  writing?: WritingMeta;
 };
 
 export const SidebarLink = ({ writing }: Props) => {

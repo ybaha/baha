@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation';
 import { PageTitle } from '@/components/page-title';
 import { Metadata } from 'next';
-import { Mdx } from '@/components/mdx-components';
+import { MdxContent } from '@/components/mdx/mdx-content';
 import { cn, getFormattedDate } from '@/lib/utils';
 import { ClientComments } from './client-comments';
 import Tags from '@/components/tags';
 import { getAllWritings, getAllWritingSlugs, getWritingBySlug } from '@/queries/writings';
-import { type Writing } from 'contentlayer2/generated';
+import type { Writing } from '@/lib/content/types';
 
 type Params = Promise<{
   slug: string[];
@@ -17,7 +17,7 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-async function getWritingFromParams(params: { slug: string[] }): Promise<Writing | null> {
+async function getWritingFromParams(params: { slug: string[] }): Promise<Writing | null | undefined> {
   const slug = params?.slug?.join('/');
   const post = await getWritingBySlug(slug);
 
@@ -32,9 +32,17 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     return {};
   }
 
+  const canonical = `/writings/${post.slug}`;
   return {
     title: post.title,
     description: post.description,
+    alternates: { canonical },
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      url: canonical,
+      type: 'article',
+    },
   };
 }
 
@@ -88,7 +96,7 @@ export default async function Writing(props: Props) {
               className={cn('mb-6 h-[200px] md:h-[280px] object-fill', writing.imageClassName)}
             />
           )}
-          <Mdx code={writing.body.code} />
+          <MdxContent source={writing.body} />
           <hr className="my-16" />
           <ClientComments slug={writing.slug} />
         </article>

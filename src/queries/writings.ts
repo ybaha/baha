@@ -1,14 +1,19 @@
 import { cache } from 'react';
-import { allWritings } from 'contentlayer2/generated';
+import {
+  getAllWritingSlugs as getAllWritingSlugsFromContent,
+  getAllWritingsMeta,
+  getWritingBySlug as getWritingBySlugFromContent,
+} from '@/lib/content/selectors';
+import type { Writing, WritingMeta } from '@/lib/content/types';
 
-export const getAllWritings = cache(async () => {
-  return allWritings;
+export const getAllWritings = cache(async (): Promise<WritingMeta[]> => {
+  return getAllWritingsMeta();
 });
 
-export const getWritingBySlug = cache(async (slug: string) => {
-  return allWritings.find((writing) => writing.slug === slug);
+export const getWritingBySlug = cache(async (slug: string): Promise<Writing | undefined> => {
+  return getWritingBySlugFromContent(slug);
 });
 
-export const getAllWritingSlugs = cache(async () => {
-  return allWritings.map((writing) => writing._raw.flattenedPath.split('/'));
+export const getAllWritingSlugs = cache(async (): Promise<string[][]> => {
+  return getAllWritingSlugsFromContent();
 });

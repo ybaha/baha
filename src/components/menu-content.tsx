@@ -10,101 +10,55 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Input } from "./ui/input";
 import { Command } from "lucide-react";
 import { CommandMenu } from "./command-menu";
-import { getCookie, setCookie } from "cookies-next";
 import { useEffect, useState } from "react";
+
+const ACCENT_STORAGE_KEY = "baha-accent";
 
 type Props = {
   setDrawerOpen?: (open: boolean) => void;
 };
 
+function readStoredAccent(): string | null {
+  if (typeof document === "undefined") return null;
+  try {
+    return window.localStorage.getItem(ACCENT_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function applyAccent(color: string) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  root.style.setProperty("--color-primary", color);
+  try {
+    window.localStorage.setItem(ACCENT_STORAGE_KEY, color);
+  } catch {
+    // ignore quota / privacy-mode errors; accent reset is non-essential
+  }
+}
+
 export const MenuContent = ({ setDrawerOpen }: Props) => {
   const { setTheme, theme } = useTheme();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [currentColorIndex, setCurrentColorIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [activeAccent, setActiveAccent] = useState<string | null>(null);
   const colorEntries = Object.entries(COLORS);
 
   useEffect(() => {
     setMounted(true);
+    const stored = readStoredAccent();
+    if (stored) {
+      setActiveAccent(stored);
+      applyAccent(stored);
+    }
   }, []);
 
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    const isMobile = window.innerWidth < 768;
-
-    const isThemeAlreadySet = getCookie("theme");
-
-    if (isMobile || isThemeAlreadySet) return;
-
-    const startTimeout = setTimeout(() => {
-      // First open the popover
-      setIsPopoverOpen(true);
-
-      // Then wait a bit for the buttons to be in DOM
-      setTimeout(() => {
-        const buttons = document.querySelectorAll("[data-color-button]");
-        if (buttons.length === 0) return;
-
-        setIsAnimating(true);
-        let index = 0;
-
-        const cycleColors = () => {
-          if (index < colorEntries.length) {
-            setCurrentColorIndex(index);
-            const [_, color] = colorEntries[index];
-            const root = document.querySelector(":root") as HTMLElement;
-            if (root) {
-              root.style.setProperty("--color-primary", color);
-              setCookie("theme", color);
-
-              const buttons = document.querySelectorAll("[data-color-button]");
-              const button = buttons[index] as HTMLElement;
-              button.focus();
-              button.style.backgroundColor = `rgb(${color})`;
-              const child = button.querySelector("div") as HTMLElement;
-              if (child) child.style.backgroundColor = "white";
-
-              if (index > 0) {
-                const prevButton = buttons[index - 1] as HTMLElement;
-                const prevChild = prevButton?.querySelector(
-                  "div"
-                ) as HTMLElement;
-                if (prevButton) prevButton.style.backgroundColor = "";
-                if (prevChild)
-                  prevChild.style.backgroundColor = `rgb(${
-                    colorEntries[index - 1][1]
-                  })`;
-              }
-            }
-            index++;
-            timeoutId = setTimeout(cycleColors, 1000);
-          } else {
-            const buttons = document.querySelectorAll("[data-color-button]");
-            const lastButton = buttons[buttons.length - 1] as HTMLElement;
-            const lastChild = lastButton?.querySelector("div") as HTMLElement;
-            if (lastButton) lastButton.style.backgroundColor = "";
-            if (lastChild)
-              lastChild.style.backgroundColor = `rgb(${
-                colorEntries[colorEntries.length - 1][1]
-              })`;
-
-            setIsPopoverOpen(false);
-            setIsAnimating(false);
-          }
-        };
-
-        cycleColors();
-      }, 100); // Small delay for DOM to be ready
-    }, 500);
-
-    return () => {
-      clearTimeout(startTimeout);
-      clearTimeout(timeoutId);
-    };
-  }, []);
+  const selectAccent = (color: string) => {
+    setActiveAccent(color);
+    applyAccent(color);
+  };
 
   return (
     <div className="flex w-full flex-col lg:h-[calc(100vh-24px)] text-sm">
@@ -178,6 +132,7 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
               onClick={() => {
                 setTheme(theme === "dark" ? "light" : "dark");
               }}
+              aria-label="Toggle color theme"
             >
               {mounted && (
                 <>
@@ -203,24 +158,33 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
             <Popover
               modal
               open={isPopoverOpen}
-              onOpenChange={(open) => !isAnimating && setIsPopoverOpen(open)}
+              onOpenChange={setIsPopoverOpen}
             >
               <PopoverTrigger asChild>
-                <Button className="p-0 h-8 w-8 bg-foreground/5 hover:bg-primary hover:text-white relative group">
-                  <div className="w-4 h-4 rounded-full bg-primary transition group-hover:bg-white" />
+                <Button
+                  className="p-0 h-8 w-8 bg-foreground/5 hover:bg-primary hover:text-white relative group"
+                  aria-label="Change accent color"
+                  aria-haspopup="dialog"
+                >
+                  <div
+                    className="w-4 h-4 rounded-full bg-primary transition group-hover:bg-white"
+                    style={
+                      activeAccent
+                        ? { backgroundColor: `rgb(${activeAccent})` }
+                        : undefined
+                    }
+                  />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-34 bg-background-tertiary border-foreground/10 p-2 gap-2 flex z-50">
-                {colorEntries.map(([key, color], index) => {
-                  return (
-                    <ColorButton
-                      key={key}
-                      color={color}
-                      isAnimating={index === currentColorIndex && isAnimating}
-                      data-color-button
-                    />
-                  );
-                })}
+                {colorEntries.map(([key, color]) => (
+                  <ColorButton
+                    key={key}
+                    color={color}
+                    isActive={activeAccent === color}
+                    onSelect={() => selectAccent(color)}
+                  />
+                ))}
               </PopoverContent>
             </Popover>
           </div>
@@ -232,50 +196,29 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
 
 const ColorButton = ({
   color,
-  isAnimating,
-  ...props
+  isActive,
+  onSelect,
 }: {
   color: string;
-  isAnimating?: boolean;
-  [key: string]: any;
+  isActive?: boolean;
+  onSelect: () => void;
 }) => {
   return (
     <Button
       className={cn(
-        "p-0 h-8 w-8 bg-foreground/5 hover:text-white relative group transition-all duration-500",
-        isAnimating && ["scale-105", "animate-[subtleBounce_1.5s_ease-in-out]"]
+        "p-0 h-8 w-8 bg-foreground/5 hover:text-white relative group transition-all duration-200",
+        isActive && "ring-2 ring-foreground/40"
       )}
-      onClick={() => {
-        if (typeof document !== "undefined") {
-          const root = document.querySelector(":root") as HTMLElement;
-          if (root) {
-            root.style.setProperty("--color-primary", `${color}`);
-            setCookie("theme", color);
-          }
-        }
-      }}
-      onMouseEnter={(e) => {
-        const target = e.target as HTMLElement;
-        const child = target.querySelector("div") as HTMLElement;
-
-        if (target) target.style.backgroundColor = `rgb(${color})`;
-        if (child) child.style.backgroundColor = `white`;
-      }}
-      onMouseLeave={(e) => {
-        const target = e.target as HTMLElement;
-        const child = target.querySelector("div") as HTMLElement;
-        if (target) target.style.backgroundColor = ``;
-        if (child) child.style.backgroundColor = `rgb(${color})`;
-      }}
-      {...props}
+      onClick={onSelect}
+      aria-label={`Use ${color} accent`}
+      aria-pressed={isActive}
     >
       <div
-        className={cn(
-          "w-4 h-4 rounded-full transition-all duration-500",
-          isAnimating && "animate-[subtleBounce_1.5s_ease-in-out]"
-        )}
+        className="w-4 h-4 rounded-full transition"
         style={{ backgroundColor: `rgb(${color})` }}
-      ></div>
+      />
     </Button>
   );
 };
+
+// legacy handlers removed; ring/aria-pressed now indicate the active accent

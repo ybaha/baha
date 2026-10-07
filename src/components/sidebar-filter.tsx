@@ -1,6 +1,6 @@
 "use client";
 
-import { allWritings } from "contentlayer2/generated";
+import { useContentMetadata } from "@/components/content-metadata-provider";
 import { Check, Filter, X } from "lucide-react";
 import * as React from "react";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ import {
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 const SidebarFilter = ({ type }: { type: "writings" }) => {
+  const { writings: allWritings } = useContentMetadata();
   const [open, setOpen] = React.useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -32,7 +33,7 @@ const SidebarFilter = ({ type }: { type: "writings" }) => {
       writing.tags?.forEach((tag) => tags.add(tag));
     });
     return Array.from(tags).sort();
-  }, []);
+  }, [allWritings]);
 
   // Get currently selected tags from URL
   const selectedTags = React.useMemo(() => {
@@ -84,11 +85,11 @@ const SidebarFilter = ({ type }: { type: "writings" }) => {
       )}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <div
-            role="button"
-            className={cn(
-              "inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 relative"
-            )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-8 w-8"
+            aria-label={`Filter writings by tag (${selectedTags.length} selected)`}
           >
             <Filter className="h-4 w-4" />
             {selectedTags.length > 0 && (
@@ -96,7 +97,7 @@ const SidebarFilter = ({ type }: { type: "writings" }) => {
                 {selectedTags.length}
               </span>
             )}
-          </div>
+          </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0 bg-background">
           <Command>

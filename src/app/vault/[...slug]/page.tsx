@@ -1,7 +1,7 @@
-import { Mdx } from "@/components/mdx-components";
+import { MdxContent } from "@/components/mdx/mdx-content";
 import { PageTitle } from "@/components/page-title";
-import { type Snippet, allSnippets } from "contentlayer2/generated";
-import { Metadata, ResolvingMetadata } from "next";
+import { getAllSnippets, getSnippetBySlug } from "@/lib/content/selectors";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 type Params = Promise<{
@@ -15,12 +15,9 @@ type Props = {
 
 async function getSnippetFromParams(params: {
   slug: string[];
-}): Promise<Snippet | null> {
+}) {
   const slug = params?.slug?.join("/");
-  const post = allSnippets.find((post) => post.slug === slug);
-  console.log({ allSnippets });
-
-  return post ?? null;
+  return getSnippetBySlug(slug ?? "");
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -31,9 +28,17 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     return {};
   }
 
+  const canonical = `/vault/${post.slug}`;
   return {
     title: post.title,
     description: post.description,
+    alternates: { canonical },
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      url: canonical,
+      type: "article",
+    },
   };
 }
 
@@ -42,15 +47,15 @@ export async function generateStaticParams(): Promise<
     slug: string[];
   }[]
 > {
-  return allSnippets?.map((post) => ({
+  return getAllSnippets().map((post) => ({
     slug: post.slug.split("/"),
   }));
 }
 
-export default async function Snippet(p: Props) {
+export default async function SnippetPage(p: Props) {
   const params = await p.params;
-  const Snippet = await getSnippetFromParams(params);
-  if (!Snippet) {
+  const snippet = await getSnippetFromParams(params);
+  if (!snippet) {
     return notFound();
   }
   return (
@@ -58,15 +63,15 @@ export default async function Snippet(p: Props) {
       <div className="content-wrapper">
         <article className="content">
           <PageTitle
-            title={Snippet.title}
+            title={snippet.title}
             subtitle={
-              <time dateTime={Snippet.date} className="text-foreground/50">
-                {Snippet.date}
+              <time dateTime={snippet.date} className="text-foreground/50">
+                {snippet.date}
               </time>
             }
             className="mb-6 flex flex-col gap-3 text-foreground"
           />
-          <Mdx code={Snippet.body.code} />
+          <MdxContent source={snippet.body} />
         </article>
       </div>
     </div>

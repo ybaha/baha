@@ -1,5 +1,12 @@
 "use server";
 
+import { getCurrentSession } from "@/lib/auth/session";
+import {
+  buildCommentsPageResult,
+  commentOrderBy,
+  commentPageInclude,
+} from "@/lib/comments/commentPage";
+import type { CommentsPageResult } from "@/lib/comments/types";
 import { prisma } from "@/lib/prisma";
 
 type GetCommentsParams = {
@@ -12,42 +19,24 @@ export async function getComments({
   postSlug,
   limit = 10,
   cursor,
-}: GetCommentsParams) {
+}: GetCommentsParams): Promise<CommentsPageResult> {
+  const session = await getCurrentSession();
+  const currentUserId = session?.user?.id;
+
   const comments = await prisma.comment.findMany({
     where: {
       postSlug,
     },
-    take: limit + 1, // take one extra to check if there are more
+    take: limit + 1,
     ...(cursor && {
-      skip: 1, // Skip the cursor
+      skip: 1,
       cursor: {
         id: cursor,
       },
     }),
-    include: {
-      votes: {
-        select: {
-          id: true,
-          value: true,
-          userId: true,
-          commentId: true,
-        },
-      },
-      user: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
+    include: commentPageInclude,
+    orderBy: commentOrderBy,
   });
 
-  let nextCursor: string | undefined = undefined;
-  if (comments.length > limit) {
-    const nextItem = comments.pop();
-    nextCursor = nextItem?.id;
-  }
-
-  return {
-    comments,
-    nextCursor,
-  };
+  return buildCommentsPageResult(comments, limit, currentUserId);
 }

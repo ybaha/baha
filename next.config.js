@@ -1,10 +1,10 @@
 // next.config.js
-const { withContentlayer } = require("next-contentlayer2");
+const path = require("path");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  outputFileTracingRoot: path.join(__dirname),
   reactStrictMode: true,
-  experimental: { mdxRs: false },
   images: {
     remotePatterns: [
       {
@@ -19,4 +19,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withContentlayer(nextConfig);
+module.exports = nextConfig;

@@ -29,11 +29,10 @@ export default async function WritingLayout({ children }: Props) {
           </div>
         </Suspense>
       </SideMenu>
-      <div className="lg:bg-dots flex-1">
-        {/* For desktop */}
-        <ScrollArea className="lg:block hidden bg-background">{children}</ScrollArea>
-        {/* For mobile */}
-        <div className="lg:hidden block">{children}</div>
+      <div className="lg:bg-dots flex-1 min-h-0">
+        <ScrollArea className="h-auto !min-h-0 !max-h-none lg:h-screen lg:!min-h-dynamic-screen lg:!max-h-dynamic-screen bg-background">
+          {children}
+        </ScrollArea>
       </div>
     </>
   );

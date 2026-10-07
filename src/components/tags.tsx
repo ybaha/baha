@@ -80,16 +80,14 @@ const Tags: React.FC<TagsProps> = ({ tags, isActive, isStatic }) => {
                 </span>
               ))
             ) : (
-              <div className="flex items-center gap-1">
-                {tags.length > 0 && (
-                  <>
-                    <span className={dynamicTagStyle}>{tags[0]}</span>
-                    <span className={cn(dynamicTagStyle)}>
-                      <Loader size={12} className="animate-spin" />
-                    </span>
-                  </>
-                )}
-              </div>
+              <span
+                className={dynamicTagStyle}
+                aria-label={`${tags.length} tags (overflow hidden)`}
+                title={tags.join(", ")}
+              >
+                {tags[0]}
+                {tags.length > 1 ? "…" : ""}
+              </span>
             )}
             {overflowCount > 0 && (
               <span className={cn(dynamicTagStyle, "py-0 not-italic serif")}>

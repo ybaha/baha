@@ -1,9 +1,10 @@
+import type { ReactElement } from "react";
 import Balancer from "react-wrap-balancer";
 import { cn } from "@/lib/utils";
 
 type Props = {
   title: string;
-  subtitle?: JSX.Element;
+  subtitle?: ReactElement;
   className?: string;
   [x: string]: any;
 };

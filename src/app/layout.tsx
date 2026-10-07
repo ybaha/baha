@@ -12,6 +12,8 @@ import { ScrollArea } from '@/components/scroll-area';
 import { cookies } from 'next/headers';
 import { Metadata } from 'next';
 import { Toaster } from 'react-hot-toast';
+import { ContentMetadataProvider } from '@/components/content-metadata-provider';
+import { getAllLogsMeta, getAllWritingsMeta } from '@/lib/content/selectors';
 
 type Props = {
   children: React.ReactNode;
@@ -33,6 +35,8 @@ const cormorant = Cormorant({
 });
 
 export default async function RootLayout({ children }: Props) {
+  const writings = getAllWritingsMeta();
+  const logs = getAllLogsMeta();
   const cookieStore = await cookies();
   const theme = cookieStore.get('theme');
   const isDark = cookieStore.get('is-dark')?.value === 'true';
@@ -54,6 +58,7 @@ export default async function RootLayout({ children }: Props) {
           </style>
         )}
         <main vaul-drawer-wrapper="" className="min-h-screen bg-background">
+          <ContentMetadataProvider writings={writings} logs={logs}>
           <MainLayout>
             <div className="lg:flex">
               <SideMenu>
@@ -67,6 +72,7 @@ export default async function RootLayout({ children }: Props) {
               </div>
             </div>
           </MainLayout>
+          </ContentMetadataProvider>
         </main>
         <Toaster
           position="top-center"

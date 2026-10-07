@@ -1,9 +1,7 @@
-import { useEffect } from "react";
-import { Icons, IconsType } from "@/components/icons";
-import { JourneyCard } from "@/components/journey-card";
 import { PageTitle } from "@/components/page-title";
 import { GradientBg3 } from "@/components/gradient-bg";
-import Logs from "./page.client";
+import { LogsTimeline } from "@/components/logs-timeline";
+import { LogHashScroll } from "@/components/log-hash-scroll";
 
 export default async function Journey() {
   return (
@@ -13,11 +11,12 @@ export default async function Journey() {
         <div className="content">
           <PageTitle title={"Logs"} />
           <div className="flex flex-col items-stretch gap-12">
-            <Logs />
+            <LogsTimeline />
           </div>
         </div>
         <div className="h-[32px]" />
       </div>
+      <LogHashScroll />
     </>
   );
 }

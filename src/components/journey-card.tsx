@@ -1,10 +1,10 @@
-import { Mdx } from "./mdx-components";
 import { Icons } from "./icons";
 import Balancer from "react-wrap-balancer";
+import type { ReactNode } from "react";
 
 interface Props {
   title: string;
-  description?: string;
+  description?: ReactNode;
   image?: string;
   index: number;
   date: string;
@@ -30,7 +30,7 @@ export const JourneyCard = (props: Props) => {
         </span>
       </Balancer>
 
-      {description && <Mdx code={description} journey className="text-xs" />}
+      {description}
     </div>
   );
 };

@@ -2,11 +2,12 @@
 
 import React from "react";
 import { SidebarLink } from "./writing-link";
-import { allWritings } from "contentlayer2/generated";
+import { useContentMetadata } from "@/components/content-metadata-provider";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 
 const LinkList = () => {
+  const { writings: allWritings } = useContentMetadata();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();

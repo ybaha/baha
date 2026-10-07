@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      # Synthetic values only. Nothing in CI connects to a real database or
+      # applies a schema: `build` runs `prisma generate` and nothing else.
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:1/ci
+      NEXTAUTH_URL: http://127.0.0.1:3000
+      NEXTAUTH_SECRET: ci-only-secret-not-used-anywhere-else
+      SITE_URL: http://127.0.0.1:3000
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      - run: npm test
+      # The integration tests start a throwaway PostgreSQL cluster in /tmp
+      # (initdb/pg_ctl) on a free loopback port and delete it afterwards.
+      - name: Put PostgreSQL binaries on PATH
+        run: echo "$(ls -d /usr/lib/postgresql/*/bin | sort -V | tail -1)" >> "$GITHUB_PATH"
+      - run: npm run test:integration
+      - run: npm run build

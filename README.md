@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# baha
 
-## Getting Started
+Personal site: writings, vault snippets, a logs timeline and a comments system.
+Next.js 16 (App Router, webpack), React 19, Tailwind 3, MDX content in `content/`,
+PostgreSQL via Prisma 7, NextAuth (GitHub/Google).
 
-First, run the development server:
+## Requirements
+
+- Node.js `>=22.13` (see `engines` in `package.json`)
+- PostgreSQL for comments, votes, views and sign-in (the public pages render without it)
+
+## Setup
 
 ```bash
+npm ci
+cp .env.example .env   # then fill in values; .env is git-ignored
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`npm ci` runs `prisma generate` (output goes to `src/generated/prisma`, git-ignored).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Names only; see `.env.example`.
 
-## Learn More
+| Name | Used for |
+| --- | --- |
+| `DATABASE_URL` | Prisma runtime and CLI |
+| `NEXTAUTH_URL`, `NEXTAUTH_SECRET` | NextAuth |
+| `NEXT_PUBLIC_GITHUB_ID`, `GITHUB_SECRET` | GitHub sign-in |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in |
+| `SITE_URL` | Absolute URLs in `sitemap.xml` / `robots.txt` (optional) |
 
-To learn more about Next.js, take a look at the following resources:
+## Content
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Content lives in `content/{writings,snippets,logs}` as `.mdx` with frontmatter.
+It is loaded at build/request time by `src/lib/content` and compiled with
+`next-mdx-remote`; there is no separate content build step. Slugs are file
+basenames. A log's optional `icon` must be listed in `src/components/icons.tsx`
+(a test enforces this).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Dev server (webpack) |
+| `npm run build` | `prisma generate` + `next build --webpack` |
+| `npm start` | Serve the production build |
+| `npm run lint` | ESLint (flat config) |
+| `npm test` | Unit/regression tests (no database) |
+| `npm run test:integration` | Contract tests against a **disposable local** PostgreSQL |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`--webpack` is intentional: the default Turbopack build currently fails on the
+`next/font/google` Cormorant import.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Integration tests need `initdb`, `pg_ctl` and `createdb` on `PATH`. They create a
+cluster under `/tmp` on a free loopback port, point `DATABASE_URL` at it for the
+test process, and remove it when done.
+
+## Database
+
+The build only runs `prisma generate`; it never changes a schema. There is no
+migration history in this repo yet: `prisma/schema.prisma` is the source of truth
+and an existing database has to be baselined against it. Before the first schema
+change, create a reviewed baseline (`prisma migrate diff` /
+`prisma migrate resolve`) and apply changes with `prisma migrate deploy`. Do not
+run `prisma db push` against a database you care about. See `prisma/README.md`.
+
+## Deploy
+
+Run `npm ci && npm run build && npm start` with the environment above. CI
+(`.github/workflows/ci.yml`) runs typecheck, lint, tests and a build using
+synthetic values only.
+
+## Security notes
+
+- Comment text is validated server-side (length, slug pattern) and a user may post
+  at most 10 comments per rolling 24 hours (enforced in one transaction with a
+  per-user advisory lock).
+- Reading comments is public; posting and voting require a session. Responses never
+  include emails or other users' vote rows.

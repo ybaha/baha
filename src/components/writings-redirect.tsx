@@ -3,13 +3,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import { type Writing } from 'contentlayer2/generated';
+import type { WritingMeta } from '@/lib/content/types';
 
-export function WritingsRedirect({ writings = [] }: { writings: Writing[] }) {
+export function WritingsRedirect({ writings = [] }: { writings: WritingMeta[] }) {
   const pathname = usePathname();
   const router = useRouter();
-  console.log({ writings });
-  const latestWriting = writings.sort(
+  const latestWriting = [...writings].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )[0];
 

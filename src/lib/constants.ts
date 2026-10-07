@@ -1,5 +1,4 @@
 import { Icons, IconsType } from '@/components/icons';
-import { Colors } from '@/stores/theme';
 
 type Profile = {
   label: string;

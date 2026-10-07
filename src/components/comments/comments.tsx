@@ -22,12 +22,8 @@ type Comment = {
     name: string | null;
     image: string | null;
   };
-  votes: {
-    id: string;
-    value: number;
-    userId: string;
-    commentId: string;
-  }[];
+  score: number;
+  currentUserVote: -1 | 0 | 1;
 };
 
 export function Comments({
@@ -104,9 +100,10 @@ export function Comments({
 
     setIsSubmitting(true);
     try {
-      const comment = await createComment(newComment, postSlug);
-      if (comment.error) {
-        setError(comment.error);
+      const result = await createComment(newComment, postSlug);
+      if (result.error) {
+        setError(result.error);
+        return;
       }
       setNewComment("");
       const commentsSection = document.getElementById("comments-section");
@@ -132,32 +129,51 @@ export function Comments({
       if (error) {
         setError(error);
       }
-      fetchComments();
+      if (data) {
+        setComments((prev) =>
+          prev.map((comment) =>
+            comment.id === commentId
+              ? {
+                  ...comment,
+                  score: comment.score + data.value - comment.currentUserVote,
+                  currentUserVote: data.value,
+                }
+              : comment
+          )
+        );
+      } else {
+        fetchComments();
+      }
     } catch (error) {
       console.error("Failed to vote:", error);
     }
   };
 
-  const getVoteCount = (votes: Comment["votes"]) => {
-    return votes.reduce((acc, vote) => acc + vote.value, 0);
-  };
-
-  const votes = comments.flatMap((comment) => comment.votes);
-
   if (isLoading && !initialLoadDone) {
     return (
-      <div className="space-y-8 mb-8">
+      <section
+        id="comments-section"
+        className="space-y-8 mb-8"
+        aria-label="Comments"
+      >
         <h2 className="text-2xl font-normal font-serif italic">Comments</h2>
-        <div className="flex flex-col items-center justify-center py-6 space-y-4 text-foreground/50">
+        <div
+          className="flex flex-col items-center justify-center py-6 space-y-4 text-foreground/50"
+          role="status"
+          aria-live="polite"
+        >
           <Loader className="h-6 w-6 animate-spin" />
-          {/* <p>Loading comments...</p> */}
         </div>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className="space-y-8 mb-8">
+    <section
+      id="comments-section"
+      aria-label="Comments"
+      className="space-y-8 mb-8"
+    >
       <h2 className="text-2xl font-normal font-serif italic">Comments</h2>
       <div className="space-y-6">
         {initialLoadDone && comments.length === 0 ? (
@@ -173,26 +189,15 @@ export function Comments({
         ) : (
           <>
             {comments.map((comment) => {
-              const userLiked = votes.find(
-                (vote) =>
-                  vote.userId === session?.user?.id &&
-                  vote.value > 0 &&
-                  vote.commentId === comment.id
-              );
-              const userDisliked = votes.find(
-                (vote) =>
-                  vote.userId === session?.user?.id &&
-                  vote.value < 0 &&
-                  vote.commentId === comment.id
-              );
+              const userLiked = comment.currentUserVote > 0;
+              const userDisliked = comment.currentUserVote < 0;
               return (
-                <div
+                <article
                   key={comment.id}
                   className={cn(
                     "flex space-x-4",
                     isSubmitting && "opacity-50 pointer-events-none"
                   )}
-                  id="comments-section"
                 >
                   <Avatar>
                     <AvatarImage src={comment.user.image ?? undefined} />
@@ -222,6 +227,8 @@ export function Comments({
                           variant="ghost"
                           size="sm"
                           onClick={() => handleVote(comment.id, 1)}
+                          aria-label="Upvote comment"
+                          aria-pressed={userLiked}
                         >
                           <ThumbsUp
                             className={cn(
@@ -230,11 +237,13 @@ export function Comments({
                             )}
                           />
                         </Button>
-                        <span>{getVoteCount(comment.votes)}</span>
+                        <span aria-live="polite">{comment.score}</span>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleVote(comment.id, -1)}
+                          aria-label="Downvote comment"
+                          aria-pressed={userDisliked}
                         >
                           <ThumbsDown
                             className={cn(
@@ -246,7 +255,7 @@ export function Comments({
                       </div>
                     )}
                   </div>
-                </div>
+                </article>
               );
             })}
             {comments.length > 0 && hasMore && (
@@ -267,7 +276,11 @@ export function Comments({
       </div>
       {session ? (
         <form onSubmit={handleSubmit} className="space-y-4">
+          <label htmlFor="new-comment" className="sr-only">
+            Write a comment
+          </label>
           <Textarea
+            id="new-comment"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Write a comment..."
@@ -306,6 +319,6 @@ export function Comments({
           </Button>
         </div>
       )}
-    </div>
+    </section>
   );
 }

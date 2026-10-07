@@ -1,13 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Writing } from 'contentlayer2/generated';
+import type { WritingMeta } from '@/lib/content/types';
 import { useEffect, useState, useMemo } from 'react';
 import { getViews } from '@/queries/getViews';
 import { Loader } from 'lucide-react';
 
 type Props = {
-  writings: Writing[];
+  writings: WritingMeta[];
   header?: string;
 };
 
@@ -41,7 +41,7 @@ export const WritingList = ({ writings }: Props) => {
           }
           acc[year].push(item);
           return acc;
-        }, {} as Record<string, Writing[]>),
+        }, {} as Record<string, WritingMeta[]>),
     [writings],
   );
 
@@ -76,11 +76,7 @@ export const WritingList = ({ writings }: Props) => {
           return (
             <ul className="group/list list-none" key={year}>
               {writingsByYear.map((item, itemIndex) => {
-                const {
-                  title,
-                  date,
-                  _raw: { flattenedPath: slug },
-                } = item;
+                const { title, date, slug } = item;
                 const dateObj = new Date(date);
                 const dateWithDayAndMonth = dateObj.toLocaleString('en-UK', {
                   day: 'numeric',
@@ -99,7 +95,7 @@ export const WritingList = ({ writings }: Props) => {
 
                 return (
                   <li
-                    key={slug}
+                    key={item.id}
                     className="group/list-item grid grid-cols-12 p-0 group-hover/list-wrapper:text-foreground/40"
                   >
                     <span

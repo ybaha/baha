@@ -1,6 +1,6 @@
 'use client';
 
-import { allWritings } from 'contentlayer2/generated';
+import { useContentMetadata } from '@/components/content-metadata-provider';
 import { Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
@@ -83,6 +83,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 // };
 
 const Page = () => {
+  const { writings: allWritings } = useContentMetadata();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -122,7 +123,7 @@ const Page = () => {
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .map((writing) => (
             <Link
-              key={writing._id}
+              key={writing.id}
               href={`/writings/${writing.slug}`}
               className="flex flex-col gap-1 border-b border-foreground/20 px-4 py-3 text-sm hover:bg-primary/20"
             >

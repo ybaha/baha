@@ -8,7 +8,7 @@ import { MobileDrawer } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { allWritings } from "contentlayer2/generated";
+import { useContentMetadata } from "@/components/content-metadata-provider";
 import SidebarFilter from "@/components/sidebar-filter";
 
 type Props = {
@@ -24,6 +24,7 @@ const FloatingHeaderComponent = ({
   title,
   children,
 }: Props) => {
+  const { writings: allWritings } = useContentMetadata();
   const pathname = usePathname();
   const includesWritings = pathname.includes("/writings/");
   const isWritingsPage = pathname === "/writings";
