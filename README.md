@@ -1,7 +1,7 @@
 # baha
 
 Personal site: writings, vault snippets, a logs timeline and a comments system.
-Next.js 16 (App Router, webpack), React 19, Tailwind 3, MDX content in `content/`,
+Next.js 16 (App Router, Turbopack), React 19, Tailwind 3, MDX content in `content/`,
 PostgreSQL via Prisma 7, NextAuth (GitHub/Google).
 
 ## Requirements
@@ -43,15 +43,15 @@ basenames. A log's optional `icon` must be listed in `src/components/icons.tsx`
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | Dev server (webpack) |
-| `npm run build` | `prisma generate` + `next build --webpack` |
+| `npm run dev` | Dev server (Turbopack) |
+| `npm run build` | `prisma generate` + `next build` (Turbopack) |
 | `npm start` | Serve the production build |
 | `npm run lint` | ESLint (flat config) |
 | `npm test` | Unit/regression tests (no database) |
 | `npm run test:integration` | Contract tests against a **disposable local** PostgreSQL |
 
-`--webpack` is intentional: the default Turbopack build currently fails on the
-`next/font/google` Cormorant import.
+Both dev and build use Next's default bundler (Turbopack). `next/font/google` (Cormorant)
+is downloaded at build time, so the first build needs network access.
 
 Integration tests need `initdb`, `pg_ctl` and `createdb` on `PATH`. They create a
 cluster under `/tmp` on a free loopback port, point `DATABASE_URL` at it for the
@@ -59,12 +59,16 @@ test process, and remove it when done.
 
 ## Database
 
-The build only runs `prisma generate`; it never changes a schema. There is no
-migration history in this repo yet: `prisma/schema.prisma` is the source of truth
-and an existing database has to be baselined against it. Before the first schema
-change, create a reviewed baseline (`prisma migrate diff` /
-`prisma migrate resolve`) and apply changes with `prisma migrate deploy`. Do not
-run `prisma db push` against a database you care about. See `prisma/README.md`.
+The build only runs `prisma generate`; it never changes a schema. Migrations live in
+`prisma/migrations` (`0_init` is the baseline of the current schema and is already
+marked as applied in production). To change the schema:
+
+1. Edit `prisma/schema.prisma` and create a migration against a **local** database
+   (`prisma migrate dev --name <change>`).
+2. Review the SQL, commit it, then run `prisma migrate deploy` against production.
+
+Back up first (`pg_dump`). Never run `prisma db push` against a database you care
+about. See `prisma/README.md`.
 
 ## Deploy
 

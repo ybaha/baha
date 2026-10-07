@@ -10,7 +10,7 @@ import MainLayout from '@/components/main-layout';
 import { FloatingHeader } from '@/components/floating-header';
 import { ScrollArea } from '@/components/scroll-area';
 import { cookies } from 'next/headers';
-import { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'react-hot-toast';
 import { ContentMetadataProvider } from '@/components/content-metadata-provider';
 import { getAllLogsMeta, getAllWritingsMeta } from '@/lib/content/selectors';
@@ -90,6 +90,13 @@ export default async function RootLayout({ children }: Props) {
   );
 }
 
+export const viewport: Viewport = {
+  themeColor: '#ffffff',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://baha.vercel.app/'),
   robots: {
@@ -122,14 +129,8 @@ export const metadata: Metadata = {
     siteName: sharedTitle,
     locale: 'en_IE',
   },
-  themeColor: '#ffffff',
   alternates: {
     canonical: '/',
-  },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
   },
   twitter: {
     card: 'summary_large_image',

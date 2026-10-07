@@ -1,5 +1,14 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
-import colors from 'tailwindcss/colors';
+import allColors from 'tailwindcss/colors';
+
+// Tailwind v3 still exposes renamed palettes as warning-emitting getters, so
+// copy only the current palette names instead of spreading the whole object.
+const renamed = new Set(['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']);
+const colors = Object.fromEntries(
+  Object.keys(allColors)
+    .filter((name) => !renamed.has(name))
+    .map((name) => [name, allColors[name as keyof typeof allColors]])
+);
 
 module.exports = {
   darkMode: ['class', '[data-theme="dark"]'],

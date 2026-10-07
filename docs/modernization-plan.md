@@ -199,9 +199,13 @@ removed because audit results are unchanged without them.
 
 ## Open items
 
-1. No migration baseline exists; production schema handling is a deliberate manual step (see README "Database").
-2. Default Turbopack build fails on `next/font/google` (Cormorant); `--webpack` stays.
-3. Hydration warning from `next-themes` on the sidebar search input (pre-existing).
+1. Production runs PostgreSQL 12.22 (EOL upstream); consider upgrading the server.
+2. `next/font/google` (Cormorant) is fetched from Google at build time, so builds need network access (self-hosting the font would remove that).
+3. The hydration warning seen in earlier browser runs is a Playwright artifact (it injects `caret-color` when screenshotting mid-hydration); with no screenshot there are zero hydration warnings in dev or production.
 4. `.github/workflows/ci.yml` has not run on GitHub; it was validated by running
    the same commands in a clean copy with `npm ci` and synthetic environment only.
 5. Tailwind 3 → 4 migration (clears most remaining audit entries) is deferred.
+
+## Database baseline (done)
+
+Production (`blog_db`, PostgreSQL 12.22) was backed up (custom + plain dumps, restore verified by row counts), diffed against `schema.prisma` (no difference), and `0_init` was marked applied. Only the `_prisma_migrations` bookkeeping table was added; application tables/rows are unchanged.
