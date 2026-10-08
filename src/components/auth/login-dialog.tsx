@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Github, Mail } from 'lucide-react';
+import { GithubLogoIcon, EnvelopeSimpleIcon } from '@phosphor-icons/react/dist/ssr';
 import { signIn } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 
@@ -47,11 +47,11 @@ export function LoginDialog({ children }: { children: React.ReactNode }) {
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
           <Button className="w-full" variant="outline" onClick={handleGitHubSignIn}>
-            <Github className="mr-2 h-4 w-4" />
+            <GithubLogoIcon className="mr-2 h-4 w-4" />
             Continue with GitHub
           </Button>
           <Button className="w-full" variant="outline" onClick={handleGoogleSignIn}>
-            <Mail className="mr-2 h-4 w-4" />
+            <EnvelopeSimpleIcon className="mr-2 h-4 w-4" />
             Continue with Google
           </Button>
         </div>

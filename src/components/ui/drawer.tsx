@@ -4,7 +4,7 @@ import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 
 import { cn } from "@/lib/utils";
-import { AlignJustify, CommandIcon } from "lucide-react";
+import { ListIcon } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "./button";
 import { MenuContent } from "../menu-content";
 
@@ -117,14 +117,14 @@ export function MobileDrawer() {
     >
       <DrawerTrigger className="rounded-none p-3" title="Toggle drawer">
         <div className="flex gap-2 justify-center items-center">
-          <AlignJustify size={14} />
+          <ListIcon size={16} />
           {/* <span className="font-serif italic ">Menu</span> */}
         </div>
       </DrawerTrigger>
 
       <DrawerPortal>
         <DrawerContent className="fixed bottom-0 left-0 right-0 mt-24 flex h-[80vh] flex-col rounded-t-lg bg-background/80">
-          <div className="flex-1 overflow-y-auto rounded-t-[10px] bg-background p-4">
+          <div className="flex-1 overflow-y-auto rounded-t-[10px] bg-background p-4 lt-surface">
             <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-primary" />
             <MenuContent setDrawerOpen={setDrawerOpen} />
           </div>

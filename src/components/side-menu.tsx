@@ -19,30 +19,20 @@ export const SideMenu = ({
   return (
     <ScrollArea
       className={cn(
-        "hidden bg-background-tertiary border-border lg:flex lg:flex-col lg:border-r",
-        isInner ? "lg:w-80 xl:w-96" : "lg:w-60 xl:w-72",
+        "hidden lg:flex lg:flex-col",
+        isInner
+          ? "wr-pane lg:w-80 xl:w-96"
+          : "sb-side lg:w-60 xl:w-72",
         className
       )}
     >
       {title && (
-        <div
-          className={cn(
-            "sticky top-0 z-10 px-5 py-3 border-border text-foreground flex justify-between items-center",
-            isInner ? "bg-background/10" : "bg-background-tertiary"
-          )}
-        >
-          <span className="text-sm  font-serif italic">{title}</span>
+        <div className="wr-header">
+          <span className="wr-title">{title}</span>
           {title === "Writings" && <SidebarFilter type="writings" />}
         </div>
       )}
-      <div
-        className={cn(
-          "p-5 text-foreground h-screen",
-          isInner ? "bg-background/10" : "bg-background-tertiary"
-        )}
-      >
-        {children}
-      </div>
+      <div className={isInner ? "wr-body" : "sb-panel"}>{children}</div>
     </ScrollArea>
   );
 };

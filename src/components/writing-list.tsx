@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import type { WritingMeta } from '@/lib/content/types';
 import { useEffect, useState, useMemo } from 'react';
 import { getViews } from '@/queries/getViews';
-import { Loader } from 'lucide-react';
+import { SpinnerGapIcon } from '@phosphor-icons/react/dist/ssr';
 
 type Props = {
   writings: WritingMeta[];
@@ -124,7 +124,7 @@ export const WritingList = ({ writings }: Props) => {
                         <span className="col-span-1 md:col-span-5 text-right">
                           {isLoading ? (
                             <div className="flex items-center justify-end">
-                              <Loader className="h-4 w-4 animate-spin" />
+                              <SpinnerGapIcon className="h-4 w-4 animate-spin" />
                             </div>
                           ) : (
                             formattedViews

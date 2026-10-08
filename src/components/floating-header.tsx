@@ -3,7 +3,7 @@
 import { memo, useEffect, useState } from "react";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon } from "@phosphor-icons/react/dist/ssr";
 import { MobileDrawer } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";

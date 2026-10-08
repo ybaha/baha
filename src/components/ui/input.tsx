@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { Command } from "lucide-react";
+import { CommandIcon } from "@phosphor-icons/react/dist/ssr";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -28,7 +28,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 key={idx}
                 className="pointer-events-none text-foreground/60 border border-input p-0.5 rounded-md"
               >
-                {icon || <Command size={14} />}
+                {icon || <CommandIcon size={14} />}
               </div>
             ))}
           </div>

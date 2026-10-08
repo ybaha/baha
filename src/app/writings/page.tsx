@@ -1,7 +1,7 @@
 'use client';
 
 import { useContentMetadata } from '@/components/content-metadata-provider';
-import { Sparkles } from 'lucide-react';
+import { SparkleIcon } from '@phosphor-icons/react/dist/ssr';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -134,7 +134,7 @@ const Page = () => {
                   {writing.aiGenerated && (
                     <div className="text-primary flex items-center justify-center">
                       <span className="md:block hidden">Created with magic</span>
-                      <Sparkles size={16} className="text-primary" />
+                      <SparkleIcon size={16} className="text-primary" />
                     </div>
                   )}
                 </div>

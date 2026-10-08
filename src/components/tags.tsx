@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Loader } from "lucide-react";
 
 interface TagsProps {
   tags: string[];

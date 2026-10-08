@@ -1,19 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  AtSignIcon,
-  Calculator,
-  Calendar,
-  CreditCard,
-  Feather,
-  LinkIcon,
-  PenLine,
-  Settings,
-  Smile,
-  User,
-  Waypoints,
-} from "lucide-react";
+import { AtIcon, PencilLineIcon, PathIcon } from "@phosphor-icons/react/dist/ssr";
 
 import {
   CommandDialog,
@@ -99,7 +87,7 @@ export function CommandMenu({ open, setOpen }: Props) {
                   setOpen(false);
                 }}
               >
-                <PenLine className="mr-2 h-4 w-4" />
+                <PencilLineIcon className="mr-2 h-4 w-4" />
                 <span>{writing.title}</span>
               </CommandItem>
             ))}
@@ -114,7 +102,7 @@ export function CommandMenu({ open, setOpen }: Props) {
                   setOpen(false);
                 }}
               >
-                <Waypoints className="mr-2 h-4 w-4" />
+                <PathIcon className="mr-2 h-4 w-4" />
                 <span>{log.title}</span>
               </CommandItem>
             ))}
@@ -125,7 +113,7 @@ export function CommandMenu({ open, setOpen }: Props) {
               const icon = link.icon ? (
                 <Icons name={link.icon as IconsType} className="mr-2 h-4 w-4" />
               ) : (
-                <AtSignIcon className="mr-2 h-4 w-4" />
+                <AtIcon className="mr-2 h-4 w-4" />
               );
               return (
                 <CommandItem

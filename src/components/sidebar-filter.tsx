@@ -1,7 +1,7 @@
 "use client";
 
 import { useContentMetadata } from "@/components/content-metadata-provider";
-import { Check, Filter, X } from "lucide-react";
+import { CheckIcon, FunnelIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -80,7 +80,7 @@ const SidebarFilter = ({ type }: { type: "writings" }) => {
           className="h-8 w-8"
           onClick={clearFilters}
         >
-          <X className="h-4 w-4" />
+          <XIcon className="h-4 w-4" />
         </Button>
       )}
       <Popover open={open} onOpenChange={setOpen}>
@@ -91,7 +91,7 @@ const SidebarFilter = ({ type }: { type: "writings" }) => {
             className="relative h-8 w-8"
             aria-label={`Filter writings by tag (${selectedTags.length} selected)`}
           >
-            <Filter className="h-4 w-4" />
+            <FunnelIcon className="h-4 w-4" />
             {selectedTags.length > 0 && (
               <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-white">
                 {selectedTags.length}
@@ -99,7 +99,7 @@ const SidebarFilter = ({ type }: { type: "writings" }) => {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0 bg-background">
+        <PopoverContent className="w-[200px] overflow-hidden rounded-xl p-0 bg-background">
           <Command>
             <CommandInput placeholder="Search tags..." className="h-9" />
             <CommandEmpty>No tags found.</CommandEmpty>
@@ -112,7 +112,7 @@ const SidebarFilter = ({ type }: { type: "writings" }) => {
                     updateTags(tag);
                   }}
                 >
-                  <Check
+                  <CheckIcon
                     className={cn(
                       "mr-2 h-4 w-4",
                       selectedTags.includes(tag) ? "opacity-100" : "opacity-0"

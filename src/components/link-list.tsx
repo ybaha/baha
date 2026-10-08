@@ -43,7 +43,7 @@ const LinkList = () => {
   }
 
   return (
-    <div>
+    <div className="wr-list">
       {filteredWritings
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .map((writing) => (

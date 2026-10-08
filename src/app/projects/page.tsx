@@ -1,7 +1,7 @@
 import { PageTitle } from '@/components/page-title';
 import { Badge } from '@/components/ui/badge';
 import { PROJECTS } from '@/lib/constants';
-import { SquareArrowOutUpRight } from 'lucide-react';
+import { ArrowSquareOutIcon } from '@phosphor-icons/react/dist/ssr';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -42,7 +42,7 @@ const ProjectCard = (project: (typeof PROJECTS)[0]) => {
                   className="inline-flex w-full justify-end items-center gap-1 text-sm font-medium text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-100"
                 >
                   View Project
-                  <SquareArrowOutUpRight className="w-4 h-4" />
+                  <ArrowSquareOutIcon className="w-4 h-4" />
                 </Link>
               )}
             </div>

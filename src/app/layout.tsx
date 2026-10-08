@@ -1,4 +1,5 @@
 import '@/global.css';
+import '@/components/sidebar/sidebar.css';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { Cormorant } from 'next/font/google';
@@ -32,6 +33,7 @@ const getTitle = (path: string) => {
 const cormorant = Cormorant({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin', 'latin-ext'],
+  variable: '--font-cormorant',
 });
 
 export default async function RootLayout({ children }: Props) {
@@ -44,7 +46,7 @@ export default async function RootLayout({ children }: Props) {
   return (
     <html
       lang="en"
-      className={`${GeistSans.className} ${GeistMono.variable} ${cormorant.className}`}
+      className={`${GeistSans.className} ${GeistMono.variable} ${cormorant.className} ${cormorant.variable}`}
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
@@ -57,14 +59,14 @@ export default async function RootLayout({ children }: Props) {
            `}
           </style>
         )}
-        <main vaul-drawer-wrapper="" className="min-h-screen bg-background">
+        <main vaul-drawer-wrapper="" className="sb-shell min-h-screen">
           <ContentMetadataProvider writings={writings} logs={logs}>
           <MainLayout>
             <div className="lg:flex">
               <SideMenu>
                 <MenuContent />
               </SideMenu>
-              <div className="flex flex-1">
+              <div className="app-main flex flex-1">
                 <ScrollArea className="flex flex-col lg:flex-row bg-background" hasScrollTitle>
                   <FloatingHeader />
                   {children}

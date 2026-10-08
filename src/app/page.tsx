@@ -4,7 +4,7 @@ import { LoadingSpinner } from '@/components/loading-spinner';
 import { WritingList } from '@/components/writing-list';
 import { PageTitle } from '@/components/page-title';
 import Link from '@/components/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRightIcon } from '@phosphor-icons/react/dist/ssr';
 import { PROJECTS } from '@/lib/constants';
 import { getAllWritings } from '@/queries/writings';
 
@@ -56,19 +56,19 @@ export default async function Home() {
 
             <div className="flex flex-col mt-4">
               <p className="flex items-center gap-2">
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRightIcon className="w-4 h-4" />
                 <Link href="/logs">Check out my journey</Link>
               </p>
               <p className="flex items-center gap-2">
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRightIcon className="w-4 h-4" />
                 <Link href="/writings">View all writings</Link>
               </p>
               <p className="flex items-center gap-2">
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRightIcon className="w-4 h-4" />
                 <Link href="/projects">View all projects</Link>
               </p>
               <p className="flex items-center gap-2">
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRightIcon className="w-4 h-4" />
                 <Link href="/tech-stack">Check out my tech stack</Link>
               </p>
             </div>

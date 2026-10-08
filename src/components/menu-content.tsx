@@ -2,13 +2,12 @@
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { NavigationLink } from "@/components/navigation-link";
+import { MorphIcon } from "@/components/sidebar/morph-icon";
 import { SOCIALS, LINKS, COLORS, CV } from "@/lib/constants";
-import { Button } from "./ui/button";
 import { Icons } from "./icons";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Input } from "./ui/input";
-import { Command } from "lucide-react";
+import { CommandIcon } from "@phosphor-icons/react/dist/ssr";
 import { CommandMenu } from "./command-menu";
 import { useEffect, useState } from "react";
 
@@ -61,134 +60,129 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
   };
 
   return (
-    <div className="flex w-full flex-col lg:h-[calc(100vh-24px)] text-sm">
-      <div className="flex flex-col gap-4">
-        <Link href="/" className="link-card inline-flex items-center gap-2 p-2">
-          <div className="flex flex-col">
-            <span className="font-semibold text-foreground">
-              Yusuf Baha Erarslan
-            </span>
-            <span className="text-foreground/80 font-serif italic">
-              Software Engineer
-            </span>
-          </div>
-        </Link>
-        <CommandMenu open={isCommandMenuOpen} setOpen={setIsCommandMenuOpen} />
-        <div className="relative" onClick={() => setIsCommandMenuOpen(true)}>
-          <Input
-            className="h-8 cursor-pointer pointer-events-none"
-            icons={[
-              <div className="w-4 h-4 flex justify-center items-center" key={1}>
-                <Command size={14} />
-              </div>,
-              <div
-                className="w-4 h-4 flex justify-center items-center font-[500]"
-                key={2}
-              >
-                K
-              </div>,
-            ]}
+    <div className="sb-root">
+      <Link href="/" className="sb-profile">
+        <span className="sb-profile-text">
+          <span className="sb-name">Yusuf Baha Erarslan</span>
+          <span className="sb-role">Software Engineer</span>
+        </span>
+      </Link>
+
+      <CommandMenu open={isCommandMenuOpen} setOpen={setIsCommandMenuOpen} />
+      <button
+        type="button"
+        className="sb-item sb-search"
+        onClick={() => setIsCommandMenuOpen(true)}
+      >
+        <MorphIcon name="Search" />
+        <span className="sb-label">Search</span>
+        <kbd className="sb-kbd" aria-hidden>
+          <CommandIcon size={11} />K
+        </kbd>
+      </button>
+
+      <nav className="sb-nav" aria-label="Pages">
+        {LINKS.map((link) => (
+          <NavigationLink
+            key={link.href}
+            href={link.href}
+            label={link.label}
+            icon={link.icon}
+            setDrawerOpen={setDrawerOpen}
           />
-        </div>
-        <div className="flex flex-col gap-1">
-          {LINKS.map((link) => (
+        ))}
+      </nav>
+
+      <div className="sb-section">
+        <span className="sb-section-label">Socials</span>
+        <nav className="sb-nav" aria-label="Socials">
+          {SOCIALS.map((profile) => (
             <NavigationLink
-              key={link.href}
-              href={link.href}
-              label={link.label}
-              icon={link.icon}
-              setDrawerOpen={setDrawerOpen}
+              key={profile.url}
+              href={profile.url}
+              label={profile.label}
+              icon={profile.icon}
             />
           ))}
-        </div>
+        </nav>
       </div>
-      <hr className="bg-background text-background" />
-      <div className="flex flex-col text-sm flex-1 gap-2">
-        <div className="flex flex-col">
-          <span className="px-2 text-xs font-medium leading-relaxed text-gray-600">
-            Socials
-          </span>
-          <div className="flex flex-col gap-1 mt-2">
-            {SOCIALS.map((profile) => (
-              <NavigationLink
-                key={profile.url}
-                href={profile.url}
-                label={profile.label}
-                icon={profile.icon}
+
+      <div className="sb-section">
+        <span className="sb-section-label">Resume</span>
+        <nav className="sb-nav" aria-label="Resume">
+          <NavigationLink href={CV} label="My Resume" icon="File" />
+        </nav>
+      </div>
+
+      <div className="sb-spacer" />
+
+      <div className="sb-footer">
+        <button
+          type="button"
+          className="sb-tool"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          aria-label="Toggle color theme"
+        >
+          {mounted && (
+            <>
+              <Icons
+                name="Sun"
+                size={16}
+                className={cn(
+                  "absolute transition-all duration-300",
+                  theme === "dark"
+                    ? "scale-50 -rotate-90 opacity-0"
+                    : "opacity-100"
+                )}
+              />
+              <Icons
+                name="MoonStar"
+                size={16}
+                className={cn(
+                  "absolute transition-all duration-300",
+                  theme === "dark"
+                    ? "opacity-100"
+                    : "scale-50 rotate-90 opacity-0"
+                )}
+              />
+            </>
+          )}
+        </button>
+
+        <Popover modal open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className="sb-tool sb-accent-pop"
+              aria-label="Change accent color"
+              aria-haspopup="dialog"
+            >
+              <span
+                className="h-4 w-4 rounded-full bg-primary"
+                style={
+                  activeAccent
+                    ? { backgroundColor: `rgb(${activeAccent})` }
+                    : undefined
+                }
+              />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            side="top"
+            align="end"
+            sideOffset={10}
+            className="sb-popover"
+          >
+            {colorEntries.map(([key, color]) => (
+              <ColorButton
+                key={key}
+                color={color}
+                isActive={activeAccent === color}
+                onSelect={() => selectAccent(color)}
               />
             ))}
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="px-2 text-xs font-medium leading-relaxed text-gray-600">
-            Resume
-          </span>
-          <NavigationLink href={CV} label="My Resume" icon="File" />
-        </div>
-        <div className="flex flex-1 h-full mt-4 lg:mt-0 lg:items-end">
-          <div className="flex justify-between w-full gap-3">
-            <Button
-              className="p-0 h-8 w-8 bg-foreground/5 hover:bg-primary hover:text-white relative"
-              onClick={() => {
-                setTheme(theme === "dark" ? "light" : "dark");
-              }}
-              aria-label="Toggle color theme"
-            >
-              {mounted && (
-                <>
-                  <Icons
-                    name="Sun"
-                    size={16}
-                    className={cn(
-                      "absolute",
-                      theme === "dark" ? "opacity-0" : "opacity-100"
-                    )}
-                  />
-                  <Icons
-                    name="MoonStar"
-                    size={16}
-                    className={cn(
-                      "absolute",
-                      theme === "dark" ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                </>
-              )}
-            </Button>
-            <Popover
-              modal
-              open={isPopoverOpen}
-              onOpenChange={setIsPopoverOpen}
-            >
-              <PopoverTrigger asChild>
-                <Button
-                  className="p-0 h-8 w-8 bg-foreground/5 hover:bg-primary hover:text-white relative group"
-                  aria-label="Change accent color"
-                  aria-haspopup="dialog"
-                >
-                  <div
-                    className="w-4 h-4 rounded-full bg-primary transition group-hover:bg-white"
-                    style={
-                      activeAccent
-                        ? { backgroundColor: `rgb(${activeAccent})` }
-                        : undefined
-                    }
-                  />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-34 bg-background-tertiary border-foreground/10 p-2 gap-2 flex z-50">
-                {colorEntries.map(([key, color]) => (
-                  <ColorButton
-                    key={key}
-                    color={color}
-                    isActive={activeAccent === color}
-                    onSelect={() => selectAccent(color)}
-                  />
-                ))}
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );
@@ -204,21 +198,18 @@ const ColorButton = ({
   onSelect: () => void;
 }) => {
   return (
-    <Button
-      className={cn(
-        "p-0 h-8 w-8 bg-foreground/5 hover:text-white relative group transition-all duration-200",
-        isActive && "ring-2 ring-foreground/40"
-      )}
+    <button
+      type="button"
+      className="sb-swatch"
+      data-active={isActive ? "" : undefined}
       onClick={onSelect}
       aria-label={`Use ${color} accent`}
       aria-pressed={isActive}
     >
-      <div
-        className="w-4 h-4 rounded-full transition"
+      <span
+        className="h-4 w-4 rounded-full"
         style={{ backgroundColor: `rgb(${color})` }}
       />
-    </Button>
+    </button>
   );
 };
-
-// legacy handlers removed; ring/aria-pressed now indicate the active accent

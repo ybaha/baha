@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ThumbsUp, ThumbsDown, Loader, MessageCircle } from "lucide-react";
+import { ThumbsUpIcon, ThumbsDownIcon, SpinnerGapIcon, ChatCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { cn, getFormattedDate } from "@/lib/utils";
 import { LoginDialog } from "@/components/auth/login-dialog";
 import { Session } from "next-auth";
@@ -162,7 +162,7 @@ export function Comments({
           role="status"
           aria-live="polite"
         >
-          <Loader className="h-6 w-6 animate-spin" />
+          <SpinnerGapIcon className="h-6 w-6 animate-spin" />
         </div>
       </section>
     );
@@ -178,7 +178,7 @@ export function Comments({
       <div className="space-y-6">
         {initialLoadDone && comments.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 space-y-4 text-foreground/50">
-            <MessageCircle className="h-8 w-8" />
+            <ChatCircleIcon className="h-8 w-8" />
             <p className="text-center">
               No comments yet.{" "}
               {session
@@ -230,10 +230,11 @@ export function Comments({
                           aria-label="Upvote comment"
                           aria-pressed={userLiked}
                         >
-                          <ThumbsUp
+                          <ThumbsUpIcon
+                            weight={userLiked ? "fill" : "regular"}
                             className={cn(
                               "h-4 w-4",
-                              userLiked ? "fill-primary" : ""
+                              userLiked ? "text-primary" : ""
                             )}
                           />
                         </Button>
@@ -245,10 +246,11 @@ export function Comments({
                           aria-label="Downvote comment"
                           aria-pressed={userDisliked}
                         >
-                          <ThumbsDown
+                          <ThumbsDownIcon
+                            weight={userDisliked ? "fill" : "regular"}
                             className={cn(
                               "h-4 w-4",
-                              userDisliked ? "fill-red-500" : ""
+                              userDisliked ? "text-red-500" : ""
                             )}
                           />
                         </Button>
