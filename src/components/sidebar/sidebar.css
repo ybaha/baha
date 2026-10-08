@@ -355,12 +355,13 @@ html .sb-popover {
     overflow-y: auto;
     padding: 14px 12px 12px;
     border-radius: 18px;
-    background: var(--lt-sheen-l),
-      radial-gradient(
+    /* Accent wash sits above the sheen: white over colour reads as grey. */
+    background: radial-gradient(
         130% 55% at 50% -12%,
-        rgb(var(--color-primary) / 0.26),
+        rgb(var(--color-primary) / 0.34),
         transparent 70%
       ),
+      var(--lt-sheen-l),
       linear-gradient(
         180deg,
         rgb(var(--sb-panel-from)),
@@ -418,13 +419,18 @@ html .sb-popover {
 
 @media (min-width: 1024px) {
   .wr-pane {
+    /* Slightly cool grey in light: a pure neutral reads warm beside the page
+     * and the blue-leaning nav panel. */
+    --wr-bg: rgb(242 243 247);
+    border-right: 1px solid var(--lt-ring);
+    background: var(--wr-bg);
+  }
+  html[data-theme="dark"] .wr-pane {
     --wr-bg: color-mix(
       in srgb,
       rgb(var(--color-foreground)) 5%,
       rgb(var(--color-background))
     );
-    border-right: 1px solid var(--lt-ring);
-    background: var(--wr-bg);
   }
   .wr-header {
     position: sticky;
