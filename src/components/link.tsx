@@ -62,7 +62,7 @@ export default function Link(props: Props) {
       <NextLink
         {...linkProps}
         className={cn(
-          'underline decoration-primary hover:bg-primary hover:text-white hover:no-underline transition-all duration-100 px-0.5 -mx-0.5',
+          'underline decoration-primary lt-link px-0.5 -mx-0.5',
           props.className,
         )}
         onMouseEnter={() => isDesktop && image && setShowTooltip(true)}

@@ -31,7 +31,7 @@ const DrawerOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/40 dark:bg-black/80", className)}
+    className={cn("fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] dark:bg-black/70", className)}
     {...props}
   />
 ));
@@ -115,17 +115,17 @@ export function MobileDrawer() {
       open={isDrawerOpen}
       onOpenChange={(val) => setDrawerOpen(val)}
     >
-      <DrawerTrigger className="rounded-none p-3" title="Toggle drawer">
-        <div className="flex gap-2 justify-center items-center">
-          <ListIcon size={16} />
-          {/* <span className="font-serif italic ">Menu</span> */}
-        </div>
+      <DrawerTrigger className="sb-tool" title="Toggle drawer" aria-label="Open menu">
+        <ListIcon size={16} />
       </DrawerTrigger>
 
       <DrawerPortal>
-        <DrawerContent className="fixed bottom-0 left-0 right-0 mt-24 flex h-[80vh] flex-col rounded-t-lg bg-background/80">
-          <div className="flex-1 overflow-y-auto rounded-t-[10px] bg-background p-4 lt-surface">
-            <div className="mx-auto mb-8 h-1.5 w-12 flex-shrink-0 rounded-full bg-primary" />
+        <DrawerContent className="sb-sheet inset-x-2 bottom-2 mt-0 h-[84dvh] rounded-[24px] border-0 bg-transparent">
+          <div
+            className="mx-auto mb-1 mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-foreground/15"
+            aria-hidden
+          />
+          <div className="sb-drawer">
             <MenuContent setDrawerOpen={setDrawerOpen} />
           </div>
         </DrawerContent>

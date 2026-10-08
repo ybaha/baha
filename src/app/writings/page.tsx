@@ -118,19 +118,19 @@ const Page = () => {
 
   return (
     <>
-      <div className="lg:hidden">
+      <div className="flex flex-col gap-3 p-3 lg:hidden">
         {filteredWritings
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .map((writing) => (
             <Link
               key={writing.id}
               href={`/writings/${writing.slug}`}
-              className="flex flex-col gap-1 border-b border-foreground/20 px-4 py-3 text-sm hover:bg-primary/20"
+              className="lt-row flex flex-col gap-1.5 px-4 py-3.5 text-sm"
             >
               <span className="font-medium">{writing.title}</span>
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-foreground/50">{getDateFormat(writing.date)}</span>
+                  <span className="text-foreground/60">{getDateFormat(writing.date)}</span>
                   {writing.aiGenerated && (
                     <div className="text-primary flex items-center justify-center">
                       <span className="md:block hidden">Created with magic</span>

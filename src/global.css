@@ -49,8 +49,15 @@
     --color-input: 64 64 64;
   }
 
+  /* Selection only accepts a flat colour (no gradients), so use a translucent
+   * accent that keeps the text readable instead of solid accent + white. */
   ::selection {
-    @apply bg-primary text-white;
+    background: rgb(var(--color-primary) / 0.32);
+    color: inherit;
+  }
+
+  [data-theme='dark'] ::selection {
+    background: rgb(var(--color-primary) / 0.5);
   }
 
   html,

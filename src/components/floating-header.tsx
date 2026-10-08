@@ -56,22 +56,22 @@ const FloatingHeaderComponent = ({
   return (
     <header
       className={cn(
-        "sticky inset-x-0 top-0 z-10 mx-auto flex h-12 w-full shrink-0 items-center overflow-hidden border-b border-primary/10 text-sm font-medium lg:hidden backdrop-blur-md bg-zinc-100/90 dark:bg-zinc-900/90 dark:border-zinc-800"
+        "lt-bar sticky top-2 z-10 mx-3 mt-2 flex h-12 shrink-0 items-center rounded-2xl text-sm font-medium lg:hidden"
       )}
     >
-      <div className="flex h-full w-full items-center px-3">
+      <div className="flex h-full w-full items-center px-2">
         <div className="flex w-full items-center justify-between gap-2">
-          <div className="flex flex-1 items-center gap-1">
+          <div className="flex flex-1 items-center gap-2">
             {goBackLink ? (
               <Link
                 href={goBackLink}
                 title="Go back"
-                className="flex shrink-0 p-3"
+                className="sb-tool"
               >
                 <ArrowLeftIcon size={16} />
                 <span
                   className={cn(
-                    "font-serif italic absolute left-16 transition-all duration-200",
+                    "font-serif italic absolute left-14 whitespace-nowrap transition-all duration-200",
                     isScrolled
                       ? "opacity-0 -translate-y-6"
                       : "opacity-100 translate-y-0"
