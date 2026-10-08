@@ -20,7 +20,9 @@
     --color-primary: var(--pr) var(--pg) var(--pb);
     --color-secondary: 111 114 185;
 
-    --color-background: 255 255 255;
+    /* Light page: cold grey with just 1% accent, keeping the tint barely visible. */
+    --color-background: calc(244 * 0.99 + var(--pr) * 0.01)
+      calc(246 * 0.99 + var(--pg) * 0.01) calc(250 * 0.99 + var(--pb) * 0.01);
     --color-foreground: 0 0 0;
 
     --color-background-tertiary: 250 250 250;
