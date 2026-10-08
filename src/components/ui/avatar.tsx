@@ -12,7 +12,7 @@ const Avatar = React.forwardRef<
   <AvatarPrimitive.Root
     ref={ref}
     className={cn(
-      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
+      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full shadow-[0_1px_2px_var(--lt-drop-s)] after:pointer-events-none after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_0_0_1px_var(--lt-ring),inset_0_1px_0_var(--lt-rim)] after:content-['']",
       className
     )}
     {...props}
@@ -26,7 +26,9 @@ const AvatarImage = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AvatarPrimitive.Image
     ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
+    // The global `img` rule adds a border + rounded-xl; both show as white
+    // corners inside a circle, so reset them here.
+    className={cn("aspect-square h-full w-full rounded-full border-0 object-cover", className)}
     {...props}
   />
 ));
@@ -39,7 +41,7 @@ const AvatarFallback = React.forwardRef<
   <AvatarPrimitive.Fallback
     ref={ref}
     className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-muted",
+      "flex h-full w-full items-center justify-center rounded-full bg-foreground/10 text-sm font-medium uppercase text-foreground/70",
       className
     )}
     {...props}

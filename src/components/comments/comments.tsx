@@ -172,112 +172,113 @@ export function Comments({
     <section
       id="comments-section"
       aria-label="Comments"
-      className="space-y-8 mb-8"
+      className="mb-8 space-y-8"
     >
       <h2 className="text-2xl font-normal font-serif italic">Comments</h2>
-      <div className="space-y-6">
-        {initialLoadDone && comments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-4 text-foreground/50">
-            <ChatCircleIcon className="h-8 w-8" />
-            <p className="text-center">
-              No comments yet.{" "}
-              {session
-                ? "Be the first to comment!"
-                : "Sign in to be the first to comment!"}
-            </p>
-          </div>
-        ) : (
-          <>
-            {comments.map((comment) => {
-              const userLiked = comment.currentUserVote > 0;
-              const userDisliked = comment.currentUserVote < 0;
-              return (
-                <article
-                  key={comment.id}
-                  className={cn(
-                    "flex space-x-4",
-                    isSubmitting && "opacity-50 pointer-events-none"
-                  )}
-                >
-                  <Avatar>
-                    <AvatarImage src={comment.user.image ?? undefined} />
-                    <AvatarFallback>
-                      {comment.user.name?.[0] ?? "?"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-semibold text-sm sm:text-base">
-                        {comment.user.name}
-                      </span>
-                      <span className="text-gray-500">•</span>
-                      <time className="text-gray-500 text-xs sm:text-sm">
-                        {getFormattedDate(
-                          comment.createdAt.toISOString(),
-                          "comment"
-                        )}
-                      </time>
-                    </div>
-                    <p className="mt-1 text-sm md:text-base mb-0 sm:mb-2">
-                      {comment.text}
-                    </p>
-                    {session && (
-                      <div className="sm:mt-2 flex items-center space-x-2 -ml-3">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleVote(comment.id, 1)}
-                          aria-label="Upvote comment"
-                          aria-pressed={userLiked}
-                        >
-                          <ThumbsUpIcon
-                            weight={userLiked ? "fill" : "regular"}
-                            className={cn(
-                              "h-4 w-4",
-                              userLiked ? "text-primary" : ""
-                            )}
-                          />
-                        </Button>
-                        <span aria-live="polite">{comment.score}</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleVote(comment.id, -1)}
-                          aria-label="Downvote comment"
-                          aria-pressed={userDisliked}
-                        >
-                          <ThumbsDownIcon
-                            weight={userDisliked ? "fill" : "regular"}
-                            className={cn(
-                              "h-4 w-4",
-                              userDisliked ? "text-red-500" : ""
-                            )}
-                          />
-                        </Button>
-                      </div>
-                    )}
+
+      {initialLoadDone && comments.length === 0 ? (
+        <div className="lt-well flex flex-col items-center justify-center gap-3 px-6 py-10 text-foreground/50">
+          <ChatCircleIcon className="h-7 w-7" />
+          <p className="mb-0 text-center text-sm">
+            No comments yet.{" "}
+            {session
+              ? "Be the first to comment!"
+              : "Sign in to be the first to comment!"}
+          </p>
+        </div>
+      ) : (
+        <div>
+          {comments.map((comment) => {
+            const userLiked = comment.currentUserVote > 0;
+            const userDisliked = comment.currentUserVote < 0;
+            return (
+              <article
+                key={comment.id}
+                className={cn(
+                  "flex flex-row gap-3 border-t border-foreground/10 py-5 first:border-t-0 first:pt-0",
+                  isSubmitting && "pointer-events-none opacity-50"
+                )}
+              >
+                <Avatar className="h-9 w-9">
+                  <AvatarImage
+                    src={comment.user.image ?? undefined}
+                    alt=""
+                    referrerPolicy="no-referrer"
+                  />
+                  <AvatarFallback>
+                    {comment.user.name?.[0] ?? "?"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline gap-x-2">
+                    <span className="text-sm font-semibold">
+                      {comment.user.name}
+                    </span>
+                    <time className="text-xs text-foreground/45">
+                      {getFormattedDate(
+                        comment.createdAt.toISOString(),
+                        "comment"
+                      )}
+                    </time>
                   </div>
-                </article>
-              );
-            })}
-            {comments.length > 0 && hasMore && (
-              <div className="flex justify-center pt-4">
-                <Button
-                  variant="outline"
-                  onClick={handleLoadMore}
-                  disabled={isLoadingMore}
-                  className="min-w-[100px]"
-                  loading={isLoadingMore}
-                >
-                  Load More
-                </Button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+                  <p className="mb-0 mt-1 whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground/85 md:text-[15px]">
+                    {comment.text}
+                  </p>
+                  {session && (
+                    <div className="cm-votes mt-3" role="group" aria-label="Votes">
+                      <button
+                        type="button"
+                        className="cm-vote"
+                        data-active={userLiked ? "up" : undefined}
+                        onClick={() => handleVote(comment.id, 1)}
+                        aria-label="Upvote comment"
+                        aria-pressed={userLiked}
+                      >
+                        <ThumbsUpIcon
+                          size={14}
+                          weight={userLiked ? "fill" : "regular"}
+                        />
+                      </button>
+                      <span className="cm-score" aria-live="polite">
+                        {comment.score}
+                      </span>
+                      <button
+                        type="button"
+                        className="cm-vote"
+                        data-active={userDisliked ? "down" : undefined}
+                        onClick={() => handleVote(comment.id, -1)}
+                        aria-label="Downvote comment"
+                        aria-pressed={userDisliked}
+                      >
+                        <ThumbsDownIcon
+                          size={14}
+                          weight={userDisliked ? "fill" : "regular"}
+                        />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+          {comments.length > 0 && hasMore && (
+            <div className="flex justify-center border-t border-foreground/10 pt-5">
+              <Button
+                variant="outline"
+                onClick={handleLoadMore}
+                disabled={isLoadingMore}
+                className="min-w-[110px]"
+                loading={isLoadingMore}
+              >
+                Load more
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
       {session ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <label htmlFor="new-comment" className="sr-only">
             Write a comment
           </label>
@@ -290,35 +291,44 @@ export function Comments({
             maxLength={1000}
             disabled={isSubmitting}
           />
-          <div className="flex justify-between items-center">
-            <Button
-              type="submit"
-              variant="outline"
-              disabled={isSubmitting}
-              className="min-w-[120px]"
-              loading={isSubmitting}
-            >
-              Post Comment
-            </Button>
-            <p className="text-sm text-gray-500">{newComment.length} / 1000</p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="mb-0 text-xs tabular-nums text-foreground/45">
+              {newComment.length} / 1000
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => signOut()}
+              >
+                Sign out
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="min-w-[120px]"
+                loading={isSubmitting}
+                loaderColor="text-white"
+              >
+                Post comment
+              </Button>
+            </div>
           </div>
         </form>
       ) : (
-        <LoginDialog>
-          <Button variant="outline" className="text-sm text-foreground">
-            Sign in to comment
-          </Button>
-        </LoginDialog>
-      )}
-      {session && (
-        <div className="flex justify-end">
-          <Button
-            variant="ghost"
-            className="text-sm text-gray-500"
-            onClick={() => signOut()}
-          >
-            Sign out
-          </Button>
+        <div className="lt-well flex flex-col items-start justify-between gap-4 p-5 sm:flex-row sm:items-center">
+          <div>
+            <p className="mb-0 font-serif text-xl italic leading-tight">
+              Join the conversation
+            </p>
+            <p className="mb-0 mt-1 text-sm text-foreground/50">
+              Sign in to leave a comment and vote.
+            </p>
+          </div>
+          <LoginDialog>
+            <Button>Sign in to comment</Button>
+          </LoginDialog>
         </div>
       )}
     </section>

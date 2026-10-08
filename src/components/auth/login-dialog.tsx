@@ -35,11 +35,7 @@ export function LoginDialog({ children }: { children: React.ReactNode }) {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <div className="cursor-pointer text-primary hover:underline underline-offset-4">
-          {children}
-        </div>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Sign in</DialogTitle>
