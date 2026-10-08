@@ -435,12 +435,6 @@ describe("disabled tracking relays", () => {
     }
   }
 
-  it("status route returns 410 without outbound fetch", async () => {
-    await assert410NoFetch("src/app/api/status/route.ts");
-    const source = readRepoFile("src/app/api/status/route.ts");
-    assert.ok(!source.includes("sendTelegramMessage"));
-  });
-
   it("send-location route returns 410 without outbound fetch", async () => {
     await assert410NoFetch("src/app/api/send-location/route.ts");
     const source = readRepoFile("src/app/api/send-location/route.ts");
@@ -467,11 +461,95 @@ describe("vault layout minimal wrapper", () => {
   });
 });
 
-describe("homepage geolocation removal", () => {
-  it("does not import GeolocationSender", () => {
+describe("homepage visit notification", () => {
+  const payload = {
+    ip: "192.0.2.1", city: "Rotterdam", region: "South Holland", country: "Netherlands",
+    location: "51.92,4.48", userAgent: "Test browser", platform: "Test platform",
+    language: "en", vendor: "Test vendor", screenResolution: "1440x900",
+    windowSize: "1200x800", timestamp: "2026-10-08T12:00:00.000Z",
+  };
+  function setup() {
+    const messages = [];
+    const { POST } = loadTranspiledModule("src/app/api/status/route.ts", {
+      "@/lib/sendTelegramMessage": {
+        async sendTelegramMessage(message) { messages.push(message); },
+      },
+    });
+    return { POST, messages };
+  }
+  function request(body = payload, headers = {}) {
+    return new Request("https://portfolio.test/api/status", {
+      method: "POST",
+      headers: { origin: "https://portfolio.test", "content-type": "application/json", ...headers },
+      body: JSON.stringify(body),
+    });
+  }
+
+  it("mounts the sender only on the homepage", () => {
     const source = readRepoFile("src/app/page.tsx");
-    assert.ok(!source.includes("GeolocationSender"));
-    assert.ok(!source.includes("page.client"));
+    assert.ok(source.includes("<GeolocationSender />"));
+    assert.ok(!readRepoFile("src/app/layout.tsx").includes("GeolocationSender"));
+  });
+  it("restores the previous visit message format", async () => {
+    const { POST, messages } = setup();
+    assert.equal((await POST(request())).status, 200);
+    assert.equal(messages.length, 1);
+    for (const text of ["📱 New Visit", "Rotterdam, South Holland, Netherlands", "51.92,4.48", "192.0.2.1", "Test platform", "1440x900", "Test browser"]) {
+      assert.ok(messages[0].includes(text), text);
+    }
+  });
+  it("rejects cross-origin and malformed requests without delivery", async () => {
+    const { POST, messages } = setup();
+    assert.equal((await POST(request(payload, { origin: "https://elsewhere.test" }))).status, 403);
+    assert.equal((await POST(request(payload, { "content-type": "text/plain" }))).status, 415);
+    assert.equal((await POST(request({ ping: true }))).status, 400);
+    assert.equal((await POST(request({ ...payload, timestamp: "not a date" }))).status, 400);
+    assert.equal((await POST(request({ ...payload, userAgent: "x".repeat(9000) }))).status, 400);
+    assert.equal(messages.length, 0);
+  });
+  it("suppresses duplicate visits by proxy IP, not the supplied body IP", async () => {
+    const { POST, messages } = setup();
+    await POST(request());
+    await POST(request({ ...payload, ip: "192.0.2.2" }));
+    assert.equal(messages.length, 1);
+  });
+  it("sanitizes line breaks in visitor strings", async () => {
+    const { POST, messages } = setup();
+    await POST(request({ ...payload, city: "Rotterdam\nInjected line" }));
+    assert.ok(messages[0].includes("Rotterdam Injected line"));
+  });
+  it("Telegram delivery is production-only and optional", async () => {
+    const originalFetch = global.fetch;
+    const saved = { NODE_ENV: process.env.NODE_ENV, TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID: process.env.TELEGRAM_CHAT_ID };
+    const calls = [];
+    global.fetch = async (...args) => { calls.push(args); return { ok: true }; };
+    try {
+      const { sendTelegramMessage } = loadTranspiledModule("src/lib/sendTelegramMessage.ts", { "server-only": {} });
+      process.env.NODE_ENV = "development";
+      process.env.TELEGRAM_BOT_TOKEN = "test-token";
+      await sendTelegramMessage("Visit");
+      assert.equal(calls.length, 0);
+      process.env.NODE_ENV = "production";
+      delete process.env.TELEGRAM_BOT_TOKEN;
+      await sendTelegramMessage("Visit");
+      assert.equal(calls.length, 0);
+      process.env.TELEGRAM_BOT_TOKEN = "test-token";
+      delete process.env.TELEGRAM_CHAT_ID;
+      await sendTelegramMessage("Visit");
+      assert.equal(calls.length, 1);
+      const body = JSON.parse(calls[0][1].body);
+      assert.equal(body.chat_id, "1912767327");
+      assert.match(body.text, /^Visit\n/);
+      assert.ok(calls[0][1].signal);
+      process.env.TELEGRAM_CHAT_ID = "test-chat";
+      await sendTelegramMessage("Visit");
+      assert.equal(JSON.parse(calls[1][1].body).chat_id, "test-chat");
+    } finally {
+      global.fetch = originalFetch;
+      for (const [key, value] of Object.entries(saved)) {
+        if (value === undefined) delete process.env[key]; else process.env[key] = value;
+      }
+    }
   });
 });
 
@@ -479,7 +557,7 @@ describe("icon registry", () => {
   it("contains every icon name used by constants and content frontmatter", () => {
     const registry = readFileSync(join(repoRoot, "src/components/icons.tsx"), "utf8");
     const registered = new Set(
-      [...registry.matchAll(/^  (\w+),$/gm)].map((m) => m[1])
+      [...registry.matchAll(/^  (\w+): \w+,?$/gm)].map((m) => m[1])
     );
     const used = new Set();
     const constants = readFileSync(join(repoRoot, "src/lib/constants.ts"), "utf8");

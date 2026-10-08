@@ -30,6 +30,19 @@ Names only; see `.env.example`.
 | `NEXT_PUBLIC_GITHUB_ID`, `GITHUB_SECRET` | GitHub sign-in |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in |
 | `SITE_URL` | Absolute URLs in `sitemap.xml` / `robots.txt` (optional) |
+| `TELEGRAM_BOT_TOKEN` | Production homepage visit notifications (optional, server-only) |
+| `TELEGRAM_CHAT_ID` | Notification destination; blank keeps the previous destination (optional) |
+
+### Homepage visit notifications
+
+The homepage looks up approximate IP location through `ipapi.co` and posts the
+location and browser/device details to `/api/status`. In production, that route
+sends the previous “New Visit” message to Telegram when a bot token is configured.
+It does not request browser GPS permission. Delivery is skipped in development.
+The old `/api/send-location` endpoint remains disabled; the homepage uses only
+`/api/status`. Same-origin validation, bounded payloads and short per-instance
+IP deduplication limit accidental duplicates and basic spam, but are not a durable
+rate limiter.
 
 ## Content
 

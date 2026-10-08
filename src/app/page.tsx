@@ -5,6 +5,7 @@ import { WritingList } from '@/components/writing-list';
 import { PageTitle } from '@/components/page-title';
 import Link from '@/components/link';
 import { ArrowRightIcon } from '@phosphor-icons/react/dist/ssr';
+import { GeolocationSender } from './page.client';
 import { PROJECTS } from '@/lib/constants';
 import { getAllWritings } from '@/queries/writings';
 
@@ -22,6 +23,7 @@ export default async function Home() {
 
   return (
     <>
+      <GeolocationSender />
       <div className="content-wrapper text-foreground">
         <div className="content ">
           <PageTitle title="Home" className="lg:hidden" />
