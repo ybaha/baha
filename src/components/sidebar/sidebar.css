@@ -66,7 +66,7 @@ html {
     0 18px 40px -14px var(--lt-drop-l);
 
   --sb-text: rgb(var(--color-foreground) / 0.8);
-  --sb-text-strong: rgb(var(--color-foreground) / 1);
+  --sb-text-strong: rgb(var(--color-foreground) / 0.9);
   --sb-text-dim: rgb(var(--color-foreground) / 0.55);
   --sb-hover: rgb(var(--color-foreground) / 0.055);
 }
@@ -85,6 +85,7 @@ html[data-theme="dark"] {
 
   --sb-text: rgb(var(--color-foreground) / 0.84);
   --sb-text-dim: rgb(var(--color-foreground) / 0.58);
+  --sb-text-strong: rgb(var(--color-foreground) / 1);
   --sb-hover: rgb(var(--color-foreground) / 0.07);
 }
 
@@ -189,7 +190,7 @@ html[data-theme="dark"] {
 .sb-item:focus-visible {
   color: var(--sb-text-strong);
 }
-.sb-item:hover {
+.sb-item:hover:not([data-active]) {
   background: var(--sb-hover);
 }
 .sb-item:focus-visible {
@@ -482,8 +483,15 @@ html .sb-popover {
   border-radius: 12px;
   transition: background-color 0.15s, box-shadow 0.15s;
 }
-.wr-item:hover {
+.wr-item:hover:not([data-active]) {
   background: var(--sb-hover);
+}
+/* Light mode: a grey hover over the accent wash goes muddy, so lift the row
+ * with a soft white instead. */
+html:not([data-theme="dark"]) .sb-item:hover:not([data-active]),
+html:not([data-theme="dark"]) .wr-item:hover:not([data-active]) {
+  background: rgb(255 255 255 / 0.62);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.04), 0 1px 2px rgb(0 0 0 / 0.06);
 }
 .wr-item-title {
   color: rgb(var(--color-foreground) / 0.9);
