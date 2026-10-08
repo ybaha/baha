@@ -11,15 +11,26 @@
 /* ───────────────────────── tokens ───────────────────────── */
 
 html {
-  --sb-serif: var(--font-cormorant), "Cormorant Garamond", ui-serif, Georgia, serif;
+  /* Same stack as Tailwind's `font-serif` (what the rest of the site uses). */
+  --sb-serif: "Cormorant Garamond", ui-serif, Georgia, Cambria, "Times New Roman",
+    Times, serif;
   --sb-spring: linear(
     0, 0.2 5%, 0.62 12%, 0.97 20%, 1.1 28%, 1.07 36%, 0.99 48%, 0.995 60%, 1
   );
 
   /* Surfaces */
   --sb-canvas: 236 236 238;
-  --sb-panel-from: 249 249 250;
-  --sb-panel-to: 241 241 243;
+  --sb-panel-from: 254 254 255;
+  --sb-panel-to: 246 247 250;
+  /* Accent wash strength at the top of the panel; colour on white needs more
+   * than light on black to read as "coming from the top". */
+  --sb-wash: 0.5;
+  /* Accent used for text on light tints: deepened so it keeps contrast. */
+  --sb-accent-text: color-mix(
+    in srgb,
+    rgb(var(--color-primary)) 74%,
+    rgb(24 24 48)
+  );
 
   /*
    * One light source, straight down, for the whole page. Every raised surface
@@ -55,6 +66,8 @@ html[data-theme="dark"] {
   --sb-canvas: 9 9 11;
   --sb-panel-from: 24 24 27;
   --sb-panel-to: 15 15 16;
+  --sb-wash: 0.34;
+  --sb-accent-text: rgb(var(--color-primary));
 
   --lt-rim: rgb(255 255 255 / 0.16);
   --lt-sheen: rgb(255 255 255 / 0.11);
@@ -138,7 +151,7 @@ html[data-theme="dark"] {
 }
 .sb-section-label {
   padding: 0 10px;
-  color: rgb(var(--color-primary) / 0.8);
+  color: var(--sb-accent-text);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -179,7 +192,7 @@ html[data-theme="dark"] {
   border-radius: 12px;
 }
 .sb-item[data-active] {
-  color: rgb(var(--color-primary));
+  color: var(--sb-accent-text);
 }
 .sb-label {
   min-width: 0;
@@ -357,9 +370,11 @@ html .sb-popover {
     border-radius: 18px;
     /* Accent wash sits above the sheen: white over colour reads as grey. */
     background: radial-gradient(
-        130% 55% at 50% -12%,
-        rgb(var(--color-primary) / 0.34),
-        transparent 70%
+        130% 64% at 50% -12%,
+        rgb(var(--color-primary) / var(--sb-wash)) 0%,
+        rgb(var(--color-primary) / calc(var(--sb-wash) * 0.45)) 36%,
+        rgb(var(--color-primary) / calc(var(--sb-wash) * 0.14)) 62%,
+        transparent 88%
       ),
       var(--lt-sheen-l),
       linear-gradient(

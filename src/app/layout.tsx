@@ -33,7 +33,6 @@ const getTitle = (path: string) => {
 const cormorant = Cormorant({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin', 'latin-ext'],
-  variable: '--font-cormorant',
 });
 
 export default async function RootLayout({ children }: Props) {
@@ -46,7 +45,7 @@ export default async function RootLayout({ children }: Props) {
   return (
     <html
       lang="en"
-      className={`${GeistSans.className} ${GeistMono.variable} ${cormorant.className} ${cormorant.variable}`}
+      className={`${GeistSans.className} ${GeistMono.variable} ${cormorant.className}`}
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>
