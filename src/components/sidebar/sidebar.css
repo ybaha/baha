@@ -116,10 +116,6 @@ html[data-theme="dark"] {
   border-radius: 12px;
   color: inherit;
   text-decoration: none;
-  transition: background-color 0.15s;
-}
-.sb-profile:hover {
-  background: var(--sb-hover);
 }
 .sb-profile-text {
   display: flex;
@@ -134,7 +130,7 @@ html[data-theme="dark"] {
 .sb-role {
   color: var(--sb-text);
   font-family: var(--sb-serif);
-  font-size: 15px;
+  font-size: 14px;
   font-style: italic;
 }
 
