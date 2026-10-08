@@ -35,6 +35,10 @@ const cormorant = Cormorant({
   subsets: ['latin', 'latin-ext'],
 });
 
+// Applies the saved accent before first paint so the default colour never
+// flashes. Mirrors storage key + format used in menu-content.tsx.
+const ACCENT_SCRIPT = `try{var a=localStorage.getItem('baha-accent');if(a&&/^\\d{1,3} \\d{1,3} \\d{1,3}$/.test(a)){var p=a.split(' '),s=document.documentElement.style;s.setProperty('--pr',p[0]);s.setProperty('--pg',p[1]);s.setProperty('--pb',p[2])}}catch(e){}`;
+
 export default async function RootLayout({ children }: Props) {
   const writings = getAllWritingsMeta();
   const logs = getAllLogsMeta();
@@ -48,6 +52,9 @@ export default async function RootLayout({ children }: Props) {
       className={`${GeistSans.className} ${GeistMono.variable} ${cormorant.className}`}
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: ACCENT_SCRIPT }} />
+      </head>
       <body suppressHydrationWarning>
         {theme?.value && (
           <style>

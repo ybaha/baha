@@ -12,7 +12,12 @@
     --sh-comment: #a0ada0;
     --sh-jsxliterals: #6266d1;
 
-    --color-primary: 255 115 179;
+    /* Accent is stored as numeric channels so it can be animated (see
+     * @property below); --color-primary is what the rest of the app reads. */
+    --pr: 255;
+    --pg: 115;
+    --pb: 179;
+    --color-primary: var(--pr) var(--pg) var(--pb);
     --color-secondary: 111 114 185;
 
     --color-background: 255 255 255;
@@ -35,7 +40,9 @@
     --sh-comment: #a0ada0;
     --sh-jsxliterals: #6266d1;
 
-    --color-primary: 153 153 0;
+    --pr: 153;
+    --pg: 153;
+    --pb: 0;
     --color-secondary: 111 114 185;
 
     --color-background: 0 0 0;
@@ -356,5 +363,47 @@
   pre {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+}
+
+/*
+ * Accent channels are registered numbers so the accent can animate: on load
+ * the page fades from neutral grey into the saved accent (set before first
+ * paint by the head script in layout.tsx, so the default never flashes), and
+ * picking a new accent tweens instead of snapping.
+ */
+@property --pr {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 255;
+}
+@property --pg {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 115;
+}
+@property --pb {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 179;
+}
+
+@keyframes accent-in {
+  from {
+    --pr: 128;
+    --pg: 128;
+    --pb: 136;
+  }
+}
+
+html {
+  animation: accent-in 0.4s ease-in;
+  transition: --pr 0.45s ease, --pg 0.45s ease, --pb 0.45s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    animation: none;
+    transition: none;
   }
 }

@@ -25,12 +25,6 @@ html {
   /* Accent wash strength at the top of the panel; colour on white needs more
    * than light on black to read as "coming from the top". */
   --sb-wash: 0.5;
-  /* Accent used for text on light tints: deepened so it keeps contrast. */
-  --sb-accent-text: color-mix(
-    in srgb,
-    rgb(var(--color-primary)) 74%,
-    rgb(24 24 48)
-  );
 
   /*
    * One light source, straight down, for the whole page. Every raised surface
@@ -82,7 +76,6 @@ html[data-theme="dark"] {
   --sb-panel-from: 24 24 27;
   --sb-panel-to: 15 15 16;
   --sb-wash: 0.34;
-  --sb-accent-text: rgb(var(--color-primary));
 
   --lt-rim: rgb(255 255 255 / 0.16);
   --lt-sheen: rgb(255 255 255 / 0.11);
@@ -162,7 +155,7 @@ html[data-theme="dark"] {
 }
 .sb-section-label {
   padding: 0 10px;
-  color: var(--sb-accent-text);
+  color: var(--sb-text-dim);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -203,7 +196,7 @@ html[data-theme="dark"] {
   border-radius: 12px;
 }
 .sb-item[data-active] {
-  color: var(--sb-accent-text);
+  color: var(--sb-text-strong);
 }
 .sb-label {
   min-width: 0;
@@ -708,4 +701,20 @@ html .sb-popover {
     0 6px 14px -6px rgb(var(--color-primary) / 0.6);
   color: #fff;
   text-decoration: none;
+}
+
+/* App chrome uses the native arrow, not the hand: rows, buttons and cards read
+ * as UI controls. Inline links in prose keep the pointer. */
+.sb-item,
+.sb-profile,
+.sb-tool,
+.sb-swatch,
+.wr-item,
+.lt-row,
+.lt-btn,
+.lt-btn-accent,
+.lt-btn-ghost,
+.cm-vote,
+.sb-search {
+  cursor: default;
 }

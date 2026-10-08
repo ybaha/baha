@@ -72,7 +72,7 @@ export default function Link(props: Props) {
       {showTooltip && image && (
         <div
           ref={tooltipRef}
-          className="fixed pointer-events-none z-50 rounded-md overflow-hidden shadow-lg bg-background-tertiary border dark:border-gray-700 border-gray-200"
+          className="lt-card pointer-events-none fixed z-50 overflow-hidden rounded-2xl p-1.5 animate-in fade-in zoom-in-95 duration-150"
           style={{
             left: `${position.x}px`,
             top: `${position.y}px`,
@@ -82,12 +82,11 @@ export default function Link(props: Props) {
           <img
             src={image}
             alt="Preview"
-            className="max-w-[300px] max-h-[200px] object-contain bg-background-tertiary p-1 border-0 rounded-[8px]"
+            className="max-h-[200px] max-w-[300px] rounded-xl border-0 object-contain shadow-[0_0_0_1px_var(--lt-ring)]"
           />
-          {/* link  */}
-          {image && showLinkOnTooltip && (
-            <div className="flex items-center px-2 pb-1">
-              <div className="text-sm text-blue-700">{linkProps.href}</div>
+          {showLinkOnTooltip && (
+            <div className="max-w-[300px] truncate px-1.5 pb-0.5 pt-2 font-mono text-[11px] text-foreground/55">
+              {String(linkProps.href)}
             </div>
           )}
         </div>

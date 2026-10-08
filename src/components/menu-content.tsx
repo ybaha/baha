@@ -29,7 +29,10 @@ function readStoredAccent(): string | null {
 function applyAccent(color: string) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
-  root.style.setProperty("--color-primary", color);
+  const [r, g, b] = color.split(" ");
+  root.style.setProperty("--pr", r);
+  root.style.setProperty("--pg", g);
+  root.style.setProperty("--pb", b);
   try {
     window.localStorage.setItem(ACCENT_STORAGE_KEY, color);
   } catch {
