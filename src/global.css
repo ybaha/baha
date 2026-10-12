@@ -47,7 +47,7 @@
     --pb: 0;
     --color-secondary: 111 114 185;
 
-    --color-background: 0 0 0;
+    --color-background: 18 18 20;
     --color-foreground: 255 255 255;
 
     --color-background-tertiary: 24 24 24;
@@ -370,9 +370,9 @@
 
 /*
  * Accent channels are registered numbers so the accent can animate: on load
- * the page fades from neutral grey into the saved accent (set before first
- * paint by the head script in layout.tsx, so the default never flashes), and
- * picking a new accent tweens instead of snapping.
+ * the page fades from neutral grey into the saved accent (restored by
+ * menu-content.tsx during hydration), and picking a new accent tweens
+ * instead of snapping.
  */
 @property --pr {
   syntax: '<number>';

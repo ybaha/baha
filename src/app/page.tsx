@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 
 import { LoadingSpinner } from '@/components/loading-spinner';
-import { LiveOperations } from '@/components/live-operations/live-operations';
 import { WritingList } from '@/components/writing-list';
 import { PageTitle } from '@/components/page-title';
 import Link from '@/components/link';
@@ -52,8 +51,6 @@ export default async function Home() {
           <p>
             Built <Link href="/projects">{projectCount} projects</Link> this year. More on the way.
           </p>
-
-          <LiveOperations />
 
           <Suspense fallback={<LoadingSpinner />}>
             <h2 className="mb-4 mt-8 text-foreground">Writings</h2>

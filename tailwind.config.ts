@@ -38,6 +38,7 @@ module.exports = {
     extend: {
       animation: {
         reveal: 'reveal 0.7s ease-in-out',
+        'quote-pop': 'quote-pop 500ms cubic-bezier(0.34,1.45,0.64,1) both',
         'node-ripple': 'node-ripple 700ms ease-in-out both',
         'node-flash': 'node-flash 700ms ease-in-out both',
         'node-dot-flash': 'node-dot-flash 700ms ease-in-out both',
@@ -52,6 +53,10 @@ module.exports = {
         serif: ['Cormorant Garamond', ...defaultTheme.fontFamily.serif],
       },
       keyframes: {
+        'quote-pop': {
+          from: { transform: 'translateY(8px)', opacity: '0', filter: 'blur(2px)' },
+          to: { transform: 'translateY(0)', opacity: '1', filter: 'blur(0)' },
+        },
         'node-ripple': {
           '0%': { opacity: '0', transform: 'scale(0.5)' },
           '20%': { opacity: '0.6' },

@@ -93,7 +93,7 @@ function MachineInfo({ service, open, id }: {
       className={cn('grid transition-[grid-template-rows,opacity,transform] duration-500 [transition-timing-function:var(--sb-spring)] motion-reduce:transition-none', open ? 'grid-rows-[1fr] scale-100 opacity-100' : 'grid-rows-[0fr] scale-[0.98] opacity-0')}>
       <div className="min-h-0 overflow-hidden">
         <div className="lt-well mb-3 mt-1 rounded-xl p-3.5">
-          <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-medium text-foreground/90">{service.role}</span><span className="text-[9px] text-foreground/45">Example configuration</span></div>
+          <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-medium text-foreground/90">{service.role}</span><span className="text-[9px] text-foreground/45">Configuration</span></div>
           <p className="mb-3 mt-2 text-[11px] leading-relaxed text-foreground/60">{service.description}</p>
           <dl className="flex flex-wrap gap-x-5 gap-y-2 text-[10px]">
             <div><dt className="text-foreground/45">Location</dt><dd className="mt-0.5">{service.location}</dd></div>
@@ -167,30 +167,30 @@ function CompactNodes({ event }: { event: MockEvent }) {
 
 function ClusterCard({ snapshot }: { snapshot: MockSnapshot }) {
   const [expanded, setExpanded] = useState<ServiceId | null>(null);
-  const columns = 'grid grid-cols-[minmax(0,1fr)_36px_34px_28px] items-center gap-2 sm:grid-cols-[minmax(0,1fr)_40px_36px_36px_28px]';
+  const columns = 'grid grid-cols-[minmax(0,1fr)_46px_44px_28px] items-center gap-2 sm:grid-cols-[minmax(0,1fr)_54px_52px_52px_28px] sm:gap-3';
   return (
-    <div className="px-3 pt-4 font-[family-name:var(--font-geist-mono)] leading-tight sm:px-4">
+    <div className="px-3 pt-5 font-[family-name:var(--font-geist-mono)] leading-tight sm:px-5">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[13px] font-medium text-foreground/85">karardex.cluster</span>
-        <span className="inline-flex items-center gap-1 text-[9px] text-foreground/60"><CheckIcon size={11} aria-hidden="true" /> 3/3 ready</span>
+        <span className="text-[16px] font-medium text-foreground/85">karardex.cluster</span>
+        <span className="inline-flex items-center gap-1 text-[11px] text-foreground/60"><CheckIcon size={13} aria-hidden="true" /> 3/3 ready</span>
       </div>
-      <p className="mb-0 mt-1 text-[9px] text-foreground/45">homelab / simulated workload mesh</p>
-      <div className="my-3 flex items-center gap-4 border-b border-[var(--lt-ring)] pb-3 text-[10px] tabular-nums">
+      <p className="mb-0 mt-1 text-[11px] text-foreground/45">homelab / workload mesh</p>
+      <div className="my-4 flex items-center gap-5 border-b border-[var(--lt-ring)] pb-4 text-[12px] tabular-nums">
         <span><span className="text-foreground/45">rate </span>{3 + snapshot.sequence % 5}<span className="text-foreground/45"> req/s</span></span>
         <span><span className="text-foreground/45">p95 </span>{snapshot.latency}<span className="text-foreground/45"> ms</span></span>
       </div>
-      <div className={cn(columns, 'pb-1 text-[8px] tracking-wider text-foreground/45')} aria-hidden="true">
+      <div className={cn(columns, 'pb-1 text-[10px] tracking-wider text-foreground/45')} aria-hidden="true">
         <span>NODE / WORKLOAD</span><span>STATE</span><span className="text-right">CPU</span><span className="hidden text-right sm:block">MEM</span><span />
       </div>
       <div role="group" aria-label="Cluster nodes">
         {SERVICES.map((service) => (
           <div className="group border-b border-[var(--lt-ring)] last:border-b-0" key={service.id} role="group" aria-label={`${service.nodeId}, ${service.name}`} data-event-source={snapshot.events[0].service === service.id || undefined}>
-            <div className={cn(columns, 'py-2.5 text-[10px] tabular-nums')}>
+            <div className={cn(columns, 'py-3 text-[12px] tabular-nums')}>
               <div className="flex min-w-0 items-center gap-2.5 text-foreground/60">
                 <MachinePulse serviceId={service.id} event={snapshot.events[0]} />
-                <div className="flex min-w-0 flex-col gap-1"><span className="text-foreground/85">{service.nodeId}</span><span className="truncate text-[8px] text-foreground/45">{service.workload} · {service.name}</span></div>
+                <div className="flex min-w-0 flex-col gap-1"><span className="text-foreground/85">{service.nodeId}</span><span className="truncate text-[10px] text-foreground/45">{service.workload} · {service.name}</span></div>
               </div>
-              <span className="text-[9px] text-foreground/60">Ready</span>
+              <span className="text-[11px] text-foreground/60">Ready</span>
               <span className="text-right" aria-label={`CPU ${service.cpu + snapshot.sequence % 7} percent`}>{service.cpu + snapshot.sequence % 7}%</span>
               <span className="hidden text-right text-foreground/60 sm:block" aria-label={`Memory ${service.memory + snapshot.sequence % 3} percent`}>{service.memory + snapshot.sequence % 3}%</span>
               <MachineInfoTrigger service={service} open={expanded === service.id} panelId={`cluster-info-${service.id}`} onClick={() => setExpanded(expanded === service.id ? null : service.id)} />
@@ -219,21 +219,21 @@ function EventAsideRow({ event, compact, technical = false, outgoing = false }: 
     <div aria-hidden={outgoing || undefined} data-event-phase={outgoing ? 'outgoing' : 'incoming'}
       className={cn('col-start-1 row-start-1 flex min-w-0 items-center gap-2.5', outgoing ? 'pointer-events-none opacity-0 motion-safe:animate-event-slide-out' : 'motion-safe:animate-event-slide-in')}>
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className={cn('truncate text-[9px]', compact ? 'text-foreground/60' : 'text-foreground/45')}>{eventLabel} <span className="mx-1 opacity-50">/</span> {technical ? `${service.nodeId} · ${service.workload}` : service.name}</span>
-        <span className={cn('text-foreground/75', compact ? 'truncate font-[family-name:var(--font-geist-mono)] text-[10px]' : 'text-[11px]')}>{compact ? event.detail : event.message}</span>
+        <span className={cn('truncate', technical ? 'text-[11px]' : 'text-[9px]', compact ? 'text-foreground/60' : 'text-foreground/45')}>{eventLabel} <span className="mx-1 opacity-50">/</span> {technical ? `${service.nodeId} · ${service.workload}` : service.name}</span>
+        <span className={cn('text-foreground/75', technical ? 'truncate font-[family-name:var(--font-geist-mono)] text-[12px]' : compact ? 'truncate font-[family-name:var(--font-geist-mono)] text-[10px]' : 'text-[11px]')}>{compact ? event.detail : event.message}</span>
       </div>
-      <div className="flex shrink-0 flex-col items-end gap-1"><span className={mono}>{compact ? event.result : event.time}</span><span className="text-[9px] text-foreground/45">{event.duration}ms</span></div>
+      <div className="flex shrink-0 flex-col items-end gap-1"><span className={cn(mono, technical && 'text-[11px]')}>{compact ? event.result : event.time}</span><span className={cn('text-foreground/45', technical ? 'text-[11px]' : 'text-[9px]')}>{event.duration}ms</span></div>
     </div>
   );
 }
 
 function LatestEventAside({ event, previousEvent, compact = false, technical = false }: { event: MockEvent; previousEvent?: MockEvent; compact?: boolean; technical?: boolean }) {
   return (
-    <aside aria-label="Latest simulated event" className={cn('border-t', compact
+    <aside aria-label="Latest event" className={cn('border-t', compact
       ? 'border-[var(--lt-ring)] px-3 py-2.5 leading-tight [background:var(--lt-sheen-s),linear-gradient(180deg,rgb(var(--sb-panel-from)),rgb(var(--sb-panel-to)))] [box-shadow:inset_0_1px_0_var(--lt-rim)]'
       : 'border-[var(--lt-ring)] bg-foreground/[0.025] px-4 py-3.5 sm:px-[22px]')}>
       <div className="flex items-center gap-2.5">
-        <span className={cn(eventIcon, 'relative overflow-hidden', compact && 'h-[22px] w-[22px]')}>
+        <span className={cn(eventIcon, 'relative overflow-hidden', compact && 'h-[22px] w-[22px]', technical && 'h-7 w-7 [&_svg]:h-4 [&_svg]:w-4')}>
           {previousEvent && <EventAsideIcon key={previousEvent.id} event={previousEvent} outgoing />}
           <EventAsideIcon key={event.id} event={event} />
         </span>
@@ -287,7 +287,7 @@ function DispatchCard({ snapshot }: { snapshot: MockSnapshot }) {
         <span className={orb}><TerminalWindowIcon size={24} weight="duotone" aria-hidden="true" /></span>
         <div><h3 className={heading}>The latest dispatch.</h3><p className={subtitle}>A little less dashboard. A little more backstage.</p></div>
       </div>
-      <div className="flex gap-1 px-4 pb-3.5 sm:px-[22px]" role="group" aria-label="Filter simulated events">
+      <div className="flex gap-1 px-4 pb-3.5 sm:px-[22px]" role="group" aria-label="Filter events">
         {([['all', 'Everything'], ['request', 'Requests'], ['job', 'Jobs'], ['deploy', 'Releases']] as const).map(([id, text]) => (
           <button type="button" key={id} aria-pressed={filter === id} onClick={() => { setFilter(id); setExpanded(null); }} className={cn('rounded-lg px-2.5 py-1.5 text-[10px] transition-colors motion-reduce:transition-none', focusRing, filter === id ? selectedSurface : 'text-foreground/55 hover:bg-foreground/5 hover:text-foreground/90')}>{text}</button>
         ))}
@@ -308,7 +308,7 @@ function DispatchCard({ snapshot }: { snapshot: MockSnapshot }) {
               {expanded === event.id && <div className="flex flex-col gap-[5px] break-words pb-3 pl-[50px] pr-3.5 text-[9px] text-foreground/55"><span className={mono}>{event.detail}</span><span>Synthetic event · no request bodies or personal data</span></div>}
             </div>
           ))}
-          {events.length === 0 && <div className="grid min-h-[270px] place-items-center p-5 text-[11px] text-foreground/55">Waiting for a simulated {filter === 'deploy' ? 'release' : filter} event…</div>}
+          {events.length === 0 && <div className="grid min-h-[270px] place-items-center p-5 text-[11px] text-foreground/55">Waiting for a {filter === 'deploy' ? 'release' : filter} event…</div>}
         </div>
       </div>
       <p className="mb-0 px-4 py-3 text-[9px] text-foreground/45 sm:px-[22px]">Click an event to inspect</p>
@@ -328,7 +328,7 @@ function ConstellationCard() {
         <div className="relative mx-[16.6667%] h-10 before:absolute before:left-0 before:right-0 before:top-5 before:h-px before:bg-primary/30 after:absolute after:left-1/2 after:top-0 after:h-5 after:w-px after:bg-primary/30" aria-hidden="true">
           <span className="absolute bottom-0 left-0 top-5 w-px bg-primary/30" /><span className="absolute bottom-0 left-1/2 top-5 w-px bg-primary/30" /><span className="absolute bottom-0 right-0 top-5 w-px bg-primary/30" />
         </div>
-        <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5" role="group" aria-label="Select a simulated machine">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5" role="group" aria-label="Select a machine">
           {SERVICES.map((node) => {
             const Icon = node.id === 'laptop' ? LaptopIcon : HardDrivesIcon;
             return (
@@ -350,7 +350,7 @@ function ConstellationCard() {
   );
 }
 
-export function LiveOperations() {
+export function LiveOperations({ embedded = false }: { embedded?: boolean }) {
   const [variant, setVariant] = useState<Variant>('cluster');
   const [snapshot, setSnapshot] = useState(INITIAL_SNAPSHOT);
   const [hovered, setHovered] = useState(false);
@@ -375,10 +375,9 @@ export function LiveOperations() {
   const direction = VARIANTS.find((item) => item.id === variant)!;
 
   return (
-    <section className="mb-10 mt-9 font-sans text-[13px] text-foreground/80" aria-labelledby="operations-title">
-      <div className="flex items-center justify-between gap-3">
+    <section className={cn("font-sans text-[13px] text-foreground/80", !embedded && "mb-10 mt-9")} aria-label="Cluster operations">
+      {!embedded && <><div className="flex items-center justify-between gap-3">
         <div><span className="text-[10px] font-medium tracking-widest text-foreground/55">BEHIND THE SCENES</span><h2 id="operations-title" className="mt-1 font-serif text-[32px] font-medium italic leading-none tracking-tight text-foreground/90">Live operations</h2></div>
-        <span className="rounded-md border border-[var(--lt-ring)] px-2 py-1 text-[10px] text-foreground/55">Mock preview</span>
       </div>
       <p className="mb-[18px] mt-2.5 text-[13px] leading-relaxed text-foreground/55">{direction.description}</p>
       <div className="mb-3.5 flex items-center justify-between gap-3">
@@ -386,8 +385,8 @@ export function LiveOperations() {
           {VARIANTS.map((item, index) => <button type="button" className={cn('rounded-lg px-2 py-1.5 text-[11px] transition-colors motion-reduce:transition-none sm:px-2.5 sm:text-xs', index === VARIANTS.length - 1 && 'col-span-2', focusRing, variant === item.id ? selectedSurface : 'text-foreground/55 hover:bg-foreground/5 hover:text-foreground/90')} aria-pressed={variant === item.id} onClick={() => setVariant(item.id)} key={item.id}><span className="mr-1.5 hidden text-[9px] opacity-60 xs:inline">0{index + 1}</span>{item.label}</button>)}
         </div>
         <span className="hidden font-serif text-base italic text-foreground/55 min-[1200px]:inline">Five takes, one ecosystem</span>
-      </div>
-      <div className={cn('overflow-hidden rounded-2xl [background:var(--sb-panel-bg)] [box-shadow:var(--lt-e2)]', variant === 'compact' && 'max-w-[480px]', variant === 'cluster' && 'max-w-[520px]')}
+      </div></>}
+      <div className={cn('overflow-hidden rounded-2xl [background:var(--sb-panel-bg)] [box-shadow:var(--lt-e2)]', variant === 'compact' && 'max-w-[480px]', variant === 'cluster' && (embedded ? 'w-full max-w-none' : 'max-w-[520px]'))}
         onPointerEnter={(event) => { if (event.pointerType === 'mouse') setHovered(true); }}
         onPointerLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}

@@ -1,5 +1,4 @@
 import { Icons } from "./icons";
-import Balancer from "react-wrap-balancer";
 import type { ReactNode } from "react";
 
 interface Props {
@@ -15,7 +14,7 @@ export const JourneyCard = (props: Props) => {
 
   return (
     <div className="word-break-word flex flex-col group ">
-      <Balancer>
+      <span className="inline-block text-balance">
         <span className="font-semibold">
           {title}
           {date && (
@@ -28,7 +27,7 @@ export const JourneyCard = (props: Props) => {
             </span>
           )}
         </span>
-      </Balancer>
+      </span>
 
       {description}
     </div>

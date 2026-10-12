@@ -2,7 +2,6 @@
 
 import { memo, useEffect, useState } from "react";
 import Link from "next/link";
-import Balancer from "react-wrap-balancer";
 import { ArrowLeftIcon } from "@phosphor-icons/react/dist/ssr";
 import { MobileDrawer } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
@@ -96,11 +95,9 @@ const FloatingHeaderComponent = ({
               </span>
             )}
             {title && (
-              <Balancer ratio={0.35}>
-                <span className="line-clamp-2 font-bold text-foreground">
-                  {title}
-                </span>
-              </Balancer>
+              <span className="line-clamp-2 text-balance font-bold text-foreground">
+                {title}
+              </span>
             )}
           </div>
           <div className="flex min-w-[50px] justify-end items-center gap-2">

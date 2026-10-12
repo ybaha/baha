@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { CommandIcon } from "@phosphor-icons/react/dist/ssr";
 import { CommandMenu } from "./command-menu";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
 const ACCENT_STORAGE_KEY = "baha-accent";
 
@@ -48,7 +48,7 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
   const [activeAccent, setActiveAccent] = useState<string | null>(null);
   const colorEntries = Object.entries(COLORS);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setMounted(true);
     const stored = readStoredAccent();
     if (stored) {

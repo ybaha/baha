@@ -1,5 +1,4 @@
 import type { ReactElement } from "react";
-import Balancer from "react-wrap-balancer";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -12,13 +11,9 @@ type Props = {
 export const PageTitle = ({ title, subtitle, className, ...rest }: Props) => {
   return (
     <div className={cn("mb-6", className)}>
-      <Balancer
-        as="h1"
-        {...rest}
-        className="text-foreground font-serif italic font-normal"
-      >
+      <h1 {...rest} className="text-balance text-foreground font-serif italic font-normal">
         {title}
-      </Balancer>
+      </h1>
       {subtitle}
     </div>
   );
