@@ -38,6 +38,13 @@ module.exports = {
     extend: {
       animation: {
         reveal: 'reveal 0.7s ease-in-out',
+        'node-ripple': 'node-ripple 700ms ease-in-out both',
+        'node-flash': 'node-flash 700ms ease-in-out both',
+        'node-dot-flash': 'node-dot-flash 700ms ease-in-out both',
+        'event-slide-in': 'event-slide-in 280ms cubic-bezier(0.22,1,0.36,1) both',
+        'event-slide-out': 'event-slide-out 280ms cubic-bezier(0.22,1,0.36,1) both',
+        'event-icon-in': 'event-icon-in 220ms cubic-bezier(0.22,1,0.36,1) both',
+        'event-icon-out': 'event-icon-out 160ms ease-in both',
       },
       fontFamily: {
         sans: ['Geist', ...defaultTheme.fontFamily.sans],
@@ -45,6 +52,35 @@ module.exports = {
         serif: ['Cormorant Garamond', ...defaultTheme.fontFamily.serif],
       },
       keyframes: {
+        'node-ripple': {
+          '0%': { opacity: '0', transform: 'scale(0.5)' },
+          '20%': { opacity: '0.6' },
+          '100%': { opacity: '0', transform: 'scale(1)' },
+        },
+        'node-flash': {
+          '0%, 100%': { color: 'rgb(var(--color-foreground) / 0.6)' },
+          '20%': { color: 'rgb(var(--color-primary))' },
+        },
+        'node-dot-flash': {
+          '0%, 100%': { backgroundColor: 'rgb(var(--color-foreground) / 0.25)' },
+          '20%': { backgroundColor: 'rgb(var(--color-primary))' },
+        },
+        'event-slide-in': {
+          from: { opacity: '0.65', transform: 'translateY(100%)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'event-slide-out': {
+          from: { opacity: '1', transform: 'translateY(0)' },
+          to: { opacity: '0', transform: 'translateY(-100%)' },
+        },
+        'event-icon-in': {
+          from: { opacity: '0', transform: 'scale(0.55)' },
+          to: { opacity: '1', transform: 'scale(1)' },
+        },
+        'event-icon-out': {
+          from: { opacity: '1', transform: 'scale(1)' },
+          to: { opacity: '0', transform: 'scale(0.55)' },
+        },
         reveal: {
           '0%': {
             opacity: 0,
