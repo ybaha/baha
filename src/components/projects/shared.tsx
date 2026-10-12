@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { StarIcon } from '@phosphor-icons/react/dist/ssr';
 import { cn } from '@/lib/utils';
 import type { OriginWebsite, Project } from './data';
+import { FIRST_WEBSITE } from './data';
 import { OriginQuote } from './origin-quote';
 import { ExternalLink } from '@/components/ui/external-link';
 import { SectionLabel } from '@/components/ui/section-label';
@@ -49,8 +50,8 @@ export function ProjectLink({ project, children, className }: { project: Pick<Pr
   return <ExternalLink href={project.href} className={className} title={`Visit ${project.name}`} aria-label={`Visit ${project.name}`}>{children ?? `Visit ${project.name}`}</ExternalLink>;
 }
 
-export function OriginStory({ story, compact = false, className }: { story?: OriginWebsite; compact?: boolean; className?: string }) {
-  const source = story ?? { id: 'first-website', title: '', description: '', quote: '', archiveHref: '', archiveCaptureLabel: '', previewSrc: undefined, collaborators: '' } as OriginWebsite;
+export function OriginStory({ story = FIRST_WEBSITE, compact = false, className }: { story?: OriginWebsite; compact?: boolean; className?: string }) {
+  const source = story;
   return (
     <section aria-labelledby="origin-story-title" className={cn(projectPaperSurface, 'space-y-3 p-4 @xl:p-5', className)}>
       <header>
