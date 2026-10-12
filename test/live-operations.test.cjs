@@ -16,10 +16,10 @@ describe('live operations mock telemetry', () => {
     assert.deepEqual(createMockEvent(3), INITIAL_SNAPSHOT.events[0]);
     assert.equal(createMockEvent(3).time, '14:32:09');
     assert.equal(INITIAL_SNAPSHOT.traffic.length, 24);
-    assert.equal(new Set(SERVICES.map((service) => service.id)).size, 3);
-    assert.equal(new Set(SERVICES.map((service) => service.nodeId)).size, 3);
+    assert.equal(new Set(SERVICES.map((service) => service.id)).size, 2);
+    assert.equal(new Set(SERVICES.map((service) => service.nodeId)).size, 2);
     for (const service of SERVICES) {
-      assert.match(service.nodeId, /^(eu|edge|home)-01$/);
+      assert.match(service.nodeId, /^(home|vps)$/);
       assert.ok(service.workload.length > 0);
       assert.ok(service.memory > 0 && service.memory < 100);
     }

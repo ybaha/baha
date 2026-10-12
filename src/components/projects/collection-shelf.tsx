@@ -40,12 +40,18 @@ export function CollectionShelf({ shelfId, title, description, projects, classNa
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [resetAfterClose, setResetAfterClose] = useState(false);
+  function changeOpen(next: boolean) {
+    setOpen(next);
+    setResetAfterClose(!next);
+    if (!next) { setHovered(false); setFocused(false); }
+  }
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={changeOpen}>
       <DialogTrigger asChild>
         <button id={`${shelfId}-folder-toggle`} type="button" aria-label={`Open ${title} collection`} className={cn('group flex w-full min-w-0 items-center gap-3 p-3 text-left transition-colors hover:border-foreground/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary', projectPaperSurface, className)}
-          onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}>
-          <FolderArtwork projects={projects} active={hovered || focused} open={open} />
+          onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onPointerMove={event => { if (event.pointerType === 'mouse') setResetAfterClose(false); }} onFocus={() => setFocused(true)} onBlur={() => { setFocused(false); setResetAfterClose(false); }}>
+          <FolderArtwork projects={projects} active={!resetAfterClose && (hovered || focused)} open={open} />
           <span className="min-w-0 flex-1">
             <span className="block font-serif text-[24px] font-normal italic leading-none text-foreground">{title}</span>
             <span className="mt-2 block text-[11px] leading-relaxed text-foreground/50">{projects.length} {projects[0]?.kind === 'mobile' ? 'apps' : 'projects'}</span>

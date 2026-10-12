@@ -1,8 +1,5 @@
 import { PageTitle } from '@/components/page-title';
-import { ProjectsPlayground } from '@/components/projects/projects-playground';
 import EditorialProjectsLayout from '@/components/projects/versions/editorial';
-import ProjectIndexLayout from '@/components/projects/versions/project-index';
-import WorkspaceProjectsLayout from '@/components/projects/versions/workspace';
 import { LiveOperations } from '@/components/live-operations/live-operations';
 
 export default function Page() {
@@ -10,7 +7,7 @@ export default function Page() {
     <div className="content-wrapper">
       <div className="@container content pb-8 font-sans [&_p]:mb-0">
         <PageTitle title="Projects" subtitle={<p className="mb-0 mt-2 text-[13px] leading-relaxed text-foreground/55">Products I’m proud of, apps I’ve shipped, and where it all started.</p>} />
-        <ProjectsPlayground v1={<EditorialProjectsLayout />} v2={<WorkspaceProjectsLayout />} v3={<ProjectIndexLayout />} />
+        <EditorialProjectsLayout />
         <section className="mt-8 border-t border-[var(--lt-ring)] pt-6" aria-labelledby="projects-cluster-title"><h2 id="projects-cluster-title" className="mb-4 font-serif text-[26px] font-normal italic text-foreground">Behind the scenes</h2><LiveOperations embedded /></section>
       </div>
     </div>

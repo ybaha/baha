@@ -39,8 +39,8 @@ export const PRODUCT_DETAILS: Record<string, ProductDetail> = {
     snapshot: '2026-10-12T13:58:28Z',
     metricNote: 'Read-only production snapshot. Active tool users are distinct authenticated users who submitted or completed a tool job in the trailing 24 hours; this is not site traffic or all publishing activity. There were 1,383 job submissions overall and 28 in that window. Account totals may include test/review accounts.',
     hosting: {
-      title: 'A split web and worker deployment.',
-      description: 'The Next.js frontend is deployed on Vercel, while the API and PostgreSQL-backed workers run on a VPS. Long-running creator jobs are handled separately from the web request.',
+      title: 'PM2 services and durable workers.',
+      description: 'The API and PostgreSQL-backed publishing and video-tool workers run on the VPS under PM2. Long-running creator jobs are handled separately from the web request.',
       flow: ['Next.js web', 'Hono API', 'PostgreSQL queues'],
     },
   },

@@ -28,7 +28,7 @@ const VARIANTS = [
   { id: 'pulse', label: 'Pulse', description: 'A small window into the systems I build and run.' },
   { id: 'dispatch', label: 'Dispatch', description: 'Requests, releases, and the little things happening behind the scenes.' },
   { id: 'constellation', label: 'Constellation', description: 'Different machines. One connected little ecosystem.' },
-  { id: 'compact', label: 'Compact', description: 'Three nodes, one little glimpse of what’s happening.' },
+  { id: 'compact', label: 'Compact', description: 'Two hosts, one little glimpse of what’s happening.' },
   { id: 'cluster', label: 'Cluster', description: 'Node readiness, workload placement, and the latest operation.' },
 ] as const;
 type Variant = (typeof VARIANTS)[number]['id'];
@@ -167,20 +167,20 @@ function CompactNodes({ event }: { event: MockEvent }) {
 
 function ClusterCard({ snapshot }: { snapshot: MockSnapshot }) {
   const [expanded, setExpanded] = useState<ServiceId | null>(null);
-  const columns = 'grid grid-cols-[minmax(0,1fr)_46px_44px_28px] items-center gap-2 sm:grid-cols-[minmax(0,1fr)_54px_52px_52px_28px] sm:gap-3';
+  const columns = 'grid grid-cols-[minmax(0,1fr)_36px_36px_28px] items-center gap-2 sm:grid-cols-[minmax(0,1fr)_54px_52px_52px_28px] sm:gap-3';
   return (
     <div className="px-3 pt-5 font-[family-name:var(--font-geist-mono)] leading-tight sm:px-5">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[16px] font-medium text-foreground/85">karardex.cluster</span>
-        <span className="inline-flex items-center gap-1 text-[11px] text-foreground/60"><CheckIcon size={13} aria-hidden="true" /> 3/3 ready</span>
+        <span className="text-[16px] font-medium text-foreground/85">Home + VPS</span>
+        <span className="inline-flex items-center gap-1 text-[11px] text-foreground/60"><CheckIcon size={13} aria-hidden="true" /> {SERVICES.length}/{SERVICES.length} online</span>
       </div>
-      <p className="mb-0 mt-1 text-[11px] text-foreground/45">homelab / workload mesh</p>
+      <p className="mb-0 mt-1 text-[11px] text-foreground/45">Karardex at home · application services on VPS</p>
       <div className="my-4 flex items-center gap-5 border-b border-[var(--lt-ring)] pb-4 text-[12px] tabular-nums">
         <span><span className="text-foreground/45">rate </span>{3 + snapshot.sequence % 5}<span className="text-foreground/45"> req/s</span></span>
         <span><span className="text-foreground/45">p95 </span>{snapshot.latency}<span className="text-foreground/45"> ms</span></span>
       </div>
       <div className={cn(columns, 'pb-1 text-[10px] tracking-wider text-foreground/45')} aria-hidden="true">
-        <span>NODE / WORKLOAD</span><span>STATE</span><span className="text-right">CPU</span><span className="hidden text-right sm:block">MEM</span><span />
+        <span>HOST / WORKLOAD</span><span>STATE</span><span className="text-right">CPU</span><span className="hidden text-right sm:block">MEM</span><span />
       </div>
       <div role="group" aria-label="Cluster nodes">
         {SERVICES.map((service) => (
@@ -188,7 +188,7 @@ function ClusterCard({ snapshot }: { snapshot: MockSnapshot }) {
             <div className={cn(columns, 'py-3 text-[12px] tabular-nums')}>
               <div className="flex min-w-0 items-center gap-2.5 text-foreground/60">
                 <MachinePulse serviceId={service.id} event={snapshot.events[0]} />
-                <div className="flex min-w-0 flex-col gap-1"><span className="text-foreground/85">{service.nodeId}</span><span className="truncate text-[10px] text-foreground/45">{service.workload} · {service.name}</span></div>
+                <div className="flex min-w-0 flex-col gap-1"><span className="text-foreground/85">{service.name}</span><span className="truncate text-[10px] text-foreground/45">{service.workload}</span></div>
               </div>
               <span className="text-[11px] text-foreground/60">Ready</span>
               <span className="text-right" aria-label={`CPU ${service.cpu + snapshot.sequence % 7} percent`}>{service.cpu + snapshot.sequence % 7}%</span>
@@ -252,7 +252,7 @@ function PulseCard({ snapshot }: { snapshot: MockSnapshot }) {
       <div className="px-4 pt-6 sm:px-[22px]">
         <div className="flex items-center gap-3">
           <span className={orb}><PulseIcon size={24} weight="duotone" aria-hidden="true" /></span>
-          <div><h3 className={heading}>All systems, in rhythm.</h3><p className={subtitle}>Three machines. Always something happening.</p></div>
+          <div><h3 className={heading}>All systems, in rhythm.</h3><p className={subtitle}>Two hosts. Always something happening.</p></div>
         </div>
         <div className="grid grid-cols-2 gap-4 pb-[22px] pt-[26px] min-[601px]:grid-cols-[1fr_1fr_1.2fr] min-[601px]:gap-5">
           <div className="flex min-w-0 flex-col">
@@ -317,7 +317,7 @@ function DispatchCard({ snapshot }: { snapshot: MockSnapshot }) {
 }
 
 function ConstellationCard() {
-  const [selected, setSelected] = useState<ServiceId>('eu-vps');
+  const [selected, setSelected] = useState<ServiceId>('laptop');
   const [infoFor, setInfoFor] = useState<ServiceId | null>(null);
   const service = SERVICES.find((item) => item.id === (infoFor ?? selected))!;
   return (

@@ -25,7 +25,7 @@ export default function EditorialProjectsLayout() {
         <ProductPreview project={postmixr} />
       </article>
 
-      <section aria-labelledby="collections-title"><SectionLabel title="The rest of the collection" titleId="collections-title" description="Mobile releases and earlier experiments, kept in their own folders." /><div className="grid gap-3 @xl:grid-cols-2"><CollectionShelf shelfId="mobile-apps" title="Mobile apps" description="Viralty, Clean, and the other apps I’ve shipped." projects={MOBILE_PROJECTS} /><CollectionShelf shelfId="earlier-work" title="Earlier work" description="Websites, side projects, and things I learned along the way." projects={EARLIER_PROJECTS} /></div></section>
+      <section className={`${projectPaperSurface} p-4 @xl:p-5`} aria-labelledby="collections-title"><SectionLabel title="The rest of the collection" titleId="collections-title" description="Mobile releases and earlier experiments, kept in their own folders." /><div className="grid gap-3 @xl:grid-cols-2"><CollectionShelf shelfId="mobile-apps" title="Mobile apps" description="Viralty, Clean, and the other apps I’ve shipped." projects={MOBILE_PROJECTS} /><CollectionShelf shelfId="earlier-work" title="Earlier work" description="Websites, side projects, and things I learned along the way." projects={EARLIER_PROJECTS} /></div></section>
       <OriginStory />
     </div>
   );
