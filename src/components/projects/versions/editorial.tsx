@@ -1,6 +1,7 @@
 import { CollectionShelf } from '../collection-shelf';
 import { EARLIER_PROJECTS, FEATURED_PROJECTS, MOBILE_PROJECTS } from '../data';
-import { OriginStory, ProductPreview, ProjectLink, ProjectMark, SectionLabel, projectSurface, projectPaperSurface } from '../shared';
+import { OriginStory, ProductPreview, ProjectLink, ProjectMark, projectSurface, projectPaperSurface } from '../shared';
+import { SectionLabel } from '@/components/ui/section-label';
 import { ProductDetails, ProductProof } from '../product-details';
 
 export default function EditorialProjectsLayout() {

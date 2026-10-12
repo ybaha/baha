@@ -2,10 +2,12 @@ import Image, { type StaticImageData } from 'next/image';
 import karardexScreenshot from '../../../public/projects/karardex-chat-verified.webp';
 import postmixrScreenshot from '../../../public/projects/postmixr-preview.webp';
 import type { ReactNode } from 'react';
-import { ArrowUpRightIcon, StarIcon } from '@phosphor-icons/react/dist/ssr';
+import { StarIcon } from '@phosphor-icons/react/dist/ssr';
 import { cn } from '@/lib/utils';
-import { FIRST_WEBSITE, type OriginWebsite, type Project } from './data';
+import type { OriginWebsite, Project } from './data';
 import { OriginQuote } from './origin-quote';
+import { ExternalLink } from '@/components/ui/external-link';
+import { SectionLabel } from '@/components/ui/section-label';
 
 export const projectSurface = 'rounded-2xl [background:var(--sb-panel-bg)] [box-shadow:var(--lt-e2)]';
 export const projectPaperSurface = 'rounded-2xl border border-[var(--lt-ring)] [background:var(--lt-sheen-s),linear-gradient(180deg,rgb(var(--sb-panel-from)),rgb(var(--sb-panel-to)))] [box-shadow:var(--lt-e1)]';
@@ -43,19 +45,12 @@ export function ProductPreview({ project, className, priority }: {
   );
 }
 
-export function ExternalLink({ href, children, className }: { href: string; children: ReactNode; className?: string }) {
-  return <a href={href} target="_blank" rel="noopener noreferrer" className={cn('inline-flex items-center gap-1.5 rounded-sm text-foreground/75 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary', className)}>{children}<ArrowUpRightIcon size={14} aria-hidden="true" className="shrink-0" /></a>;
-}
-
 export function ProjectLink({ project, children, className }: { project: Pick<Project, 'name' | 'href'>; children?: ReactNode; className?: string }) {
-  return <ExternalLink href={project.href} className={className}>{children ?? `Visit ${project.name}`}</ExternalLink>;
+  return <ExternalLink href={project.href} className={className} title={`Visit ${project.name}`} aria-label={`Visit ${project.name}`}>{children ?? `Visit ${project.name}`}</ExternalLink>;
 }
 
-export function SectionLabel({ title, description, className, titleId }: { title: string; description?: string; className?: string; titleId?: string }) {
-  return <header className={cn('mb-4', className)}><h2 id={titleId} className="font-serif text-[26px] font-normal italic leading-tight text-foreground">{title}</h2>{description && <p className="mb-0 mt-1 text-[13px] leading-relaxed text-foreground/55">{description}</p>}</header>;
-}
-
-export function OriginStory({ story = FIRST_WEBSITE, compact = false, className }: { story?: OriginWebsite; compact?: boolean; className?: string }) {
+export function OriginStory({ story, compact = false, className }: { story?: OriginWebsite; compact?: boolean; className?: string }) {
+  const source = story ?? { id: 'first-website', title: '', description: '', quote: '', archiveHref: '', archiveCaptureLabel: '', previewSrc: undefined, collaborators: '' } as OriginWebsite;
   return (
     <section aria-labelledby="origin-story-title" className={cn(projectPaperSurface, 'space-y-3 p-4 @xl:p-5', className)}>
       <header>
@@ -65,10 +60,10 @@ export function OriginStory({ story = FIRST_WEBSITE, compact = false, className 
       <div data-origin-card className={cn('grid items-start gap-5 @xl:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]', compact && 'gap-4')}>
         <div className="min-w-0">
           <p className="mb-0 max-w-xl text-[13px] leading-relaxed text-foreground/65">Mert and I made it with a no-code builder to help our teacher. We posted homework and used the chat page to talk with friends after school.</p>
-          <OriginQuote original={story.quote} />
-          <ExternalLink href={story.archiveHref} className="mt-3 text-[12px]">Sevgi Koleji 4-B · April 2011</ExternalLink>
+          <OriginQuote original={source.quote} />
+          <ExternalLink href={source.archiveHref} className="mt-3 text-[12px]">Sevgi Koleji 4-B · April 2011</ExternalLink>
         </div>
-        {story.previewSrc && <a href={story.previewSrc} target="_blank" rel="noopener noreferrer" aria-label="View the full-size classroom website screenshot" title="Open full-size screenshot" className="block w-full overflow-hidden rounded-xl"><Image src={story.previewSrc} alt="Our original Sevgi Koleji 4-B class website" width={1728} height={1201} unoptimized className="block h-auto w-full rounded-none border-0" /></a>}
+        {source.previewSrc && <a href={source.previewSrc} target="_blank" rel="noopener noreferrer" aria-label="View the full-size classroom website screenshot" title="Open full-size screenshot" className="block w-full overflow-hidden rounded-xl"><Image src={source.previewSrc} alt="Our original Sevgi Koleji 4-B class website" width={1728} height={1201} unoptimized className="block h-auto w-full rounded-none border-0" /></a>}
       </div>
     </section>
   );
