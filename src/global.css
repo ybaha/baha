@@ -214,6 +214,10 @@
     @apply h-full max-h-dynamic-screen min-h-dynamic-screen overflow-y-auto overflow-x-hidden;
   }
 
+  #scroll-area {
+    scrollbar-gutter: stable;
+  }
+
   pre code {
     counter-reset: sh-line-number;
   }
