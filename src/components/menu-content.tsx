@@ -152,7 +152,9 @@ export const MenuContent = ({ setDrawerOpen }: Props) => {
           )}
         </button>
 
-        <Popover modal open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+        {/* Inside the mobile drawer the popover must not be modal: two modal layers
+            unmounting together leave `pointer-events: none` stuck on <body>. */}
+        <Popover modal={!setDrawerOpen} open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <button
               type="button"
