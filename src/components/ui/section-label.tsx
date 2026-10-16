@@ -10,8 +10,17 @@ export type SectionLabelProps = {
 };
 
 export function SectionLabel({ title, description, titleId, className, titleClassName }: SectionLabelProps) {
-  return <header className={cn('mb-4', className)}>
-    <h2 id={titleId} className={cn('font-serif text-[26px] font-normal italic leading-tight text-foreground', titleClassName)}>{title}</h2>
-    {description && <p className="mb-0 mt-1 text-[13px] leading-relaxed text-foreground/55">{description}</p>}
-  </header>;
+  return (
+    <header className={cn('mb-4', className)}>
+      <h2
+        id={titleId}
+        className={cn('font-sans text-section-title font-semibold tracking-tight text-content', titleClassName)}
+      >
+        {title}
+      </h2>
+      {description && (
+        <p className="mb-0 mt-1 text-body text-subtle">{description}</p>
+      )}
+    </header>
+  );
 }

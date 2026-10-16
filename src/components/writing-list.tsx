@@ -59,8 +59,8 @@ export const WritingList = ({ writings }: Props) => {
   );
 
   return (
-    <div className="text-sm">
-      <div className="grid grid-cols-12 py-2 font-medium text-foreground">
+    <div className="text-body">
+      <div className="grid grid-cols-12 py-2 text-caption font-medium text-content">
         <span className="col-span-1 hidden text-left md:grid">Year</span>
         <span className="col-span-12 md:col-span-10">
           <span className="grid grid-cols-5 items-center md:grid-cols-12">
@@ -96,11 +96,11 @@ export const WritingList = ({ writings }: Props) => {
                 return (
                   <li
                     key={item.id}
-                    className="group/list-item grid grid-cols-12 p-0 group-hover/list-wrapper:text-foreground/40"
+                    className="group/list-item grid grid-cols-12 p-0 text-subtle"
                   >
                     <span
                       className={cn(
-                        'pointer-events-none col-span-1 hidden items-center transition-colors group-hover/list:text-foreground md:grid',
+                        'pointer-events-none col-span-1 hidden items-center text-caption md:grid',
                         itemIndex === 0 && 'border-t border-foreground/20',
                       )}
                     >
@@ -108,11 +108,11 @@ export const WritingList = ({ writings }: Props) => {
                     </span>
                     <Link
                       href={`/writings/${item.slug}`}
-                      className="col-span-12 group-hover/list-item:text-foreground md:col-span-10"
+                      className="col-span-12 text-content md:col-span-10"
                       prefetch={true}
                     >
                       <span className="grid grid-cols-5 items-center gap-2 border-t border-foreground/20 py-4 md:grid-cols-12">
-                        <span className="col-span-1 md:col-span-2 text-left">
+                        <span className="col-span-1 text-left text-caption text-subtle md:col-span-2">
                           <time dateTime={date} className="hidden md:block">
                             {dateWithDayAndMonth}
                           </time>
@@ -121,7 +121,7 @@ export const WritingList = ({ writings }: Props) => {
                           </time>
                         </span>
                         <span className="col-span-3 line-clamp-4 md:col-span-5">{title}</span>
-                        <span className="col-span-1 md:col-span-5 text-right">
+                        <span className="col-span-1 text-right text-caption text-subtle md:col-span-5">
                           {isLoading ? (
                             <div className="flex items-center justify-end">
                               <SpinnerGapIcon className="h-4 w-4 animate-spin" />

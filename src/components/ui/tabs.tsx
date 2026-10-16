@@ -55,9 +55,9 @@ export function Tabs({ items, value, defaultValue, onValueChange, label = 'Views
       <div role="tablist" aria-label={label} className={cn('inline-flex max-w-full items-center gap-0.5 rounded-xl bg-foreground/[0.035] p-1 [box-shadow:var(--lt-e1)]', listClassName)}>
         {items.map((item, index) => (
           <button key={item.value} type="button" role="tab" id={`${id}-tab-${index}`} ref={node => { refs.current[index] = node; }} disabled={item.disabled} aria-selected={item === selected} aria-controls={selected ? `${id}-panel` : undefined} tabIndex={item === selected ? 0 : -1} onClick={() => select(item.value)} onKeyDown={event => handleKey(event, index)}
-            className={cn('inline-flex items-center rounded-lg px-2.5 py-1.5 text-left text-[11px] font-medium leading-tight transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-40', item === selected
-              ? 'text-foreground/90 [background:var(--lt-sheen-s),linear-gradient(180deg,rgb(var(--color-primary)/0.16),rgb(var(--color-primary)/0.06))] [box-shadow:var(--lt-e1)]'
-              : 'text-foreground/50 hover:text-foreground/80')}>
+            className={cn('inline-flex items-center rounded-lg px-2.5 py-1.5 text-left text-caption font-medium leading-tight transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-40', item === selected
+              ? 'text-content [background:var(--lt-sheen-s),linear-gradient(180deg,rgb(var(--color-primary)/0.16),rgb(var(--color-primary)/0.06))] [box-shadow:var(--lt-e1)]'
+              : 'text-subtle hover:text-content')}>
             {item.label}
           </button>
         ))}

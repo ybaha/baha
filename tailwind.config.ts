@@ -21,6 +21,9 @@ module.exports = {
       primary: 'rgb(var(--color-primary) / <alpha-value>)',
       secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
       foreground: 'rgb(var(--color-foreground) / <alpha-value>)',
+      content: 'rgb(var(--color-content) / <alpha-value>)',
+      subtle: 'rgb(var(--color-subtle) / <alpha-value>)',
+      'muted-foreground': 'rgb(var(--color-muted-foreground) / <alpha-value>)',
       background: 'rgb(var(--color-background) / <alpha-value>)',
       'background-tertiary': 'rgb(var(--color-background-tertiary) / <alpha-value>)',
       border: 'rgb(var(--color-border) / <alpha-value>)',
@@ -48,9 +51,19 @@ module.exports = {
         'event-icon-out': 'event-icon-out 160ms ease-in both',
       },
       fontFamily: {
-        sans: ['Geist', ...defaultTheme.fontFamily.sans],
-        mono: ['Jetbrains Mono', ...defaultTheme.fontFamily.mono],
-        serif: ['Cormorant Garamond', ...defaultTheme.fontFamily.serif],
+        sans: ['var(--font-geist-sans)', ...defaultTheme.fontFamily.sans],
+        mono: ['var(--font-geist-mono)', ...defaultTheme.fontFamily.mono],
+        serif: ['var(--font-cormorant)', ...defaultTheme.fontFamily.serif],
+      },
+      fontSize: {
+        'page-title': ['30px', { lineHeight: '1.2' }],
+        'page-title-lg': ['36px', { lineHeight: '1.2' }],
+        'section-title': ['20px', { lineHeight: '1.4' }],
+        'card-title': ['16px', { lineHeight: '1.5' }],
+        body: ['14px', { lineHeight: '1.75' }],
+        caption: ['12px', { lineHeight: '1.5' }],
+        stat: ['30px', { lineHeight: '1.2' }],
+        quote: ['18px', { lineHeight: '1.5' }],
       },
       keyframes: {
         'quote-pop': {

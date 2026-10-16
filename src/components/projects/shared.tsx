@@ -55,14 +55,14 @@ export function OriginStory({ story = FIRST_WEBSITE, compact = false, className 
   return (
     <section aria-labelledby="origin-story-title" className={cn(projectPaperSurface, 'space-y-3 p-4 @xl:p-5', className)}>
       <header>
-        <h2 id="origin-story-title" className="font-serif text-[26px] font-normal italic leading-tight text-foreground">Where it started · archived 2011</h2>
-        <p className="mb-0 mt-1 text-[13px] text-foreground/55">A website for our fourth-grade class.</p>
+        <h2 id="origin-story-title" className="font-sans text-section-title font-semibold leading-tight tracking-tight text-content">Where it started · archived 2011</h2>
+        <p className="mb-0 mt-1 text-body text-subtle">A website for our fourth-grade class.</p>
       </header>
       <div data-origin-card className={cn('grid items-start gap-5 @xl:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]', compact && 'gap-4')}>
         <div className="min-w-0">
-          <p className="mb-0 max-w-xl text-[13px] leading-relaxed text-foreground/65">Mert and I made it with a no-code builder to help our teacher. We posted homework and used the chat page to talk with friends after school.</p>
+          <p className="mb-0 max-w-xl text-body text-subtle">Mert and I made it with a no-code builder to help our teacher. We posted homework and used the chat page to talk with friends after school.</p>
           <OriginQuote original={source.quote} />
-          <ExternalLink href={source.archiveHref} className="mt-3 text-[12px]">Sevgi Koleji 4-B · April 2011</ExternalLink>
+          <ExternalLink href={source.archiveHref} className="mt-3 text-caption">Sevgi Koleji 4-B · April 2011</ExternalLink>
         </div>
         {source.previewSrc && <a href={source.previewSrc} target="_blank" rel="noopener noreferrer" aria-label="View the full-size classroom website screenshot" title="Open full-size screenshot" className="block w-full overflow-hidden rounded-xl"><Image src={source.previewSrc} alt="Our original Sevgi Koleji 4-B class website" width={1728} height={1201} unoptimized className="block h-auto w-full rounded-none border-0" /></a>}
       </div>

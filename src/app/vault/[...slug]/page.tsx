@@ -65,7 +65,7 @@ export default async function SnippetPage(p: Props) {
           <PageTitle
             title={snippet.title}
             subtitle={
-              <time dateTime={snippet.date} className="text-foreground/50">
+              <time dateTime={snippet.date} className="text-caption text-subtle">
                 {snippet.date}
               </time>
             }

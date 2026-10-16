@@ -30,13 +30,13 @@ export const SidebarLink = ({ writing }: Props) => {
         )}
       </div>
       <div className="flex items-center gap-2">
-        <span className="whitespace-nowrap text-xs text-foreground/60">
+        <span className="whitespace-nowrap text-caption text-subtle">
           {date && getFormattedDate(date, "short")}
         </span>
         {tags && tags.length > 0 ? (
           <Tags tags={tags} />
         ) : (
-          <span className="invisible p-1 text-xs text-foreground/50">
+          <span className="invisible p-1 text-caption text-subtle">
             No tags
           </span>
         )}

@@ -82,7 +82,7 @@ export default async function Writing(props: Props) {
                   </Link>
                 )} */}
                 <Tags tags={writing.tags ?? []} isStatic />
-                <time dateTime={writing.date} className="text-foreground/50 text-xs md:text-sm">
+                <time dateTime={writing.date} className="text-caption text-subtle md:text-body">
                   {getFormattedDate(writing.date, 'long')}
                 </time>
               </section>

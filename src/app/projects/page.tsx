@@ -6,9 +6,21 @@ export default function Page() {
   return (
     <div className="content-wrapper">
       <div className="@container content pb-8 font-sans [&_p]:mb-0">
-        <PageTitle title="Projects" subtitle={<p className="mb-0 mt-2 text-[13px] leading-relaxed text-foreground/55">Products I’m proud of, apps I’ve shipped, and where it all started.</p>} />
+        <PageTitle
+          title="Projects"
+          subtitle={
+            <p className="mb-0 mt-2 text-body text-subtle">
+              Products I’m proud of, apps I’ve shipped, and where it all started.
+            </p>
+          }
+        />
         <EditorialProjectsLayout />
-        <section className="mt-8 border-t border-[var(--lt-ring)] pt-6" aria-labelledby="projects-cluster-title"><h2 id="projects-cluster-title" className="mb-4 font-serif text-[26px] font-normal italic text-foreground">Behind the scenes</h2><LiveOperations embedded /></section>
+        <section className="mt-8 border-t border-[var(--lt-ring)] pt-6" aria-labelledby="projects-cluster-title">
+          <h2 id="projects-cluster-title" className="mb-4 font-sans text-section-title font-semibold tracking-tight text-content">
+            Behind the scenes
+          </h2>
+          <LiveOperations embedded />
+        </section>
       </div>
     </div>
   );

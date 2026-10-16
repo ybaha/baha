@@ -24,7 +24,7 @@ export default async function Home() {
   return (
     <>
       <GeolocationSender />
-      <div className="content-wrapper text-foreground">
+      <div className="content-wrapper text-content">
         <div className="content ">
           <PageTitle title="Home" className="lg:hidden" />
           <p>
@@ -53,7 +53,7 @@ export default async function Home() {
           </p>
 
           <Suspense fallback={<LoadingSpinner />}>
-            <h2 className="mb-4 mt-8 text-foreground">Writings</h2>
+            <h2 className="mb-4 mt-8 text-content">Writings</h2>
             <WritingList writings={allWritings} header="Writing" />
 
             <div className="flex flex-col mt-4">

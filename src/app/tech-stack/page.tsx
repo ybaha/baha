@@ -24,12 +24,12 @@ export default function Page() {
 function PostAi() {
   return (
     <div className="space-y-8">
-      <p className="text-sm text-neutral-600 dark:text-neutral-400">
+      <p className="text-body text-subtle">
         Times have changed. The stack that matters most now is the environment I run agents from. It
         all lives in{' '}
         <ExternalLink
           href="https://github.com/ybaha/dotfiles"
-          className="text-foreground underline underline-offset-4"
+          className="text-content underline underline-offset-4"
         >
           my dotfiles
         </ExternalLink>
@@ -37,8 +37,8 @@ function PostAi() {
       <DevEnvironment />
       {POST_AI_SECTIONS.map((section) => (
         <section key={section.name}>
-          <h2 className="text-xl font-semibold mb-2">{section.name}</h2>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-3">
+          <h2 className="text-section-title font-semibold mb-2">{section.name}</h2>
+          <p className="text-body text-subtle mb-3">
             {section.description}
           </p>
           <ul className="grid gap-2 sm:grid-cols-2">
@@ -47,8 +47,8 @@ function PostAi() {
                 key={item.name}
                 className="rounded-lg border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 transition-all px-3 py-2"
               >
-                <span className="block text-sm font-medium">{item.name}</span>
-                <span className="block text-xs text-neutral-600 dark:text-neutral-400">
+                <span className="block text-body font-medium">{item.name}</span>
+                <span className="block text-caption text-subtle">
                   {item.detail}
                 </span>
               </li>
@@ -73,8 +73,8 @@ function PreAi() {
 const CategorySection = ({ name, description, items }: (typeof CATEGORIES)[number]) => {
   return (
     <section>
-      <h2 className="text-xl font-semibold mb-2">{name}</h2>
-      <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-3">{description}</p>
+      <h2 className="text-section-title font-semibold mb-2">{name}</h2>
+      <p className="text-body text-subtle mb-3">{description}</p>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (
           <TechBadge key={item} name={item} />
@@ -86,7 +86,7 @@ const CategorySection = ({ name, description, items }: (typeof CATEGORIES)[numbe
 
 const TechBadge = ({ name }: { name: string }) => {
   return (
-    <span className="px-3 cursor-default py-1 text-sm rounded-full border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 transition-all">
+    <span className="cursor-default rounded-full border border-neutral-200 px-3 py-1 text-body dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 transition-all">
       {name}
     </span>
   );

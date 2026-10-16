@@ -31,6 +31,10 @@
     --color-input: 210 210 210;
 
     --color-muted: 100 100 100;
+
+    --color-content: 39 39 42;
+    --color-subtle: 100 100 110;
+    --color-muted-foreground: var(--color-subtle);
   }
 
   [data-theme='dark'] {
@@ -54,6 +58,10 @@
 
     --color-muted: 100 100 100;
 
+    --color-content: 228 228 231;
+    --color-subtle: 173 173 184;
+    --color-muted-foreground: var(--color-subtle);
+
     --color-border: 36 36 36;
     --color-input: 64 64 64;
   }
@@ -71,7 +79,7 @@
 
   html,
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-content;
   }
 
   html {
@@ -80,11 +88,11 @@
   }
 
   body {
-    @apply font-sans text-base text-foreground;
+    @apply font-sans text-body text-content;
   }
 
   article {
-    @apply flex flex-col;
+    @apply flex flex-col text-base leading-relaxed;
   }
 
   p {
@@ -109,23 +117,23 @@
   h1,
   h2,
   h3 {
-    @apply scroll-mt-16 font-semibold tracking-tighter text-black lg:scroll-mt-8;
+    @apply scroll-mt-16 font-semibold tracking-tight text-content lg:scroll-mt-8;
   }
 
   h1 {
-    @apply text-2xl md:text-3xl dark:text-white;
+    @apply text-page-title md:text-page-title-lg;
   }
 
   h2 {
-    @apply text-lg md:text-xl  dark:text-white;
+    @apply text-section-title;
   }
 
   h3 {
-    @apply md:text-lg dark:text-white;
+    @apply text-card-title;
   }
 
   h4 {
-    @apply text-base md:text-lg dark:text-white;
+    @apply text-body font-semibold;
   }
 
   h2 + h3 {
@@ -195,6 +203,10 @@
 
   .content {
     @apply mx-auto w-full lg:mb-0 lg:max-w-3xl;
+  }
+
+  .content > p {
+    @apply text-base leading-relaxed;
   }
 
   .link {

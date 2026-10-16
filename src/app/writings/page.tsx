@@ -106,7 +106,7 @@ const Page = () => {
   if (filteredWritings.length === 0) {
     return (
       <div className="p-4 text-center lg:hidden">
-        <p className="text-muted-foreground mb-2 text-sm">
+        <p className="mb-2 text-body text-subtle">
           No writings found with the selected filters.
         </p>
         <button onClick={clearFilters} className="text-primary hover:underline text-sm">
@@ -125,12 +125,12 @@ const Page = () => {
             <Link
               key={writing.id}
               href={`/writings/${writing.slug}`}
-              className="lt-row flex flex-col gap-1.5 px-4 py-3.5 text-sm"
+              className="lt-row flex flex-col gap-1.5 px-4 py-3.5 text-body"
             >
               <span className="font-medium">{writing.title}</span>
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-foreground/60">{getDateFormat(writing.date)}</span>
+                  <span className="text-caption text-subtle">{getDateFormat(writing.date)}</span>
                   {writing.aiGenerated && (
                     <div className="text-primary flex items-center justify-center">
                       <span className="md:block hidden">Created with magic</span>

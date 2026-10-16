@@ -18,7 +18,7 @@ export const JourneyCard = (props: Props) => {
         <span className="font-semibold">
           {title}
           {date && (
-            <span className="text-xs text-foreground/70 font-[400] group-hover:opacity-100 opacity-0 transition-all inline-block">
+            <span className="text-caption font-normal text-subtle group-hover:opacity-100 opacity-0 transition-all inline-block">
               {<Icons name="Dot" size={16} className="inline-block mx-1" />}
               {new Date(date).toLocaleString("en-UK", {
                 day: "numeric",

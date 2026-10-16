@@ -69,17 +69,17 @@ const MACHINES: readonly Machine[] = [
 export function DevEnvironment() {
   return (
     <section aria-labelledby="dev-environment-title">
-      <h2 id="dev-environment-title" className="text-xl font-semibold mb-2">
+      <h2 id="dev-environment-title" className="text-section-title font-semibold mb-2">
         Dev Environment
       </h2>
-      <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+      <p className="text-body text-subtle mb-4">
         Herdr is always open on my laptop as the orchestrator. Pi runs in every workspace, on the
         laptop and on a remote dev machine that never closes, so I can keep coding when I&apos;m
         out. Tailscale ties them together with my phone.
       </p>
       <figure className="m-0">
         <div className="relative rounded-2xl border border-dashed border-primary/35 p-3 pt-5 sm:p-4 sm:pt-6">
-          <span className="absolute -top-2.5 left-4 bg-background px-2 text-[11px] font-medium uppercase tracking-wide text-foreground/55">
+          <span className="absolute -top-2.5 left-4 bg-background px-2 text-caption font-medium uppercase tracking-wide text-subtle">
             Tailscale network
           </span>
           <Device
@@ -95,7 +95,7 @@ export function DevEnvironment() {
               title="Remote dev machine"
               tag="always on"
             >
-              <p className="m-0 text-xs text-neutral-600 dark:text-neutral-400">
+              <p className="m-0 text-caption text-subtle">
                 A machine at home that stays open, so I can code from anywhere. Agents run directly
                 on it, and it shows up in the laptop&apos;s Herdr as its own machine.
               </p>
@@ -105,10 +105,10 @@ export function DevEnvironment() {
               title="Phone"
               tag="Collie"
             >
-              <p className="m-0 text-xs text-neutral-600 dark:text-neutral-400">
+              <p className="m-0 text-caption text-subtle">
                 <ExternalLink
                   href="https://github.com/AltanS/collie"
-                  className="text-foreground underline underline-offset-4"
+                  className="text-content underline underline-offset-4"
                 >
                   Collie
                 </ExternalLink>{' '}
@@ -118,7 +118,7 @@ export function DevEnvironment() {
             </Device>
           </div>
         </div>
-        <figcaption className="mt-2 text-xs text-foreground/45">
+        <figcaption className="mt-2 text-caption text-subtle">
           Illustrative layout. Workspace names and statuses are examples.
         </figcaption>
       </figure>
@@ -140,9 +140,9 @@ function Device({
   return (
     <div className="rounded-xl border border-neutral-200 bg-background-tertiary p-3 dark:border-neutral-700">
       <div className="mb-2 flex items-center gap-2">
-        <span className="text-foreground/60">{icon}</span>
-        <span className="text-sm font-medium">{title}</span>
-        <span className="ml-auto rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] text-foreground/55 dark:border-neutral-700">
+        <span className="text-subtle">{icon}</span>
+        <span className="text-body font-medium">{title}</span>
+        <span className="ml-auto rounded-full border border-neutral-200 px-2 py-0.5 text-caption text-subtle dark:border-neutral-700">
           {tag}
         </span>
       </div>

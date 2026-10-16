@@ -28,7 +28,7 @@ const Tags: React.FC<TagsProps> = ({ tags, isActive, isStatic }) => {
       tempSpan.style.visibility = "hidden";
       tempSpan.style.position = "absolute";
       tempSpan.className =
-        "text-xs px-1.5 py-0.5 rounded-full whitespace-nowrap";
+        "font-sans text-caption px-1.5 rounded-full whitespace-nowrap";
       document.body.appendChild(tempSpan);
 
       for (const tag of tags) {
@@ -60,7 +60,7 @@ const Tags: React.FC<TagsProps> = ({ tags, isActive, isStatic }) => {
   const staticTagStyle = cn("py-0 dark:bg-primary/70 dark:text-white");
 
   const dynamicTagStyle = cn(
-    "text-[11px] px-1.5 rounded-full h-[22px] flex items-center justify-center whitespace-nowrap font-serif italic",
+    "font-sans text-caption px-1.5 rounded-full h-[22px] flex items-center justify-center whitespace-nowrap",
     isActive
       ? "bg-white/30 text-white dark:bg-white/30 dark:text-white/90"
       : "bg-primary/10 text-primary dark:bg-primary/60 dark:text-white/90",
@@ -89,14 +89,14 @@ const Tags: React.FC<TagsProps> = ({ tags, isActive, isStatic }) => {
               </span>
             )}
             {overflowCount > 0 && (
-              <span className={cn(dynamicTagStyle, "py-0 not-italic serif")}>
+              <span className={cn(dynamicTagStyle, "py-0")}>
                 +{overflowCount}
               </span>
             )}
           </div>
         </div>
       ) : (
-        <span className="text-xs text-foreground/50 h-[22px] invisible">
+        <span className="text-caption text-subtle h-[22px] invisible">
           No tags
         </span>
       )}

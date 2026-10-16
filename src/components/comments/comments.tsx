@@ -156,9 +156,9 @@ export function Comments({
         className="space-y-8 mb-8"
         aria-label="Comments"
       >
-        <h2 className="text-2xl font-normal font-serif italic">Comments</h2>
+        <h2 className="text-section-title font-semibold text-content">Comments</h2>
         <div
-          className="flex flex-col items-center justify-center py-6 space-y-4 text-foreground/50"
+          className="flex flex-col items-center justify-center py-6 space-y-4 text-subtle"
           role="status"
           aria-live="polite"
         >
@@ -174,10 +174,10 @@ export function Comments({
       aria-label="Comments"
       className="mb-8 space-y-8"
     >
-      <h2 className="text-2xl font-normal font-serif italic">Comments</h2>
+      <h2 className="text-section-title font-semibold text-content">Comments</h2>
 
       {initialLoadDone && comments.length === 0 ? (
-        <div className="lt-well flex flex-col items-center justify-center gap-3 px-6 py-10 text-foreground/50">
+        <div className="lt-well flex flex-col items-center justify-center gap-3 px-6 py-10 text-subtle">
           <ChatCircleIcon className="h-7 w-7" />
           <p className="mb-0 text-center text-sm">
             No comments yet.{" "}
@@ -214,14 +214,14 @@ export function Comments({
                     <span className="text-sm font-semibold">
                       {comment.user.name}
                     </span>
-                    <time className="text-xs text-foreground/45">
+                    <time className="text-caption text-subtle">
                       {getFormattedDate(
                         comment.createdAt.toISOString(),
                         "comment"
                       )}
                     </time>
                   </div>
-                  <p className="mb-0 mt-1 whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground/85 md:text-[15px]">
+                  <p className="mb-0 mt-1 whitespace-pre-wrap break-words text-body text-content">
                     {comment.text}
                   </p>
                   {session && (
@@ -292,7 +292,7 @@ export function Comments({
             disabled={isSubmitting}
           />
           <div className="flex items-center justify-between gap-3">
-            <p className="mb-0 text-xs tabular-nums text-foreground/45">
+            <p className="mb-0 text-xs tabular-nums text-subtle">
               {newComment.length} / 1000
             </p>
             <div className="flex items-center gap-2">
@@ -319,10 +319,10 @@ export function Comments({
       ) : (
         <div className="lt-well flex flex-col items-start justify-between gap-4 p-5 sm:flex-row sm:items-center">
           <div>
-            <p className="mb-0 font-serif text-xl italic leading-tight">
+            <p className="mb-0 text-card-title font-semibold text-content">
               Join the conversation
             </p>
-            <p className="mb-0 mt-1 text-sm text-foreground/50">
+            <p className="mb-0 mt-1 text-body text-subtle">
               Sign in to leave a comment and vote.
             </p>
           </div>

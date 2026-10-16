@@ -1,8 +1,20 @@
 import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+
+// Custom text sizes must be distinguished from text colors when merging classes.
+const mergeClasses = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      "font-size": [{ text: [
+        "page-title", "page-title-lg", "section-title", "card-title",
+        "body", "caption", "stat", "quote",
+      ] }],
+    },
+  },
+});
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return mergeClasses(clsx(inputs));
 }
 
 export function getFormattedDate(

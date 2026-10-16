@@ -29,12 +29,12 @@ const LinkList = () => {
   if (filteredWritings.length === 0) {
     return (
       <div className="p-4 text-center">
-        <p className="text-muted-foreground mb-2">
+        <p className="mb-2 text-body text-subtle">
           No writings found with the selected filters.
         </p>
         <button
           onClick={clearFilters}
-          className="text-primary hover:underline text-sm"
+          className="text-primary hover:underline text-body"
         >
           Clear filters
         </button>

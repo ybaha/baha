@@ -34,12 +34,12 @@ const VARIANTS = [
 type Variant = (typeof VARIANTS)[number]['id'];
 type Filter = 'all' | 'request' | 'job' | 'deploy';
 
-const selectedSurface = '[background:var(--lt-sheen-s),linear-gradient(180deg,rgb(var(--color-primary)/0.24),rgb(var(--color-primary)/0.1))] shadow-[inset_0_0_0_1px_rgb(var(--color-primary)/0.24),var(--lt-e1)] text-foreground/90';
+const selectedSurface = '[background:var(--lt-sheen-s),linear-gradient(180deg,rgb(var(--color-primary)/0.24),rgb(var(--color-primary)/0.1))] shadow-[inset_0_0_0_1px_rgb(var(--color-primary)/0.24),var(--lt-e1)] text-content';
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
-const mono = 'font-[family-name:var(--font-geist-mono)] text-[10px] tabular-nums text-foreground/55';
-const label = 'text-[10px] font-medium tracking-wide text-foreground/55';
-const heading = 'font-serif text-[26px] font-medium italic leading-tight tracking-tight text-foreground/90';
-const subtitle = 'mb-0 mt-1 text-xs leading-relaxed text-foreground/55';
+const mono = 'font-mono text-caption tabular-nums text-subtle';
+const label = 'text-caption font-medium tracking-wide text-subtle';
+const heading = 'font-sans text-section-title font-semibold leading-tight tracking-tight text-content';
+const subtitle = 'mb-0 mt-1 text-body text-subtle';
 const orb = 'lt-btn flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] border-primary/20 !bg-primary/10';
 const eventIcon = 'lt-btn grid h-[26px] w-[26px] shrink-0 place-items-center rounded-lg';
 const arrival = 'motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 motion-safe:duration-300';
@@ -93,13 +93,13 @@ function MachineInfo({ service, open, id }: {
       className={cn('grid transition-[grid-template-rows,opacity,transform] duration-500 [transition-timing-function:var(--sb-spring)] motion-reduce:transition-none', open ? 'grid-rows-[1fr] scale-100 opacity-100' : 'grid-rows-[0fr] scale-[0.98] opacity-0')}>
       <div className="min-h-0 overflow-hidden">
         <div className="lt-well mb-3 mt-1 rounded-xl p-3.5">
-          <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-medium text-foreground/90">{service.role}</span><span className="text-[9px] text-foreground/45">Configuration</span></div>
-          <p className="mb-3 mt-2 text-[11px] leading-relaxed text-foreground/60">{service.description}</p>
-          <dl className="flex flex-wrap gap-x-5 gap-y-2 text-[10px]">
-            <div><dt className="text-foreground/45">Location</dt><dd className="mt-0.5">{service.location}</dd></div>
-            <div><dt className="text-foreground/45">Machine</dt><dd className="mt-0.5">{service.capacity}</dd></div>
+          <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-caption font-medium text-content">{service.role}</span><span className="text-caption text-subtle">Configuration</span></div>
+          <p className="mb-3 mt-2 text-caption leading-relaxed text-subtle">{service.description}</p>
+          <dl className="flex flex-wrap gap-x-5 gap-y-2 text-caption">
+            <div><dt className="text-subtle">Location</dt><dd className="mt-0.5">{service.location}</dd></div>
+            <div><dt className="text-subtle">Machine</dt><dd className="mt-0.5">{service.capacity}</dd></div>
           </dl>
-          <div className="mt-3 flex flex-wrap gap-1.5">{service.stack.map((technology) => <span key={technology} className="rounded-md border border-[var(--lt-ring)] bg-foreground/[0.025] px-2 py-1 text-[9px] text-foreground/60">{technology}</span>)}</div>
+          <div className="mt-3 flex flex-wrap gap-1.5">{service.stack.map((technology) => <span key={technology} className="rounded-md border border-[var(--lt-ring)] bg-foreground/[0.025] px-2 py-1 text-caption text-subtle">{technology}</span>)}</div>
         </div>
       </div>
     </div>
@@ -117,11 +117,11 @@ function ServiceRows({ sequence }: { sequence: number }) {
               {service.id === 'laptop' ? <LaptopIcon size={16} /> : <HardDrivesIcon size={16} />}
             </span>
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <strong className="text-xs font-medium text-foreground/90">{service.name}</strong>
-              <span className="text-[10px] text-foreground/55">{service.role}</span>
+              <strong className="text-caption font-medium text-content">{service.name}</strong>
+              <span className="text-caption text-subtle">{service.role}</span>
             </div>
-            <span className="hidden text-[11px] tabular-nums sm:inline">{service.cpu + sequence % 7}% <span className="text-[9px] text-foreground/55">CPU</span></span>
-            <span className="inline-flex items-center gap-1 text-[10px] sm:ml-2"><CheckIcon size={12} aria-hidden="true" /><span className="hidden xs:inline">Healthy</span></span>
+            <span className="hidden text-caption tabular-nums sm:inline">{service.cpu + sequence % 7}% <span className="text-caption text-subtle">CPU</span></span>
+            <span className="inline-flex items-center gap-1 text-caption sm:ml-2"><CheckIcon size={12} aria-hidden="true" /><span className="hidden xs:inline">Healthy</span></span>
             <MachineInfoTrigger service={service} open={expanded === service.id} panelId={`pulse-info-${service.id}`} onClick={() => setExpanded(expanded === service.id ? null : service.id)} />
           </div>
           <MachineInfo service={service} open={expanded === service.id} id={`pulse-info-${service.id}`} />
@@ -152,11 +152,11 @@ function CompactNodes({ event }: { event: MockEvent }) {
         return (
           <div key={service.id} role="group" aria-label={`${service.name}${active ? ', latest event source' : ''}`}
             data-event-source={active || undefined}
-            className="flex min-w-0 flex-col items-center gap-2 rounded-[10px] px-1.5 py-2.5 text-foreground/60 sm:flex-row sm:gap-2.5 sm:px-2.5">
+            className="flex min-w-0 flex-col items-center gap-2 rounded-[10px] px-1.5 py-2.5 text-subtle sm:flex-row sm:gap-2.5 sm:px-2.5">
             <MachinePulse serviceId={service.id} event={event} />
             <div className="flex min-w-0 flex-col gap-0.5 text-center sm:text-left">
-              <span className="whitespace-nowrap text-[10px] font-medium">{service.name}</span>
-              <span className="text-[8px] text-foreground/45">{service.location}</span>
+              <span className="whitespace-nowrap text-caption font-medium">{service.name}</span>
+              <span className="text-caption text-subtle">{service.location}</span>
             </div>
           </div>
         );
@@ -169,30 +169,30 @@ function ClusterCard({ snapshot }: { snapshot: MockSnapshot }) {
   const [expanded, setExpanded] = useState<ServiceId | null>(null);
   const columns = 'grid grid-cols-[minmax(0,1fr)_36px_36px_28px] items-center gap-2 sm:grid-cols-[minmax(0,1fr)_54px_52px_52px_28px] sm:gap-3';
   return (
-    <div className="px-3 pt-5 font-[family-name:var(--font-geist-mono)] leading-tight sm:px-5">
+    <div className="px-3 pt-5 font-mono leading-tight sm:px-5">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[16px] font-medium text-foreground/85">Home + VPS</span>
-        <span className="inline-flex items-center gap-1 text-[11px] text-foreground/60"><CheckIcon size={13} aria-hidden="true" /> {SERVICES.length}/{SERVICES.length} online</span>
+        <span className="text-card-title font-medium text-content">Home + VPS</span>
+        <span className="inline-flex items-center gap-1 text-caption text-subtle"><CheckIcon size={13} aria-hidden="true" /> {SERVICES.length}/{SERVICES.length} online</span>
       </div>
-      <p className="mb-0 mt-1 text-[11px] text-foreground/45">Karardex at home · application services on VPS</p>
-      <div className="my-4 flex items-center gap-5 border-b border-[var(--lt-ring)] pb-4 text-[12px] tabular-nums">
-        <span><span className="text-foreground/45">rate </span>{3 + snapshot.sequence % 5}<span className="text-foreground/45"> req/s</span></span>
-        <span><span className="text-foreground/45">p95 </span>{snapshot.latency}<span className="text-foreground/45"> ms</span></span>
+      <p className="mb-0 mt-1 text-caption text-subtle">Karardex at home · application services on VPS</p>
+      <div className="my-4 flex items-center gap-5 border-b border-[var(--lt-ring)] pb-4 text-caption tabular-nums">
+        <span><span className="text-subtle">rate </span>{3 + snapshot.sequence % 5}<span className="text-subtle"> req/s</span></span>
+        <span><span className="text-subtle">p95 </span>{snapshot.latency}<span className="text-subtle"> ms</span></span>
       </div>
-      <div className={cn(columns, 'pb-1 text-[10px] tracking-wider text-foreground/45')} aria-hidden="true">
+      <div className={cn(columns, 'pb-1 text-caption tracking-wider text-subtle')} aria-hidden="true">
         <span>HOST / WORKLOAD</span><span>STATE</span><span className="text-right">CPU</span><span className="hidden text-right sm:block">MEM</span><span />
       </div>
       <div role="group" aria-label="Cluster nodes">
         {SERVICES.map((service) => (
           <div className="group border-b border-[var(--lt-ring)] last:border-b-0" key={service.id} role="group" aria-label={`${service.nodeId}, ${service.name}`} data-event-source={snapshot.events[0].service === service.id || undefined}>
-            <div className={cn(columns, 'py-3 text-[12px] tabular-nums')}>
-              <div className="flex min-w-0 items-center gap-2.5 text-foreground/60">
+            <div className={cn(columns, 'py-3 text-caption tabular-nums')}>
+              <div className="flex min-w-0 items-center gap-2.5 text-subtle">
                 <MachinePulse serviceId={service.id} event={snapshot.events[0]} />
-                <div className="flex min-w-0 flex-col gap-1"><span className="text-foreground/85">{service.name}</span><span className="truncate text-[10px] text-foreground/45">{service.workload}</span></div>
+                <div className="flex min-w-0 flex-col gap-1"><span className="text-content">{service.name}</span><span className="truncate text-caption text-subtle">{service.workload}</span></div>
               </div>
-              <span className="text-[11px] text-foreground/60">Ready</span>
+              <span className="text-caption text-subtle">Ready</span>
               <span className="text-right" aria-label={`CPU ${service.cpu + snapshot.sequence % 7} percent`}>{service.cpu + snapshot.sequence % 7}%</span>
-              <span className="hidden text-right text-foreground/60 sm:block" aria-label={`Memory ${service.memory + snapshot.sequence % 3} percent`}>{service.memory + snapshot.sequence % 3}%</span>
+              <span className="hidden text-right text-subtle sm:block" aria-label={`Memory ${service.memory + snapshot.sequence % 3} percent`}>{service.memory + snapshot.sequence % 3}%</span>
               <MachineInfoTrigger service={service} open={expanded === service.id} panelId={`cluster-info-${service.id}`} onClick={() => setExpanded(expanded === service.id ? null : service.id)} />
             </div>
             <MachineInfo service={service} open={expanded === service.id} id={`cluster-info-${service.id}`} />
@@ -219,10 +219,10 @@ function EventAsideRow({ event, compact, technical = false, outgoing = false }: 
     <div aria-hidden={outgoing || undefined} data-event-phase={outgoing ? 'outgoing' : 'incoming'}
       className={cn('col-start-1 row-start-1 flex min-w-0 items-center gap-2.5', outgoing ? 'pointer-events-none opacity-0 motion-safe:animate-event-slide-out' : 'motion-safe:animate-event-slide-in')}>
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className={cn('truncate', technical ? 'text-[11px]' : 'text-[9px]', compact ? 'text-foreground/60' : 'text-foreground/45')}>{eventLabel} <span className="mx-1 opacity-50">/</span> {technical ? `${service.nodeId} · ${service.workload}` : service.name}</span>
-        <span className={cn('text-foreground/75', technical ? 'truncate font-[family-name:var(--font-geist-mono)] text-[12px]' : compact ? 'truncate font-[family-name:var(--font-geist-mono)] text-[10px]' : 'text-[11px]')}>{compact ? event.detail : event.message}</span>
+        <span className="truncate text-caption text-subtle">{eventLabel} <span className="mx-1 opacity-50">/</span> {technical ? `${service.nodeId} · ${service.workload}` : service.name}</span>
+        <span className={cn('text-caption text-content', (technical || compact) && 'truncate font-mono')}>{compact ? event.detail : event.message}</span>
       </div>
-      <div className="flex shrink-0 flex-col items-end gap-1"><span className={cn(mono, technical && 'text-[11px]')}>{compact ? event.result : event.time}</span><span className={cn('text-foreground/45', technical ? 'text-[11px]' : 'text-[9px]')}>{event.duration}ms</span></div>
+      <div className="flex shrink-0 flex-col items-end gap-1"><span className={mono}>{compact ? event.result : event.time}</span><span className="text-caption text-subtle">{event.duration}ms</span></div>
     </div>
   );
 }
@@ -257,18 +257,18 @@ function PulseCard({ snapshot }: { snapshot: MockSnapshot }) {
         <div className="grid grid-cols-2 gap-4 pb-[22px] pt-[26px] min-[601px]:grid-cols-[1fr_1fr_1.2fr] min-[601px]:gap-5">
           <div className="flex min-w-0 flex-col">
             <span className={label}>Requests today</span>
-            <strong className="my-1 text-[30px] font-medium leading-tight tracking-tighter text-foreground/90 tabular-nums">{snapshot.requests.toLocaleString('en-US')}</strong>
-            <span className="text-[10px] text-foreground/55">Across the ecosystem</span>
+            <strong className="my-1 text-stat font-medium leading-tight tracking-tighter text-content tabular-nums">{snapshot.requests.toLocaleString('en-US')}</strong>
+            <span className="text-caption text-subtle">Across the ecosystem</span>
           </div>
           <div className="flex min-w-0 flex-col">
             <span className={label}>API latency · p95</span>
-            <strong className="my-1 text-[30px] font-medium leading-tight tracking-tighter text-foreground/90 tabular-nums">{snapshot.latency}<small className="ml-1 text-[13px] tracking-normal text-foreground/55">ms</small></strong>
-            <span className="text-[10px] text-foreground/55">Karardex API</span>
+            <strong className="my-1 text-stat font-medium leading-tight tracking-tighter text-content tabular-nums">{snapshot.latency}<small className="ml-1 text-body tracking-normal text-subtle">ms</small></strong>
+            <span className="text-caption text-subtle">Karardex API</span>
           </div>
           <div className="col-span-2 flex min-w-0 flex-col min-[601px]:col-span-1">
             <span className={label}>Request activity</span>
             <Sparkline values={snapshot.traffic} />
-            <span className="text-[10px] text-foreground/55">Illustrative rolling window</span>
+            <span className="text-caption text-subtle">Illustrative rolling window</span>
           </div>
         </div>
       </div>
@@ -287,31 +287,31 @@ function DispatchCard({ snapshot }: { snapshot: MockSnapshot }) {
         <span className={orb}><TerminalWindowIcon size={24} weight="duotone" aria-hidden="true" /></span>
         <div><h3 className={heading}>The latest dispatch.</h3><p className={subtitle}>A little less dashboard. A little more backstage.</p></div>
       </div>
-      <div className="flex gap-1 px-4 pb-3.5 sm:px-[22px]" role="group" aria-label="Filter events">
+      <div className="flex flex-wrap gap-1 px-4 pb-3.5 sm:px-[22px]" role="group" aria-label="Filter events">
         {([['all', 'Everything'], ['request', 'Requests'], ['job', 'Jobs'], ['deploy', 'Releases']] as const).map(([id, text]) => (
-          <button type="button" key={id} aria-pressed={filter === id} onClick={() => { setFilter(id); setExpanded(null); }} className={cn('rounded-lg px-2.5 py-1.5 text-[10px] transition-colors motion-reduce:transition-none', focusRing, filter === id ? selectedSurface : 'text-foreground/55 hover:bg-foreground/5 hover:text-foreground/90')}>{text}</button>
+          <button type="button" key={id} aria-pressed={filter === id} onClick={() => { setFilter(id); setExpanded(null); }} className={cn('rounded-lg px-2.5 py-1.5 text-caption transition-colors motion-reduce:transition-none', focusRing, filter === id ? selectedSurface : 'text-subtle hover:bg-foreground/5 hover:text-foreground')}>{text}</button>
         ))}
       </div>
       <div className="lt-well mx-4 overflow-hidden rounded-xl sm:mx-[22px]">
-        <div className="flex justify-between border-b border-[var(--lt-ring)] px-3.5 pb-[9px] pt-3 text-[8px] font-medium tracking-widest text-foreground/55"><span>EVENT / SOURCE</span><span>RESULT</span></div>
+        <div className="flex justify-between border-b border-[var(--lt-ring)] px-3.5 pb-[9px] pt-3 text-caption font-medium tracking-widest text-subtle"><span>EVENT / SOURCE</span><span>RESULT</span></div>
         <div className="min-h-[270px]" role="group" aria-label="Simulated event stream">
           {events.map((event) => (
             <div className={cn('border-b border-[var(--lt-ring)] last:border-b-0', arrival)} key={event.id}>
               <button type="button" className={cn('flex w-full items-center gap-2.5 px-3.5 py-3 text-left hover:bg-foreground/5 focus-visible:-outline-offset-2', focusRing)} onClick={() => setExpanded(expanded === event.id ? null : event.id)} aria-expanded={expanded === event.id}>
                 <span className={eventIcon}><EventIcon kind={event.kind} /></span>
                 <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
-                  <strong className="text-[11px] font-medium text-foreground/90">{event.message}</strong>
-                  <span className="text-[9px] text-foreground/55">{SERVICES.find((service) => service.id === event.service)?.name} <span className="mx-[3px] opacity-40">/</span> {event.time}</span>
+                  <strong className="text-caption font-medium text-content">{event.message}</strong>
+                  <span className="text-caption text-subtle">{SERVICES.find((service) => service.id === event.service)?.name} <span className="mx-[3px] opacity-40">/</span> {event.time}</span>
                 </span>
-                <span className="flex shrink-0 flex-col items-end gap-[3px] font-[family-name:var(--font-geist-mono)] text-[9px]">{event.result}<small className="text-[9px] text-foreground/55">{event.duration}ms</small></span>
+                <span className="flex shrink-0 flex-col items-end gap-[3px] font-mono text-caption">{event.result}<small className="text-caption text-subtle">{event.duration}ms</small></span>
               </button>
-              {expanded === event.id && <div className="flex flex-col gap-[5px] break-words pb-3 pl-[50px] pr-3.5 text-[9px] text-foreground/55"><span className={mono}>{event.detail}</span><span>Synthetic event · no request bodies or personal data</span></div>}
+              {expanded === event.id && <div className="flex flex-col gap-[5px] break-words pb-3 pl-[50px] pr-3.5 text-caption text-subtle"><span className={mono}>{event.detail}</span><span>Synthetic event · no request bodies or personal data</span></div>}
             </div>
           ))}
-          {events.length === 0 && <div className="grid min-h-[270px] place-items-center p-5 text-[11px] text-foreground/55">Waiting for a {filter === 'deploy' ? 'release' : filter} event…</div>}
+          {events.length === 0 && <div className="grid min-h-[270px] place-items-center p-5 text-caption text-subtle">Waiting for a {filter === 'deploy' ? 'release' : filter} event…</div>}
         </div>
       </div>
-      <p className="mb-0 px-4 py-3 text-[9px] text-foreground/45 sm:px-[22px]">Click an event to inspect</p>
+      <p className="mb-0 px-4 py-3 text-caption text-subtle sm:px-[22px]">Click an event to inspect</p>
     </>
   );
 }
@@ -324,7 +324,7 @@ function ConstellationCard() {
     <>
       <div className="px-4 pb-5 pt-[26px] text-center sm:px-[22px]"><h3 className={heading}>A small constellation.</h3><p className={subtitle}>The machines behind the things I make.</p></div>
       <div className="px-4 pb-[22px] sm:px-[22px]">
-        <div className="lt-btn mx-auto flex w-fit items-center justify-center gap-2 rounded-[10px] px-3 py-[9px] text-[11px]"><PulseIcon size={16} weight="duotone" aria-hidden="true" /><span>My infrastructure</span><span className="border-l border-[var(--lt-ring)] pl-2 text-[9px] text-foreground/55">3 nodes</span></div>
+        <div className="lt-btn mx-auto flex w-fit items-center justify-center gap-2 rounded-[10px] px-3 py-[9px] text-caption"><PulseIcon size={16} weight="duotone" aria-hidden="true" /><span>My infrastructure</span><span className="border-l border-[var(--lt-ring)] pl-2 text-caption text-subtle">3 nodes</span></div>
         <div className="relative mx-[16.6667%] h-10 before:absolute before:left-0 before:right-0 before:top-5 before:h-px before:bg-primary/30 after:absolute after:left-1/2 after:top-0 after:h-5 after:w-px after:bg-primary/30" aria-hidden="true">
           <span className="absolute bottom-0 left-0 top-5 w-px bg-primary/30" /><span className="absolute bottom-0 left-1/2 top-5 w-px bg-primary/30" /><span className="absolute bottom-0 right-0 top-5 w-px bg-primary/30" />
         </div>
@@ -335,9 +335,9 @@ function ConstellationCard() {
               <div className="group relative min-w-0" key={node.id}>
                 <button type="button" className={cn('flex h-full w-full min-w-0 flex-col items-center rounded-xl border border-[var(--lt-ring)] px-1 pb-3.5 pt-9 transition-colors motion-reduce:transition-none sm:px-2', focusRing, node.id === selected ? selectedSurface : 'lt-btn')} aria-pressed={node.id === selected} onClick={() => { setSelected(node.id); if (infoFor !== null) setInfoFor(node.id); }}>
                   <span className="relative mb-2.5"><Icon size={24} weight={node.id === selected ? 'duotone' : 'regular'} aria-hidden="true" /><span className="absolute -right-[3px] bottom-0 h-[5px] w-[5px] rounded-full bg-primary ring-[3px] ring-background" /></span>
-                  <strong className="text-center text-[10px] font-medium text-foreground/90 sm:text-[11px]">{node.name}</strong>
-                  <span className="mt-1 text-[9px] text-foreground/55">{node.location}</span>
-                  <small className="mt-2.5 text-[9px]">Healthy</small>
+                  <strong className="text-center text-caption font-medium text-content">{node.name}</strong>
+                  <span className="mt-1 text-caption text-subtle">{node.location}</span>
+                  <small className="mt-2.5 text-caption">Healthy</small>
                 </button>
                 <MachineInfoTrigger className="absolute right-1.5 top-1.5" service={node} open={infoFor === node.id} panelId="map-machine-info" onClick={() => { setSelected(node.id); setInfoFor(infoFor === node.id ? null : node.id); }} />
               </div>
@@ -375,16 +375,16 @@ export function LiveOperations({ embedded = false }: { embedded?: boolean }) {
   const direction = VARIANTS.find((item) => item.id === variant)!;
 
   return (
-    <section className={cn("font-sans text-[13px] text-foreground/80", !embedded && "mb-10 mt-9")} aria-label="Cluster operations">
+    <section className={cn("font-sans text-body text-content", !embedded && "mb-10 mt-9")} aria-label="Cluster operations">
       {!embedded && <><div className="flex items-center justify-between gap-3">
-        <div><span className="text-[10px] font-medium tracking-widest text-foreground/55">BEHIND THE SCENES</span><h2 id="operations-title" className="mt-1 font-serif text-[32px] font-medium italic leading-none tracking-tight text-foreground/90">Live operations</h2></div>
+        <div><span className="text-caption font-medium tracking-widest text-subtle">BEHIND THE SCENES</span><h2 id="operations-title" className="mt-1 font-sans text-section-title font-semibold leading-tight tracking-tight text-content">Live operations</h2></div>
       </div>
-      <p className="mb-[18px] mt-2.5 text-[13px] leading-relaxed text-foreground/55">{direction.description}</p>
+      <p className="mb-[18px] mt-2.5 text-body leading-relaxed text-subtle">{direction.description}</p>
       <div className="mb-3.5 flex items-center justify-between gap-3">
         <div className="grid grid-cols-2 gap-[3px] rounded-xl border border-[var(--lt-ring)] bg-foreground/[0.025] p-1 shadow-[inset_0_1px_2px_var(--lt-drop-s)] sm:inline-flex" role="group" aria-label="Card design variation">
-          {VARIANTS.map((item, index) => <button type="button" className={cn('rounded-lg px-2 py-1.5 text-[11px] transition-colors motion-reduce:transition-none sm:px-2.5 sm:text-xs', index === VARIANTS.length - 1 && 'col-span-2', focusRing, variant === item.id ? selectedSurface : 'text-foreground/55 hover:bg-foreground/5 hover:text-foreground/90')} aria-pressed={variant === item.id} onClick={() => setVariant(item.id)} key={item.id}><span className="mr-1.5 hidden text-[9px] opacity-60 xs:inline">0{index + 1}</span>{item.label}</button>)}
+          {VARIANTS.map((item, index) => <button type="button" className={cn('rounded-lg px-2 py-1.5 text-caption transition-colors motion-reduce:transition-none sm:px-2.5 sm:text-xs', index === VARIANTS.length - 1 && 'col-span-2', focusRing, variant === item.id ? selectedSurface : 'text-subtle hover:bg-foreground/5 hover:text-foreground')} aria-pressed={variant === item.id} onClick={() => setVariant(item.id)} key={item.id}><span className="mr-1.5 hidden text-caption opacity-60 xs:inline">0{index + 1}</span>{item.label}</button>)}
         </div>
-        <span className="hidden font-serif text-base italic text-foreground/55 min-[1200px]:inline">Five takes, one ecosystem</span>
+        <span className="hidden text-body text-subtle min-[1200px]:inline">Five takes, one ecosystem</span>
       </div></>}
       <div className={cn('overflow-hidden rounded-2xl [background:var(--sb-panel-bg)] [box-shadow:var(--lt-e2)]', variant === 'compact' && 'max-w-[480px]', variant === 'cluster' && (embedded ? 'w-full max-w-none' : 'max-w-[520px]'))}
         onPointerEnter={(event) => { if (event.pointerType === 'mouse') setHovered(true); }}

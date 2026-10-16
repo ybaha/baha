@@ -85,7 +85,7 @@ export default function Link(props: Props) {
             className="max-h-[200px] max-w-[300px] rounded-xl border-0 object-contain shadow-[0_0_0_1px_var(--lt-ring)]"
           />
           {showLinkOnTooltip && (
-            <div className="max-w-[300px] truncate px-1.5 pb-0.5 pt-2 font-mono text-[11px] text-foreground/55">
+            <div className="max-w-[300px] truncate px-1.5 pb-0.5 pt-2 font-mono text-caption text-subtle">
               {String(linkProps.href)}
             </div>
           )}
