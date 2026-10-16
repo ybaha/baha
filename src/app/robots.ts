@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next';
-
-const siteUrl = process.env.SITE_URL ?? 'https://baha.vercel.app';
+import { siteUrl } from '@/lib/site';
 
 export default function robots(): MetadataRoute.Robots {
   return {

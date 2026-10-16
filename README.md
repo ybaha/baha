@@ -1,6 +1,6 @@
 # baha
 
-Personal site: writings, vault snippets, a logs timeline and a comments system.
+Personal site: [ybaha.com](https://ybaha.com) — writings, vault snippets, a logs timeline and a comments system.
 Next.js 16 (App Router, Turbopack), React 19, Tailwind 3, MDX content in `content/`,
 PostgreSQL via Prisma 7, NextAuth (GitHub/Google).
 
@@ -29,7 +29,7 @@ Names only; see `.env.example`.
 | `NEXTAUTH_URL`, `NEXTAUTH_SECRET` | NextAuth |
 | `NEXT_PUBLIC_GITHUB_ID`, `GITHUB_SECRET` | GitHub sign-in |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in |
-| `SITE_URL` | Absolute URLs in `sitemap.xml` / `robots.txt` (optional) |
+| `SITE_URL` | Metadata, canonical/social URLs, `sitemap.xml` and `robots.txt` (optional; defaults to `https://ybaha.com`) |
 | `TELEGRAM_BOT_TOKEN` | Production homepage visit notifications (optional, server-only) |
 | `TELEGRAM_CHAT_ID` | Notification destination; blank keeps the previous destination (optional) |
 
@@ -88,6 +88,11 @@ about. See `prisma/README.md`.
 Run `npm ci && npm run build && npm start` with the environment above. CI
 (`.github/workflows/ci.yml`) runs typecheck, lint, tests and a build using
 synthetic values only.
+
+For production, set `NEXTAUTH_URL=https://ybaha.com` and leave `SITE_URL` unset
+or set it to `https://ybaha.com`. Update the GitHub/Google OAuth applications'
+authorized callback URLs to `https://ybaha.com/api/auth/callback/github` and
+`https://ybaha.com/api/auth/callback/google` respectively.
 
 ## Security notes
 

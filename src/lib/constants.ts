@@ -154,7 +154,7 @@ export const PROJECTS = [
     name: 'Personal Website',
     description: 'My digital garden where I share my thoughts and experiences.',
     image: '/projects/baha.png',
-    url: 'https://baha.vercel.app',
+    url: 'https://ybaha.com',
     year: 2024,
   },
   {

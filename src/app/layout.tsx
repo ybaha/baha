@@ -7,6 +7,7 @@ import { Cormorant } from 'next/font/google';
 import { SideMenu } from '@/components/side-menu';
 import { MenuContent } from '@/components/menu-content';
 import { SOCIALS, sharedDescription, sharedTitle } from '@/lib/constants';
+import { siteUrl } from '@/lib/site';
 import MainLayout from '@/components/main-layout';
 import { FloatingHeader } from '@/components/floating-header';
 import { ScrollArea } from '@/components/scroll-area';
@@ -100,7 +101,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://baha.vercel.app/'),
+  metadataBase: new URL(siteUrl),
   robots: {
     index: true,
     follow: true,

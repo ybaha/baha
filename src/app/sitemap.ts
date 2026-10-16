@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getAllSnippetsMeta, getAllWritingsMeta } from '@/lib/content/selectors';
-
-const siteUrl = process.env.SITE_URL ?? 'https://baha.vercel.app';
+import { siteUrl } from '@/lib/site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [

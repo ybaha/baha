@@ -184,7 +184,7 @@ export const EARLIER_PROJECTS: Project[] = [
     category: 'Portfolio',
     name: 'Personal Website',
     description: 'My digital garden where I share my thoughts and experiences.',
-    href: 'https://baha.vercel.app',
+    href: 'https://ybaha.com',
     markSrc: '/projects/baha.png',
     previewSrc: '/projects/baha.png',
     year: 2024,
