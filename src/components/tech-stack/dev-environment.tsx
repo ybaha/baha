@@ -72,7 +72,7 @@ export function DevEnvironment() {
       <h2 id="dev-environment-title" className="text-section-title font-semibold mb-2">
         Dev Environment
       </h2>
-      <p className="text-body text-subtle mb-4">
+      <p className="text-body text-content mb-4">
         Herdr is always open on my laptop as the orchestrator. Pi runs in every workspace, on the
         laptop and on a remote dev machine that never closes, so I can keep coding when I&apos;m
         out. Tailscale ties them together with my phone.

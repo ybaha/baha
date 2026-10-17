@@ -56,11 +56,11 @@ export function OriginStory({ story = FIRST_WEBSITE, compact = false, className 
     <section aria-labelledby="origin-story-title" className={cn(projectPaperSurface, 'space-y-3 p-4 @xl:p-5', className)}>
       <header>
         <h2 id="origin-story-title" className="font-sans text-section-title font-semibold leading-tight tracking-tight text-content">Where it started · archived 2011</h2>
-        <p className="mb-0 mt-1 text-body text-subtle">A website for our fourth-grade class.</p>
+        <p className="mb-0 mt-1 text-body text-content">A website for our fourth-grade class.</p>
       </header>
       <div data-origin-card className={cn('grid items-start gap-5 @xl:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]', compact && 'gap-4')}>
         <div className="min-w-0">
-          <p className="mb-0 max-w-xl text-body text-subtle">Mert and I made it with a no-code builder to help our teacher. We posted homework and used the chat page to talk with friends after school.</p>
+          <p className="mb-0 max-w-xl text-body text-content">Mert and I made it with a no-code builder to help our teacher. We posted homework and used the chat page to talk with friends after school.</p>
           <OriginQuote original={source.quote} />
           <ExternalLink href={source.archiveHref} className="mt-3 text-caption">Sevgi Koleji 4-B · April 2011</ExternalLink>
         </div>

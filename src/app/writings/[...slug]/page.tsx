@@ -87,7 +87,7 @@ export default async function Writing(props: Props) {
                 </time>
               </section>
             }
-            className="mb-6 flex flex-col gap-3 text-foreground"
+            className="mb-6 flex flex-col gap-3 text-content"
           />
           {!!writing.image && (
             <img

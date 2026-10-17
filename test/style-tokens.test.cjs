@@ -82,12 +82,60 @@ describe("style token contracts", () => {
     }
   });
 
+  it("renders main prose with the same body color on Projects, Tech Stack, and MDX", () => {
+    const React = require("react");
+    const { renderToStaticMarkup } = require("react-dom/server");
+    const previousReact = global.React;
+    const previousImageLoader = require.extensions[".webp"];
+    global.React = React;
+    // Next normally provides static image metadata; images are irrelevant to this text contract.
+    require.extensions[".webp"] = (module, filename) => {
+      module.exports = { src: filename, width: 1600, height: 900 };
+    };
+    try {
+      const Projects = require("../src/app/projects/page.tsx").default;
+      const TechStack = require("../src/app/tech-stack/page.tsx").default;
+      const { mdxComponentMap } = require("../src/components/mdx/mdx-component-map.tsx");
+      const projectsHtml = renderToStaticMarkup(React.createElement(Projects));
+      const techHtml = renderToStaticMarkup(React.createElement(TechStack));
+      const paragraphs = [
+        [projectsHtml, "Products I’m proud of"],
+        [projectsHtml, "Ask a question about Turkish law."],
+        [projectsHtml, "One shared calendar"],
+        [projectsHtml, "Mobile releases and earlier experiments"],
+        [projectsHtml, "Mert and I made it"],
+        [techHtml, "Times have changed."],
+        [techHtml, "Herdr is always open"],
+        [techHtml, "Reusable instructions"],
+        [renderToStaticMarkup(React.createElement(mdxComponentMap.p, null, "Article body")), "Article body"],
+      ];
+      for (const [html, text] of paragraphs) {
+        const paragraph = (html.match(/<p\b[^>]*>[\s\S]*?<\/p>/g) || []).find(p => p.includes(text));
+        assert.ok(paragraph, `Rendered paragraph: ${text}`);
+        const classes = paragraph.match(/class="([^"]+)"/)[1].split(/\s+/);
+        assert.ok(classes.includes("text-body"), `${text}: shared size`);
+        assert.ok(classes.includes("text-content"), `${text}: main text color`);
+        assert.ok(!classes.includes("text-subtle"), `${text}: must not be dimmed as metadata`);
+      }
+      assert.match(projectsHtml, /<p\b[^>]*class="[^"]*text-caption[^"]*text-subtle[^"]*"[^>]*>[^<]*registered accounts/);
+      assert.match(techHtml, /<figcaption\b[^>]*class="[^"]*text-caption[^"]*text-subtle/);
+      const globalCss = readRepoFile("src/global.css");
+      assert.doesNotMatch(globalCss, /\.content\s*>\s*p\s*\{/);
+      assert.doesNotMatch(globalCss, /article\s*\{[^}]*text-base/);
+    } finally {
+      if (previousReact === undefined) delete global.React;
+      else global.React = previousReact;
+      if (previousImageLoader === undefined) delete require.extensions[".webp"];
+      else require.extensions[".webp"] = previousImageLoader;
+    }
+  });
+
   it("defines semantic content and subtle colors in both themes", () => {
     const css = readRepoFile("src/global.css");
     assert.match(css, /--color-content:\s*39 39 42/);
     assert.match(css, /--color-subtle:\s*100 100 110/);
     assert.match(css, /\[data-theme='dark'\][\s\S]*--color-content:\s*228 228 231/);
-    assert.match(css, /\[data-theme='dark'\][\s\S]*--color-subtle:\s*173 173 184/);
+    assert.match(css, /\[data-theme='dark'\][\s\S]*--color-subtle:\s*190 190 198/);
     assert.match(css, /--color-muted-foreground:\s*var\(--color-subtle\)/);
   });
 
@@ -107,7 +155,7 @@ describe("style token contracts", () => {
     assert.match(tailwind, /mono:\s*\['var\(--font-geist-mono\)'/);
     assert.match(tailwind, /serif:\s*\['var\(--font-cormorant\)'/);
     assert.match(tailwind, /'section-title':/);
-    assert.match(tailwind, /body:\s*\['14px'/);
+    assert.match(tailwind, /body:\s*\['16px'/);
   });
 
   it("maps sidebar text tokens to semantic colors", () => {
@@ -120,11 +168,11 @@ describe("style token contracts", () => {
   it("adopts shared section and page typography on key routes", () => {
     const projects = readRepoFile("src/app/projects/page.tsx");
     assert.match(projects, /text-section-title/);
-    assert.match(projects, /text-body text-subtle/);
+    assert.match(projects, /text-body text-content/);
 
     const tech = readRepoFile("src/app/tech-stack/page.tsx");
     assert.match(tech, /text-section-title/);
-    assert.match(tech, /text-body text-subtle/);
+    assert.match(tech, /text-body text-content/);
 
     const pageTitle = readRepoFile("src/components/page-title.tsx");
     assert.match(pageTitle, /text-page-title/);

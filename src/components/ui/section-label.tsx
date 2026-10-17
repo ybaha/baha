@@ -19,7 +19,7 @@ export function SectionLabel({ title, description, titleId, className, titleClas
         {title}
       </h2>
       {description && (
-        <p className="mb-0 mt-1 text-body text-subtle">{description}</p>
+        <p className="mb-0 mt-1 text-body text-content">{description}</p>
       )}
     </header>
   );

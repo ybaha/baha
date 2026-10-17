@@ -9,7 +9,7 @@ export default function Page() {
         <PageTitle
           title="Projects"
           subtitle={
-            <p className="mb-0 mt-2 text-body text-subtle">
+            <p className="mb-0 mt-2 text-body text-content">
               Products I’m proud of, apps I’ve shipped, and where it all started.
             </p>
           }

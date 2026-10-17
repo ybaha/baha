@@ -53,7 +53,7 @@ export function RagSchematic() {
       <h3 className="font-sans text-card-title font-semibold tracking-normal text-content">
         GPU power to build it. A laptop to run it.
       </h3>
-      <p className="mb-0 mt-1 text-body text-subtle">
+      <p className="mb-0 mt-1 text-body text-content">
         The expensive embedding work happens once. Retrieval and the product live at home.
       </p>
       <div className="mb-2 mt-4 text-caption font-medium text-subtle">01 · Build the corpus</div>

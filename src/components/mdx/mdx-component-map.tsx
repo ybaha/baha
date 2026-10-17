@@ -32,7 +32,7 @@ export const mdxComponentMap = {
     <h4 {...props} className={cn(props.className, 'mb-3 lg:mb-4')} />
   ),
   p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
-    <p {...props} className="text-sm sm:text-base mb-4 lg:mb-6" />
+    <p {...props} className="text-body text-content mb-4 lg:mb-6" />
   ),
   pre: ({ children, className, ...props }: React.HTMLAttributes<HTMLPreElement>) => {
     const hasLang = /language-(\w+)/.exec(className || '');

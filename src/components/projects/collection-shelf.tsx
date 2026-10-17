@@ -121,7 +121,7 @@ export function CollectionShelf({
           <DialogTitle className="mt-1 font-sans text-page-title font-semibold leading-tight text-content">
             {title}
           </DialogTitle>
-          <DialogDescription id={`${shelfId}-description`} className="mb-0 mt-1 text-body text-subtle">
+          <DialogDescription id={`${shelfId}-description`} className="mb-0 mt-1 text-body text-content">
             {description ?? `${projects.length} projects from the collection.`}
           </DialogDescription>
         </header>

@@ -40,7 +40,7 @@ export async function LogsTimeline() {
                   <JourneyCard
                     title={item.title}
                     description={
-                      <MdxContent source={item.body} journey className="text-xs" />
+                      <MdxContent source={item.body} journey />
                     }
                     image={item.image}
                     date={item.date}

@@ -20,7 +20,7 @@ export default function EditorialProjectsLayout() {
           </div>
           <ProjectLink project={karardex} className="shrink-0 text-caption">Visit</ProjectLink>
         </div>
-        <p className="mb-0 max-w-xl text-body text-subtle">
+        <p className="mb-0 max-w-xl text-body text-content">
           Ask a question about Turkish law. Follow the research, read the answer, and trace every citation back to its source.
         </p>
         <div data-project-tags className="mb-4 mt-3 flex flex-wrap gap-1.5">
@@ -50,7 +50,7 @@ export default function EditorialProjectsLayout() {
               <h2 id="postmixr-feature-title" className={featureTitle}>Postmixr</h2>
             </div>
           </div>
-          <p className="mb-0 text-body text-subtle">
+          <p className="mb-0 text-body text-content">
             One shared calendar to plan and publish across your social channels.
           </p>
           <ProductProof project={postmixr} />

@@ -24,7 +24,7 @@ export default function Page() {
 function PostAi() {
   return (
     <div className="space-y-8">
-      <p className="text-body text-subtle">
+      <p className="text-body text-content">
         Times have changed. The stack that matters most now is the environment I run agents from. It
         all lives in{' '}
         <ExternalLink
@@ -38,7 +38,7 @@ function PostAi() {
       {POST_AI_SECTIONS.map((section) => (
         <section key={section.name}>
           <h2 className="text-section-title font-semibold mb-2">{section.name}</h2>
-          <p className="text-body text-subtle mb-3">
+          <p className="text-body text-content mb-3">
             {section.description}
           </p>
           <ul className="grid gap-2 sm:grid-cols-2">
@@ -74,7 +74,7 @@ const CategorySection = ({ name, description, items }: (typeof CATEGORIES)[numbe
   return (
     <section>
       <h2 className="text-section-title font-semibold mb-2">{name}</h2>
-      <p className="text-body text-subtle mb-3">{description}</p>
+      <p className="text-body text-content mb-3">{description}</p>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (
           <TechBadge key={item} name={item} />

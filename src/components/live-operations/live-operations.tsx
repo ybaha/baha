@@ -39,7 +39,7 @@ const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible
 const mono = 'font-mono text-caption tabular-nums text-subtle';
 const label = 'text-caption font-medium tracking-wide text-subtle';
 const heading = 'font-sans text-section-title font-semibold leading-tight tracking-tight text-content';
-const subtitle = 'mb-0 mt-1 text-body text-subtle';
+const subtitle = 'mb-0 mt-1 text-body text-content';
 const orb = 'lt-btn flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] border-primary/20 !bg-primary/10';
 const eventIcon = 'lt-btn grid h-[26px] w-[26px] shrink-0 place-items-center rounded-lg';
 const arrival = 'motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 motion-safe:duration-300';
@@ -379,7 +379,7 @@ export function LiveOperations({ embedded = false }: { embedded?: boolean }) {
       {!embedded && <><div className="flex items-center justify-between gap-3">
         <div><span className="text-caption font-medium tracking-widest text-subtle">BEHIND THE SCENES</span><h2 id="operations-title" className="mt-1 font-sans text-section-title font-semibold leading-tight tracking-tight text-content">Live operations</h2></div>
       </div>
-      <p className="mb-[18px] mt-2.5 text-body leading-relaxed text-subtle">{direction.description}</p>
+      <p className="mb-[18px] mt-2.5 text-body text-content">{direction.description}</p>
       <div className="mb-3.5 flex items-center justify-between gap-3">
         <div className="grid grid-cols-2 gap-[3px] rounded-xl border border-[var(--lt-ring)] bg-foreground/[0.025] p-1 shadow-[inset_0_1px_2px_var(--lt-drop-s)] sm:inline-flex" role="group" aria-label="Card design variation">
           {VARIANTS.map((item, index) => <button type="button" className={cn('rounded-lg px-2 py-1.5 text-caption transition-colors motion-reduce:transition-none sm:px-2.5 sm:text-xs', index === VARIANTS.length - 1 && 'col-span-2', focusRing, variant === item.id ? selectedSurface : 'text-subtle hover:bg-foreground/5 hover:text-foreground')} aria-pressed={variant === item.id} onClick={() => setVariant(item.id)} key={item.id}><span className="mr-1.5 hidden text-caption opacity-60 xs:inline">0{index + 1}</span>{item.label}</button>)}

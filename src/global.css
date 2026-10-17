@@ -59,7 +59,7 @@
     --color-muted: 100 100 100;
 
     --color-content: 228 228 231;
-    --color-subtle: 173 173 184;
+    --color-subtle: 190 190 198;
     --color-muted-foreground: var(--color-subtle);
 
     --color-border: 36 36 36;
@@ -92,7 +92,7 @@
   }
 
   article {
-    @apply flex flex-col text-base leading-relaxed;
+    @apply flex flex-col;
   }
 
   p {
@@ -203,10 +203,6 @@
 
   .content {
     @apply mx-auto w-full lg:mb-0 lg:max-w-3xl;
-  }
-
-  .content > p {
-    @apply text-base leading-relaxed;
   }
 
   .link {

@@ -60,7 +60,7 @@ module.exports = {
         'page-title-lg': ['36px', { lineHeight: '1.2' }],
         'section-title': ['20px', { lineHeight: '1.4' }],
         'card-title': ['16px', { lineHeight: '1.5' }],
-        body: ['14px', { lineHeight: '1.75' }],
+        body: ['16px', { lineHeight: '1.75' }],
         caption: ['12px', { lineHeight: '1.5' }],
         stat: ['30px', { lineHeight: '1.2' }],
         quote: ['18px', { lineHeight: '1.5' }],

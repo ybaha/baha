@@ -69,7 +69,7 @@ export default async function SnippetPage(p: Props) {
                 {snippet.date}
               </time>
             }
-            className="mb-6 flex flex-col gap-3 text-foreground"
+            className="mb-6 flex flex-col gap-3 text-content"
           />
           <MdxContent source={snippet.body} />
         </article>

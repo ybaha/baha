@@ -52,7 +52,7 @@ export function ProductDetails({ project }: { project: Project }) {
           <ProjectLink project={project} className="text-caption">Visit</ProjectLink>
         </header>
         <div className="min-h-0 overflow-y-auto p-5">
-          <p className="mb-0 text-body text-subtle">{detail.summary}</p>
+          <p className="mb-0 text-body text-content">{detail.summary}</p>
           {project.id === 'karardex' && <RagSchematic />}
           {detail.metrics && (
             <section aria-label="Production usage" className="mt-5">
@@ -97,7 +97,7 @@ export function ProductDetails({ project }: { project: Project }) {
               <h3 className="font-sans text-section-title font-semibold leading-snug text-content">
                 {detail.hosting.title}
               </h3>
-              <p className="mb-0 mt-2 text-body text-subtle">{detail.hosting.description}</p>
+              <p className="mb-0 mt-2 text-body text-content">{detail.hosting.description}</p>
               <div className="mt-4 flex flex-wrap items-center gap-2" aria-label={detail.hosting.flow.join(' → ')}>
                 {detail.hosting.flow.map((step, index) => (
                   <span key={step} className="inline-flex items-center gap-2 text-caption text-subtle">
@@ -114,7 +114,7 @@ export function ProductDetails({ project }: { project: Project }) {
                 <h3 className="font-sans text-card-title font-semibold tracking-normal text-content">
                   {item.title}
                 </h3>
-                <p className="mb-0 mt-1 text-body text-subtle">{item.description}</p>
+                <p className="mb-0 mt-1 text-body text-content">{item.description}</p>
               </div>
             ))}
           </section>
