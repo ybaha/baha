@@ -2,7 +2,7 @@ import '@/global.css';
 import '@/components/sidebar/sidebar.css';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
-import { Cormorant } from 'next/font/google';
+import localFont from 'next/font/local';
 
 import { SideMenu } from '@/components/side-menu';
 import { MenuContent } from '@/components/menu-content';
@@ -11,9 +11,8 @@ import { siteUrl } from '@/lib/site';
 import MainLayout from '@/components/main-layout';
 import { FloatingHeader } from '@/components/floating-header';
 import { ScrollArea } from '@/components/scroll-area';
-import { cookies } from 'next/headers';
 import type { Metadata, Viewport } from 'next';
-import { Toaster } from 'react-hot-toast';
+import { ClientToaster } from '@/components/client-toaster';
 import { ContentMetadataProvider } from '@/components/content-metadata-provider';
 import { getAllLogsMeta, getAllWritingsMeta } from '@/lib/content/selectors';
 
@@ -21,7 +20,6 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const fetchCache = 'default-cache';
 export const dynamic = 'force-static';
 
 const getTitle = (path: string) => {
@@ -31,18 +29,17 @@ const getTitle = (path: string) => {
   return '404';
 };
 
-const cormorant = Cormorant({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin', 'latin-ext'],
+const cormorant = localFont({
+  src: '../assets/Cormorant-Variable.woff2',
+  weight: '300 700',
+  style: 'normal',
+  display: 'swap',
   variable: '--font-cormorant',
 });
 
 export default async function RootLayout({ children }: Props) {
   const writings = getAllWritingsMeta();
   const logs = getAllLogsMeta();
-  const cookieStore = await cookies();
-  const theme = cookieStore.get('theme');
-  const isDark = cookieStore.get('is-dark')?.value === 'true';
 
   return (
     <html
@@ -51,15 +48,6 @@ export default async function RootLayout({ children }: Props) {
       suppressHydrationWarning
     >
       <body className="font-sans text-body text-content" suppressHydrationWarning>
-        {theme?.value && (
-          <style>
-            {`
-              :root {
-                --color-primary: ${theme?.value};
-              }
-           `}
-          </style>
-        )}
         <main vaul-drawer-wrapper="" className="sb-shell min-h-screen">
           <ContentMetadataProvider writings={writings} logs={logs}>
           <MainLayout>
@@ -77,17 +65,7 @@ export default async function RootLayout({ children }: Props) {
           </MainLayout>
           </ContentMetadataProvider>
         </main>
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            style: {
-              background: isDark ? '#27272a' : 'white',
-              color: isDark ? 'white' : 'black',
-              borderRadius: '8px',
-              border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`,
-            },
-          }}
-        />
+        <ClientToaster />
       </body>
     </html>
   );

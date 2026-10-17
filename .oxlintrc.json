@@ -1,0 +1,101 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["nextjs", "react", "import", "typescript"],
+  "rules": {
+    "nextjs/google-font-display": "warn",
+    "nextjs/google-font-preconnect": "warn",
+    "nextjs/next-script-for-ga": "warn",
+    "nextjs/no-async-client-component": "warn",
+    "nextjs/no-before-interactive-script-outside-document": "warn",
+    "nextjs/no-css-tags": "warn",
+    "nextjs/no-head-element": "warn",
+    "nextjs/no-html-link-for-pages": "error",
+    "nextjs/no-img-element": "warn",
+    "nextjs/no-page-custom-font": "warn",
+    "nextjs/no-styled-jsx-in-document": "warn",
+    "nextjs/no-sync-scripts": "error",
+    "nextjs/no-title-in-document-head": "warn",
+    "nextjs/no-typos": "warn",
+    "nextjs/no-unwanted-polyfillio": "warn",
+    "nextjs/inline-script-id": "error",
+    "nextjs/no-assign-module-variable": "error",
+    "nextjs/no-document-import-in-page": "error",
+    "nextjs/no-duplicate-head": "error",
+    "nextjs/no-head-import-in-document": "error",
+    "nextjs/no-script-component-in-head": "error",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "typescript/no-explicit-any": "warn",
+    "eslint/no-unused-vars": "off",
+    "react/purity": "off",
+    "react/set-state-in-effect": "off",
+    "react/refs": "off",
+    "react/immutability": "off",
+    "import/default": "off"
+  },
+  "overrides": [
+    {
+      "files": ["test/**/*.cjs", "test/**/*.mjs"],
+      "rules": {
+        "nextjs/no-assign-module-variable": "off"
+      }
+    },
+    {
+      "files": ["src/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@baha/server", "@baha/server/*"],
+                "message": "Frontend must not import the server workspace."
+              },
+              {
+                "group": ["drizzle-orm", "drizzle-orm/*", "drizzle-kit", "drizzle-kit/*"],
+                "message": "Database drivers belong in @baha/server only."
+              },
+              {
+                "group": ["better-auth", "better-auth/*", "!better-auth/react"],
+                "message": "Auth server SDK belongs in @baha/server only (use better-auth/react in auth-client)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["packages/contracts/src/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["next", "next/*", "hono", "hono/*", "@hono/*"],
+                "message": "Contracts stay framework-agnostic."
+              },
+              {
+                "group": ["@baha/server", "@baha/server/*"],
+                "message": "Contracts must not import the server workspace."
+              },
+              {
+                "group": ["@prisma/client", "@prisma/client/*"],
+                "message": "Contracts must not depend on Prisma."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "ignorePatterns": [
+    ".next/**",
+    "**/node_modules/**",
+    ".contentlayer/**",
+    "src/generated/prisma/**",
+    "out/**",
+    "packages/contracts/dist/**",
+    "server/dist/**"
+  ]
+}

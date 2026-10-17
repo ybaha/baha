@@ -46,6 +46,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   };
 }
 
+export const dynamicParams = false;
+
 export async function generateStaticParams(): Promise<{ slug: string[] }[]> {
   const allWritingSlugs = await getAllWritingSlugs();
   return allWritingSlugs.map((slug) => ({

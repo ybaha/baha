@@ -9,10 +9,11 @@ import { after, before, describe, it } from "node:test";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
-import generatedPrisma from "../../src/generated/prisma/client.ts";
+import generatedPrisma from "../../test/generated/prisma/client.ts";
+import { assertLoopbackDatabaseUrl } from "./loopback-db.cjs";
+import { applyLegacyInitSql } from "./legacy-baseline.mjs";
 
 const { PrismaClient } = generatedPrisma;
-import { assertLoopbackDatabaseUrl } from "./loopback-db.cjs";
 
 const repoRoot = join(fileURLToPath(new URL(".", import.meta.url)), "../..");
 
@@ -26,7 +27,6 @@ function run(cmd, stdio = "pipe") {
   execSync(cmd, { stdio, env: process.env });
 }
 
-/** pg_ctl can leave pipes open with stdio pipe, hanging execSync despite -w. */
 function runPgCtl(cmd) {
   execSync(cmd, { stdio: "ignore", env: process.env });
 }
@@ -50,11 +50,7 @@ before(async () => {
   assertLoopbackDatabaseUrl(databaseUrl);
   process.env.DATABASE_URL = databaseUrl;
 
-  execSync("npx prisma db push", {
-    cwd: repoRoot,
-    stdio: "pipe",
-    env: { ...process.env, DATABASE_URL: databaseUrl },
-  });
+  await applyLegacyInitSql(databaseUrl, repoRoot);
 
   pool = new Pool({ connectionString: databaseUrl });
   const adapter = new PrismaPg(pool);

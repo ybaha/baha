@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import type { WritingMeta } from '@/lib/content/types';
 import { useEffect, useState, useMemo } from 'react';
-import { getViews } from '@/queries/getViews';
+import { api } from '@/lib/api';
 import { SpinnerGapIcon } from '@phosphor-icons/react/dist/ssr';
 
 type Props = {
@@ -12,26 +12,44 @@ type Props = {
 };
 
 export const WritingList = ({ writings }: Props) => {
-  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [viewCounts, setViewCounts] = useState<Record<string, number> | null>(null);
+  const [viewsUnavailable, setViewsUnavailable] = useState(false);
 
   const slugs = useMemo(() => writings.map((writing) => writing.slug), [writings]);
 
   useEffect(() => {
-    const fetchViews = async () => {
-      const { data, error } = await getViews(slugs);
-      if (data && !error) {
-        setViewCounts(data);
-      }
-      setIsLoading(false);
-    };
+    if (slugs.length === 0) {
+      setViewCounts({});
+      setViewsUnavailable(false);
+      return;
+    }
 
-    fetchViews();
+    let cancelled = false;
+    setViewCounts(null);
+    setViewsUnavailable(false);
+
+    void api.views
+      .get({ slugs })
+      .then((data) => {
+        if (!cancelled) {
+          setViewCounts(data);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setViewsUnavailable(true);
+          setViewCounts({});
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [slugs]);
 
   const writingsByYear = useMemo(
     () =>
-      writings
+      [...writings]
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .reduce((acc, item) => {
           const dateObj = new Date(item.date);
@@ -57,6 +75,8 @@ export const WritingList = ({ writings }: Props) => {
     },
     [],
   );
+
+  const viewsLoading = viewCounts === null && !viewsUnavailable;
 
   return (
     <div className="text-body">
@@ -90,8 +110,11 @@ export const WritingList = ({ writings }: Props) => {
                   ' ' +
                   dateObj.getFullYear();
 
-                const viewCount = viewCounts[item.slug] ?? 0;
-                const formattedViews = formatViewCount(viewCount);
+                const viewCount = viewCounts?.[item.slug];
+                const formattedViews =
+                  viewsUnavailable || viewCount === undefined
+                    ? '—'
+                    : formatViewCount(viewCount);
 
                 return (
                   <li
@@ -122,7 +145,7 @@ export const WritingList = ({ writings }: Props) => {
                         </span>
                         <span className="col-span-3 line-clamp-4 md:col-span-5">{title}</span>
                         <span className="col-span-1 text-right text-caption text-subtle md:col-span-5">
-                          {isLoading ? (
+                          {viewsLoading ? (
                             <div className="flex items-center justify-end">
                               <SpinnerGapIcon className="h-4 w-4 animate-spin" />
                             </div>

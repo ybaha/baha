@@ -1,169 +1,169 @@
 import assert from "node:assert/strict";
-import { execSync } from "node:child_process";
-import { userInfo } from "node:os";
-import { rmSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { after, before, describe, it } from "node:test";
 
-import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import { createORPCClient, isDefinedError } from "@orpc/client";
+import { RPCLink } from "@orpc/client/fetch";
+import { SimpleCsrfProtectionLinkPlugin } from "@orpc/client/plugins";
+import { ORPCError } from "@orpc/client";
+
+import { CSRF_HEADER_NAME, CSRF_HEADER_VALUE, createApp } from "../../server/src/app.ts";
+import { createDatabase } from "../../server/src/db/client.ts";
+import { runMigrations } from "../../server/src/db/migrate.ts";
+import { parseServerEnv } from "../../server/src/env.ts";
+import { users } from "../../server/src/db/schema.ts";
+import { startLoopbackPostgres } from "./server-pg.mjs";
 
 const repoRoot = join(fileURLToPath(new URL(".", import.meta.url)), "../..");
+const manifest = JSON.parse(
+  readFileSync(join(repoRoot, "server/src/slug-manifest.json"), "utf8"),
+);
+const knownSlug = manifest.writingSlugs[0];
 
-let port;
-let dataDir;
-let databaseUrl;
-let prisma;
-let pool;
-let sessionOverride;
+let pg;
+let database;
+let sessionUserId = null;
+let baseUrl;
+const listeners = new Set();
 
-function run(cmd) {
-  execSync(cmd, { stdio: "pipe", env: process.env });
+function makeEnv(databaseUrl) {
+  return parseServerEnv({
+    NODE_ENV: "test",
+    DATABASE_URL: databaseUrl,
+    HOST: "127.0.0.1",
+    PORT: "0",
+    API_READ_ORIGINS: "http://127.0.0.1:3100",
+    API_WRITE_ORIGINS: "http://127.0.0.1:3100",
+    API_BODY_LIMIT_BYTES: "4096",
+  });
+}
+
+async function startHttpServer() {
+  const env = makeEnv(pg.databaseUrl);
+  const { app } = createApp({
+    env,
+    database,
+    getSession: async () =>
+      sessionUserId ? { user: { id: sessionUserId, name: "Test User" } } : null,
+    slugManifestPath: join(repoRoot, "server/src/slug-manifest.json"),
+  });
+  const { serve } = await import("@hono/node-server");
+  return await new Promise((resolve) => {
+    const listener = serve({ fetch: app.fetch, hostname: "127.0.0.1", port: 0 }, (info) => {
+      resolve({
+        baseUrl: `http://127.0.0.1:${info.port}`,
+        close: () =>
+          new Promise((done) => {
+            listener.close(() => {
+              listeners.delete(listener);
+              done();
+            });
+            listener.closeAllConnections();
+          }),
+      });
+    });
+    listeners.add(listener);
+  });
+}
+
+async function seedUser(label) {
+  const id = `user-${label}-${Date.now()}`;
+  await database.db.insert(users).values({
+    id,
+    email: `${label}-${Date.now()}@example.com`,
+    name: `${label} Name`,
+  });
+  return id;
+}
+
+function makeClient() {
+  const link = new RPCLink({
+    url: `${baseUrl}/rpc`,
+    fetch: (request, init) =>
+      fetch(request, {
+        ...init,
+        headers: {
+          ...Object.fromEntries(new Headers(init?.headers ?? {})),
+          origin: "http://127.0.0.1:3100",
+          [CSRF_HEADER_NAME]: CSRF_HEADER_VALUE,
+        },
+      }),
+    plugins: [new SimpleCsrfProtectionLinkPlugin()],
+  });
+  return createORPCClient(link);
 }
 
 before(async () => {
-  port = Number(
-    execSync(
-      `python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1]);s.close()'`
-    )
-      .toString()
-      .trim()
-  );
-  dataDir = `/tmp/baha-pg-${port}`;
-  process.env.PGDATA = dataDir;
-
-  run(`initdb -D "${dataDir}" --auth=trust`);
-  run(
-    `pg_ctl -D "${dataDir}" -o "-h 127.0.0.1 -p ${port}" -l "${dataDir}/log" -w start`
-  );
-  run(`createdb -h 127.0.0.1 -p ${port} baha_test`);
-  databaseUrl = `postgresql://${userInfo().username}@127.0.0.1:${port}/baha_test`;
-  process.env.DATABASE_URL = databaseUrl;
-  process.env.NEXTAUTH_SECRET = "synthetic-dev-secret-32chars-minimum!!";
-  process.env.NEXTAUTH_URL = "http://127.0.0.1:3100";
-
-  execSync("npx prisma db push", {
-    cwd: repoRoot,
-    stdio: "pipe",
-    env: { ...process.env, DATABASE_URL: databaseUrl },
-  });
-
-  pool = new Pool({ connectionString: databaseUrl });
-  const adapter = new PrismaPg(pool);
-  prisma = new (await import(`${repoRoot}/src/generated/prisma/client.ts`))
-    .PrismaClient({ adapter });
+  pg = await startLoopbackPostgres();
+  database = createDatabase({ connectionString: pg.databaseUrl });
+  await runMigrations(database.db, pg.databaseUrl);
+  const started = await startHttpServer();
+  baseUrl = started.baseUrl;
 });
 
 after(async () => {
-  await prisma?.$disconnect();
-  await pool?.end();
-  try {
-    run(`pg_ctl -D "${dataDir}" -m fast -w stop`);
-  } catch {
-    // ignore shutdown errors during cleanup
-  }
-  rmSync(dataDir, { recursive: true, force: true });
-});
-
-/** Stub the current-session resolver used by the comments service. */
-async function withSession(session, fn) {
-  const { setSessionResolverForTests } = await import(
-    `${repoRoot}/src/lib/auth/session.ts`
+  await Promise.all(
+    [...listeners].map(
+      (listener) =>
+        new Promise((done) => {
+          listener.close(done);
+          listener.closeAllConnections();
+        }),
+    ),
   );
-  setSessionResolverForTests(async () => session);
-  try {
-    return await fn();
-  } finally {
-    setSessionResolverForTests(null);
-  }
-}
-
-describe("comments service: policy contract", () => {
-  it("createComment rejects empty / oversized / unknown-slug inputs", async () => {
-    const { createComment } = await import(
-      `${repoRoot}/src/queries/createComment.ts`
-    );
-    const empty = await createComment("   ", "mcmaster-speed-secrets");
-    assert.equal(empty.data, null);
-    assert.match(empty.error, /empty/i);
-    const huge = await createComment("a".repeat(1500), "mcmaster-speed-secrets");
-    assert.equal(huge.data, null);
-    assert.match(huge.error, /long/i);
-    const bad = await createComment("hi", "bad slug with spaces");
-    assert.equal(bad.data, null);
-    assert.match(bad.error, /slug/i);
-  });
-
-  it("createComment enforces daily quota atomically", async () => {
-    const { createComment } = await import(
-      `${repoRoot}/src/queries/createComment.ts`
-    );
-    const realUser = await prisma.user.create({
-      data: { email: `quota-${Date.now()}@example.com` },
-    });
-    await withSession({ user: { id: realUser.id } }, async () => {
-      for (let i = 0; i < 10; i += 1) {
-        const result = await createComment(
-          `comment ${i + 1}`,
-          "mcmaster-speed-secrets"
-        );
-        assert.equal(result.error, null, `failed at #${i + 1}: ${result.error}`);
-      }
-      const blocked = await createComment("overflow", "mcmaster-speed-secrets");
-      assert.equal(blocked.data, null);
-      assert.match(blocked.error, /maximum/i);
-    });
-  });
+  await database?.shutdown();
+  await pg?.stop();
 });
 
-describe("vote service: concurrency", () => {
-  it("createVote toggles without unique-constraint failures", async () => {
-    const { createVote } = await import(
-      `${repoRoot}/src/queries/createVote.ts`
+describe("comments policy over HTTP", () => {
+  it("rejects empty / oversized / unknown-slug inputs", async () => {
+    sessionUserId = await seedUser("validation");
+    const client = makeClient();
+    await assert.rejects(
+      () => client.comments.create({ postSlug: knownSlug, text: "   " }),
+      (error) => isDefinedError(error) && error.code === "VALIDATION",
     );
-    const user = await prisma.user.create({
-      data: { email: `vote-${Date.now()}@example.com` },
-    });
-    const otherUser = await prisma.user.create({
-      data: { email: `other-${Date.now()}@example.com` },
-    });
-    const comment = await prisma.comment.create({
-      data: {
-        text: "votable",
-        postSlug: "mcmaster-speed-secrets",
-        userId: otherUser.id,
-      },
-    });
-
-    await withSession({ user: { id: user.id } }, async () => {
-      const a = await createVote({ commentId: comment.id, liked: true });
-      assert.equal(a.error, null);
-      assert.equal(a.data.value, 1);
-
-      const b = await createVote({ commentId: comment.id, liked: true });
-      assert.equal(b.error, null);
-      assert.equal(b.data.value, 0);
-
-      const c = await createVote({ commentId: comment.id, liked: false });
-      assert.equal(c.error, null);
-      assert.equal(c.data.value, -1);
-
-      const final = await prisma.vote.findFirst({
-        where: { userId: user.id, commentId: comment.id },
-      });
-      assert.equal(final?.value, -1);
-    });
+    await assert.rejects(
+      () => client.comments.create({ postSlug: knownSlug, text: "a".repeat(1500) }),
+      (error) => isDefinedError(error) && error.code === "VALIDATION",
+    );
+    await assert.rejects(
+      () => client.comments.create({ postSlug: "bad slug", text: "hi" }),
+      (error) => isDefinedError(error) && error.code === "VALIDATION",
+    );
   });
-});
 
-describe("views: known-slug guard", () => {
-  it("rejects unknown post slugs", async () => {
-    const { incrementPostView } = await import(
-      `${repoRoot}/src/queries/incrementPostView.ts`
+  it("enforces daily quota", async () => {
+    sessionUserId = await seedUser("quota");
+    const client = makeClient();
+    for (let i = 0; i < 10; i += 1) {
+      await client.comments.create({ postSlug: knownSlug, text: `comment ${i + 1}` });
+    }
+    await assert.rejects(
+      () => client.comments.create({ postSlug: knownSlug, text: "overflow" }),
+      (error) => error instanceof ORPCError && error.code === "QUOTA_EXCEEDED",
     );
-    const result = await incrementPostView("not-a-real-slug");
-    assert.equal(result.data, null);
-    assert.match(result.error, /unknown/i);
+  });
+
+  it("toggles votes without unique-constraint failures", async () => {
+    sessionUserId = await seedUser("voter");
+    const client = makeClient();
+    const created = await client.comments.create({ postSlug: knownSlug, text: "votable" });
+    const up = await client.votes.toggle({ commentId: created.id, liked: true });
+    assert.equal(up.value, 1);
+    const off = await client.votes.toggle({ commentId: created.id, liked: true });
+    assert.equal(off.value, 0);
+    const down = await client.votes.toggle({ commentId: created.id, liked: false });
+    assert.equal(down.value, -1);
+  });
+
+  it("rejects unknown post slugs for view increment", async () => {
+    const client = makeClient();
+    await assert.rejects(
+      () => client.views.increment({ slug: "not-a-real-slug" }),
+      (error) => error instanceof ORPCError && error.code === "NOT_FOUND",
+    );
   });
 });

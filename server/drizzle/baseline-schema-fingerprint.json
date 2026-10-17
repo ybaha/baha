@@ -1,0 +1,452 @@
+{
+  "tables": [
+    {
+      "table": "Account",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "userId",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "type",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "provider",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "providerAccountId",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "refresh_token",
+          "type": "text",
+          "not_null": false,
+          "default": null
+        },
+        {
+          "name": "access_token",
+          "type": "text",
+          "not_null": false,
+          "default": null
+        },
+        {
+          "name": "expires_at",
+          "type": "integer",
+          "not_null": false,
+          "default": null
+        },
+        {
+          "name": "token_type",
+          "type": "text",
+          "not_null": false,
+          "default": null
+        },
+        {
+          "name": "scope",
+          "type": "text",
+          "not_null": false,
+          "default": null
+        },
+        {
+          "name": "id_token",
+          "type": "text",
+          "not_null": false,
+          "default": null
+        },
+        {
+          "name": "session_state",
+          "type": "text",
+          "not_null": false,
+          "default": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "Account_pkey",
+          "definition": "PRIMARY KEY (id)",
+          "validated": true
+        },
+        {
+          "name": "Account_userId_fkey",
+          "definition": "FOREIGN KEY (\"userId\") REFERENCES \"User\"(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "validated": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "Account_pkey",
+          "definition": "CREATE UNIQUE INDEX \"Account_pkey\" ON public.\"Account\" USING btree (id)",
+          "valid": true,
+          "ready": true
+        },
+        {
+          "name": "Account_provider_providerAccountId_key",
+          "definition": "CREATE UNIQUE INDEX \"Account_provider_providerAccountId_key\" ON public.\"Account\" USING btree (provider, \"providerAccountId\")",
+          "valid": true,
+          "ready": true
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "table": "Comment",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "text",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "createdAt",
+          "type": "timestamp(3) without time zone",
+          "not_null": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updatedAt",
+          "type": "timestamp(3) without time zone",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "postSlug",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "userId",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "Comment_pkey",
+          "definition": "PRIMARY KEY (id)",
+          "validated": true
+        },
+        {
+          "name": "Comment_userId_fkey",
+          "definition": "FOREIGN KEY (\"userId\") REFERENCES \"User\"(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "validated": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "Comment_pkey",
+          "definition": "CREATE UNIQUE INDEX \"Comment_pkey\" ON public.\"Comment\" USING btree (id)",
+          "valid": true,
+          "ready": true
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "table": "PostView",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "count",
+          "type": "integer",
+          "not_null": true,
+          "default": "1"
+        },
+        {
+          "name": "createdAt",
+          "type": "timestamp(3) without time zone",
+          "not_null": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updatedAt",
+          "type": "timestamp(3) without time zone",
+          "not_null": true,
+          "default": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "PostView_pkey",
+          "definition": "PRIMARY KEY (id)",
+          "validated": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PostView_pkey",
+          "definition": "CREATE UNIQUE INDEX \"PostView_pkey\" ON public.\"PostView\" USING btree (id)",
+          "valid": true,
+          "ready": true
+        },
+        {
+          "name": "PostView_slug_key",
+          "definition": "CREATE UNIQUE INDEX \"PostView_slug_key\" ON public.\"PostView\" USING btree (slug)",
+          "valid": true,
+          "ready": true
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "table": "Session",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "sessionToken",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "userId",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "expires",
+          "type": "timestamp(3) without time zone",
+          "not_null": true,
+          "default": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "Session_pkey",
+          "definition": "PRIMARY KEY (id)",
+          "validated": true
+        },
+        {
+          "name": "Session_userId_fkey",
+          "definition": "FOREIGN KEY (\"userId\") REFERENCES \"User\"(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "validated": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "Session_pkey",
+          "definition": "CREATE UNIQUE INDEX \"Session_pkey\" ON public.\"Session\" USING btree (id)",
+          "valid": true,
+          "ready": true
+        },
+        {
+          "name": "Session_sessionToken_key",
+          "definition": "CREATE UNIQUE INDEX \"Session_sessionToken_key\" ON public.\"Session\" USING btree (\"sessionToken\")",
+          "valid": true,
+          "ready": true
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "table": "User",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "not_null": false,
+          "default": null
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "not_null": false,
+          "default": null
+        },
+        {
+          "name": "emailVerified",
+          "type": "timestamp(3) without time zone",
+          "not_null": false,
+          "default": null
+        },
+        {
+          "name": "image",
+          "type": "text",
+          "not_null": false,
+          "default": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "User_pkey",
+          "definition": "PRIMARY KEY (id)",
+          "validated": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "User_email_key",
+          "definition": "CREATE UNIQUE INDEX \"User_email_key\" ON public.\"User\" USING btree (email)",
+          "valid": true,
+          "ready": true
+        },
+        {
+          "name": "User_pkey",
+          "definition": "CREATE UNIQUE INDEX \"User_pkey\" ON public.\"User\" USING btree (id)",
+          "valid": true,
+          "ready": true
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "table": "VerificationToken",
+      "columns": [
+        {
+          "name": "identifier",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "token",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "expires",
+          "type": "timestamp(3) without time zone",
+          "not_null": true,
+          "default": null
+        }
+      ],
+      "constraints": [],
+      "indexes": [
+        {
+          "name": "VerificationToken_identifier_token_key",
+          "definition": "CREATE UNIQUE INDEX \"VerificationToken_identifier_token_key\" ON public.\"VerificationToken\" USING btree (identifier, token)",
+          "valid": true,
+          "ready": true
+        },
+        {
+          "name": "VerificationToken_token_key",
+          "definition": "CREATE UNIQUE INDEX \"VerificationToken_token_key\" ON public.\"VerificationToken\" USING btree (token)",
+          "valid": true,
+          "ready": true
+        }
+      ],
+      "triggers": []
+    },
+    {
+      "table": "Vote",
+      "columns": [
+        {
+          "name": "id",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "value",
+          "type": "integer",
+          "not_null": true,
+          "default": "1"
+        },
+        {
+          "name": "createdAt",
+          "type": "timestamp(3) without time zone",
+          "not_null": true,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        {
+          "name": "updatedAt",
+          "type": "timestamp(3) without time zone",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "userId",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        },
+        {
+          "name": "commentId",
+          "type": "text",
+          "not_null": true,
+          "default": null
+        }
+      ],
+      "constraints": [
+        {
+          "name": "Vote_commentId_fkey",
+          "definition": "FOREIGN KEY (\"commentId\") REFERENCES \"Comment\"(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "validated": true
+        },
+        {
+          "name": "Vote_pkey",
+          "definition": "PRIMARY KEY (id)",
+          "validated": true
+        },
+        {
+          "name": "Vote_userId_fkey",
+          "definition": "FOREIGN KEY (\"userId\") REFERENCES \"User\"(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "validated": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "Vote_pkey",
+          "definition": "CREATE UNIQUE INDEX \"Vote_pkey\" ON public.\"Vote\" USING btree (id)",
+          "valid": true,
+          "ready": true
+        },
+        {
+          "name": "Vote_userId_commentId_key",
+          "definition": "CREATE UNIQUE INDEX \"Vote_userId_commentId_key\" ON public.\"Vote\" USING btree (\"userId\", \"commentId\")",
+          "valid": true,
+          "ready": true
+        }
+      ],
+      "triggers": []
+    }
+  ]
+}

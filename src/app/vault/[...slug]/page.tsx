@@ -20,6 +20,8 @@ async function getSnippetFromParams(params: {
   return getSnippetBySlug(slug ?? "");
 }
 
+export const dynamicParams = false;
+
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params;
   const post = await getSnippetFromParams(params);

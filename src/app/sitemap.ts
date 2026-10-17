@@ -1,4 +1,6 @@
 import type { MetadataRoute } from 'next';
+
+export const dynamic = 'force-static';
 import { getAllSnippetsMeta, getAllWritingsMeta } from '@/lib/content/selectors';
 import { siteUrl } from '@/lib/site';
 

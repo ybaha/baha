@@ -1,0 +1,29 @@
+{
+  "name": "@baha/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "node ../node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+    "build": "node ../scripts/generate-slug-manifest.mjs && node ../node_modules/typescript/bin/tsc --noEmit -p tsconfig.json && node ../scripts/build-server.mjs"
+  },
+  "dependencies": {
+    "@baha/contracts": "0.0.0",
+    "@hono/node-server": "2.1.5",
+    "@orpc/client": "1.15.7",
+    "@orpc/server": "1.15.7",
+    "@orpc/standard-server-fetch": "1.15.7",
+    "better-auth": "1.7.10",
+    "drizzle-orm": "0.45.4",
+    "hono": "4.13.13",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "better-call": "1.4.2",
+    "@types/node": "^22",
+    "@types/pg": "^8.11.11",
+    "drizzle-kit": "0.31.11",
+    "esbuild": "0.25.0",
+    "typescript": "7.0.2"
+  }
+}

@@ -1,53 +1,46 @@
 # baha
 
 Personal site: [ybaha.com](https://ybaha.com) — writings, vault snippets, a logs timeline and a comments system.
-Next.js 16 (App Router, Turbopack), React 19, Tailwind 3, MDX content in `content/`,
-PostgreSQL via Prisma 7, NextAuth (GitHub/Google).
+Next.js 16 (App Router) static export, React 19, Tailwind 3, MDX content in `content/`,
+and a standalone typed API (`@baha/server`, intended for `api.ybaha.com`) for comments, votes, views and Better Auth. Deployment is a separate step.
 
 ## Requirements
 
 - Node.js `>=22.13` (see `engines` in `package.json`)
-- PostgreSQL for comments, votes, views and sign-in (the public pages render without it)
+- The static site builds without PostgreSQL or auth secrets; interactive features call the API at runtime.
 
 ## Setup
 
 ```bash
 npm ci
-cp .env.example .env   # then fill in values; .env is git-ignored
+cp .env.example .env   # optional public URLs for local dev
 npm run dev
 ```
 
-`npm ci` runs `prisma generate` (output goes to `src/generated/prisma`, git-ignored).
+Run the API separately from `server/` when exercising comments, sign-in, or visit notifications locally.
 
-### Environment variables
+### Environment variables (frontend)
 
-Names only; see `.env.example`.
+Names only; see `.env.example`. Backend secrets stay in `server/.env.example`.
 
 | Name | Used for |
 | --- | --- |
-| `DATABASE_URL` | Prisma runtime and CLI |
-| `NEXTAUTH_URL`, `NEXTAUTH_SECRET` | NextAuth |
-| `NEXT_PUBLIC_GITHUB_ID`, `GITHUB_SECRET` | GitHub sign-in |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in |
 | `SITE_URL` | Metadata, canonical/social URLs, `sitemap.xml` and `robots.txt` (optional; defaults to `https://ybaha.com`) |
-| `TELEGRAM_BOT_TOKEN` | Production homepage visit notifications (optional, server-only) |
-| `TELEGRAM_CHAT_ID` | Notification destination; blank keeps the previous destination (optional) |
+| `NEXT_PUBLIC_API_URL` | Browser RPC + Better Auth origin (optional in dev; defaults to `http://localhost:8787`) |
+| `NEXT_PUBLIC_SITE_URL` | Client visit-notification host check (optional) |
+| `NEXT_PUBLIC_ENABLE_VISIT_NOTIFICATIONS` | Enable visits on additional production-built hosts; localhost and read-only previews always remain excluded |
+| `NEXT_PUBLIC_DISABLE_AUTH` | Public/read-only previews on custom hosts (optional; `*.pages.dev` is automatic) |
 
 ### Homepage visit notifications
 
-The homepage looks up approximate IP location through `ipapi.co` and posts the
-location and browser/device details to `/api/status`. In production, that route
-sends the previous “New Visit” message to Telegram when a bot token is configured.
-It does not request browser GPS permission. Delivery is skipped in development.
-The old `/api/send-location` endpoint remains disabled; the homepage uses only
-`/api/status`. Same-origin validation, bounded payloads and short per-instance
-IP deduplication limit accidental duplicates and basic spam, but are not a durable
-rate limiter.
+The homepage looks up approximate IP location through `ipapi.co` and calls `visits.notify` on the standalone API.
+Telegram delivery, deduplication, and production-only rules are enforced on the server. Notifications are skipped on
+localhost, Cloudflare `*.pages.dev` previews, and unless the canonical production host (or an explicit flag) is used.
 
 ## Content
 
 Content lives in `content/{writings,snippets,logs}` as `.mdx` with frontmatter.
-It is loaded at build/request time by `src/lib/content` and compiled with
+It is loaded at build time by `src/lib/content` and compiled with
 `next-mdx-remote`; there is no separate content build step. Slugs are file
 basenames. A log's optional `icon` must be listed in `src/components/icons.tsx`
 (a test enforces this).
@@ -56,48 +49,47 @@ basenames. A log's optional `icon` must be listed in `src/components/icons.tsx`
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | Dev server (Turbopack) |
-| `npm run build` | `prisma generate` + `next build` (Turbopack) |
-| `npm start` | Serve the production build |
-| `npm run lint` | ESLint (flat config) |
-| `npm test` | Unit/regression tests (no database) |
-| `npm run test:integration` | Contract tests against a **disposable local** PostgreSQL |
+| `npm run dev` | Next dev server |
+| `npm run build` / `npm run build:web` | Build `@baha/contracts` + static export to `out/` |
+| `npm run build:contracts` | Compile `@baha/contracts` to `packages/contracts/dist` |
+| `npm run build:server` | Typecheck/build `@baha/server` |
+| `npm start` / `npm run preview` | Serve `out/` with `serve` (not `next start`) |
+| `npm run typecheck` | `tsc` for web, contracts, and server workspaces |
+| `npm run lint` | Oxlint + import/bundle boundary scripts |
+| `npm test` | Build contracts, then unit/regression tests (no database) |
+| `npm run test:integration` | Legacy Prisma fixture generate + integration tests (disposable PostgreSQL) |
+| `npm run generate:legacy-test` | Generate the dev-only legacy Prisma client for adapter rollback tests |
+| `npm run test:browser` | Fresh DB-free install/build, then desktop/mobile checks against an owned local API and disposable database |
 
-Both dev and build use Next's default bundler (Turbopack). `next/font/google` (Cormorant)
-is downloaded at build time, so the first build needs network access.
+Fonts are local, including licensed Cormorant assets under `src/assets`; the web build does not fetch fonts or call the API.
+
+## Cloudflare Pages
+
+Use Cloudflare's **Next.js (Static HTML Export)** preset:
+
+- Build command: `npm run build:web`
+- Output directory: `out`
+- Node: 22.13 or newer; install build/dev dependencies normally
+- Production public API: `NEXT_PUBLIC_API_URL=https://api.ybaha.com`
+- Site metadata: `SITE_URL=https://ybaha.com` (also the default)
+
+No Next runtime adapter, Pages Function, SPA catch-all rewrite, database URL or auth secret is required.
+See the [official static Next.js Pages guide](https://developers.cloudflare.com/pages/framework-guides/nextjs/deploy-a-static-nextjs-site/).
+
+The API is deployed independently; see `server/README.md`. No Cloudflare, VPS, DNS, OAuth or production database changes are performed by these build commands.
+
+## Optional browser checks
+
+The browser test uses an existing Python Playwright installation and cached Chromium; it never installs Python/browser tooling. Set `BROWSER_PYTHON` to the Python executable and `BROWSER_EXECUTABLE` if the compatible browser is not at Playwright's default cached path. It creates only owned temporary services/databases, blocks external browser traffic, and records logs/screenshots under the printed temporary artifact directory.
 
 Integration tests need `initdb`, `pg_ctl` and `createdb` on `PATH`. They create a
 cluster under `/tmp` on a free loopback port, point `DATABASE_URL` at it for the
-test process, and remove it when done.
+server tests, and remove it when done.
 
 ## Database
 
-The build only runs `prisma generate`; it never changes a schema. Migrations live in
-`prisma/migrations` (`0_init` is the baseline of the current schema and is already
-marked as applied in production). To change the schema:
+The static frontend does not embed Prisma. Legacy NextAuth/Prisma adapter rollback tests use
+`test/fixtures/legacy-prisma` and `npm run generate:legacy-test`. Production schema history remains in
+`prisma/migrations` (`0_init` baseline). Application schema changes are owned by Drizzle in `server/drizzle`.
 
-1. Edit `prisma/schema.prisma` and create a migration against a **local** database
-   (`prisma migrate dev --name <change>`).
-2. Review the SQL, commit it, then run `prisma migrate deploy` against production.
-
-Back up first (`pg_dump`). Never run `prisma db push` against a database you care
-about. See `prisma/README.md`.
-
-## Deploy
-
-Run `npm ci && npm run build && npm start` with the environment above. CI
-(`.github/workflows/ci.yml`) runs typecheck, lint, tests and a build using
-synthetic values only.
-
-For production, set `NEXTAUTH_URL=https://ybaha.com` and leave `SITE_URL` unset
-or set it to `https://ybaha.com`. Update the GitHub/Google OAuth applications'
-authorized callback URLs to `https://ybaha.com/api/auth/callback/github` and
-`https://ybaha.com/api/auth/callback/google` respectively.
-
-## Security notes
-
-- Comment text is validated server-side (length, slug pattern) and a user may post
-  at most 10 comments per rolling 24 hours (enforced in one transaction with a
-  per-user advisory lock).
-- Reading comments is public; posting and voting require a session. Responses never
-  include emails or other users' vote rows.
+See `docs/cloudflare-migration-plan.md` for the full migration plan.
