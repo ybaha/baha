@@ -132,7 +132,6 @@ export const WritingList = ({ writings }: Props) => {
                     <Link
                       href={`/writings/${item.slug}`}
                       className="col-span-12 text-content md:col-span-10"
-                      prefetch={true}
                     >
                       <span className="grid grid-cols-5 items-center gap-2 border-t border-foreground/20 py-4 md:grid-cols-12">
                         <span className="col-span-1 text-left text-caption text-subtle md:col-span-2">

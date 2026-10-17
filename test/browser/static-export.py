@@ -54,6 +54,30 @@ def wait_url(url, proc, seconds=20):
             time.sleep(.1)
     raise RuntimeError('Owned process readiness timed out: ' + url)
 
+def check_writing_navigation(page, origin, slug, viewport):
+    article_path = '/writings/' + slug
+    for listing in ['/', '/writings']:
+        page.goto(origin + listing, wait_until='networkidle')
+        if viewport == 'desktop' and listing == '/writings':
+            # The desktop writings index intentionally opens the newest article.
+            page.wait_for_url(re.compile(re.escape(origin) + '/writings/.+'))
+            expect(page.locator('article.content')).to_be_visible()
+        source_url = page.url
+        sentinel = viewport + listing
+        page.evaluate('(value) => { window.__navigationSentinel = value }', sentinel)
+        link = page.locator('a[href="' + article_path + '"]:visible').first
+        link.hover()
+        link.click()
+        page.wait_for_url(origin + article_path)
+        expect(page.locator('article.content')).to_be_visible()
+        assert page.evaluate('window.__navigationSentinel') == sentinel, 'Writing link triggered a document reload instead of client navigation'
+        page.go_back(wait_until='networkidle')
+        page.wait_for_url(source_url)
+        page.go_forward(wait_until='networkidle')
+        page.wait_for_url(origin + article_path)
+        expect(page.locator('article.content')).to_be_visible()
+        RESULTS.append({'check': 'writing link client navigation and history', 'viewport': viewport, 'from': urlparse(source_url).path, 'to': article_path, 'pass': True})
+
 try:
     web_port, api_port = port(), port()
     metadata = OUT / 'fixture.json'
@@ -106,6 +130,10 @@ try:
         requests = []
         page_errors = []
         failed_assets = []
+        html_navigation_responses = []
+        def check_navigation_response(response):
+            if '_rsc=' in response.url and response.headers.get('content-type', '').startswith('text/html'):
+                html_navigation_responses.append(response.url)
         ctx = browser.new_context(viewport={'width': 1440, 'height': 900}, color_scheme='light', reduced_motion='reduce')
         ctx.add_cookies([data['cookie']])
         ctx.route('**/*', lambda route: route.continue_() if urlparse(route.request.url).hostname in ['127.0.0.1', 'localhost'] else route.abort())
@@ -114,6 +142,8 @@ try:
         page.on('pageerror', lambda error: page_errors.append(str(error)))
         page.on('request', lambda request: requests.append({'url': request.url, 'headers': request.headers, 'method': request.method}))
         page.on('response', lambda response: failed_assets.append(response.url) if response.status >= 400 and urlparse(response.url).port == web_port else None)
+        page.on('response', check_navigation_response)
+        check_writing_navigation(page, data['frontendOrigin'], data['slug'], 'desktop')
         for path in ['/', '/writings', '/vault', '/logs', '/projects', '/tech-stack', '/writings/' + data['slug'], '/vault/first-one']:
             response = page.goto(data['frontendOrigin'] + path, wait_until='networkidle')
             assert response.status == 200, path
@@ -189,6 +219,8 @@ try:
         mobile.route('**/*', lambda route: route.continue_() if urlparse(route.request.url).hostname in ['127.0.0.1', 'localhost'] else route.abort())
         mobile_page = mobile.new_page()
         mobile_page.on('pageerror', lambda error: page_errors.append(str(error)))
+        mobile_page.on('response', check_navigation_response)
+        check_writing_navigation(mobile_page, data['frontendOrigin'], data['slug'], 'mobile')
         for path in ['/', '/projects', '/logs', '/writings/' + data['slug'], '/vault/first-one']:
             response = mobile_page.goto(data['frontendOrigin'] + path, wait_until='networkidle')
             assert response.status == 200
@@ -215,6 +247,7 @@ try:
         RESULTS.append({'check': 'API-offline draft retention, auth error and readable static content', 'pass': True})
         assert not page_errors, page_errors
         assert not failed_assets, failed_assets
+        assert not html_navigation_responses, html_navigation_responses
         assert not any('next-action' in request['headers'] or '/api/' in urlparse(request['url']).path for request in requests)
         assert not any('ipapi.co' in request['url'] or '/visits/notify' in request['url'] for request in requests), 'Local browser must never send visit notifications'
         RESULTS.append({'check': 'no JS page errors, missing static assets, Next API or Server Action requests', 'pass': True})
