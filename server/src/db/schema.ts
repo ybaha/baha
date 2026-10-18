@@ -253,6 +253,44 @@ export const postViews = pgTable(
   (table) => [uniqueIndex("PostView_slug_key").on(table.slug)],
 );
 
+export const visits = pgTable(
+  "Visit",
+  {
+    id: text("id").primaryKey(),
+    receivedAt: timestamp("receivedAt", { withTimezone: true, mode: "date" }).notNull(),
+    visitedAt: timestamp("visitedAt", { withTimezone: true, mode: "date" }).notNull(),
+    trustedIp: text("trustedIp").notNull(),
+    reportedIp: text("reportedIp").notNull(),
+    pageUrl: text("pageUrl"),
+    referrer: text("referrer"),
+    pageTitle: text("pageTitle"),
+    city: text("city"),
+    region: text("region"),
+    country: text("country"),
+    location: text("location"),
+    postalCode: text("postalCode"),
+    organization: text("organization"),
+    userAgent: text("userAgent"),
+    platform: text("platform"),
+    language: text("language"),
+    vendor: text("vendor"),
+    screenResolution: text("screenResolution"),
+    windowSize: text("windowSize"),
+    timezone: text("timezone"),
+    encrypted: boolean("encrypted").notNull(),
+    notificationStatus: text("notificationStatus").notNull().default("pending"),
+    notifiedAt: timestamp("notifiedAt", { withTimezone: true, mode: "date" }),
+    failureCode: text("failureCode"),
+  },
+  (table) => [
+    index("Visit_receivedAt_idx").on(table.receivedAt),
+    index("Visit_notificationStatus_receivedAt_idx").on(
+      table.notificationStatus,
+      table.receivedAt,
+    ),
+  ],
+);
+
 export const betterAuthDrizzleSchema = {
   user: users,
   account: authAccounts,
@@ -277,6 +315,7 @@ export const schema = {
   comments,
   votes,
   postViews,
+  visits,
 };
 
 export type DatabaseSchema = typeof schema;
