@@ -27,6 +27,9 @@ export function createDatabase(options: CreateDatabaseOptions): DatabaseBundle {
     max: options.max ?? 10,
     idleTimeoutMillis: options.idleTimeoutMillis ?? 30_000,
     connectionTimeoutMillis: options.connectionTimeoutMillis ?? 5_000,
+    // Bound server work as well as client waiting; a stalled history write must release its slot.
+    statement_timeout: 5_000,
+    query_timeout: 6_000,
   });
   const db = drizzle(pool, { schema });
 

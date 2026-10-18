@@ -6,6 +6,9 @@ import {
   commentsListOutputSchema,
   visitsNotifyInputSchema,
   visitsNotifyOutputSchema,
+  visitsPublicKeyInputSchema,
+  visitsPublicKeyOutputSchema,
+  visitsEncryptedInputSchema,
   viewsGetInputSchema,
   viewsGetOutputSchema,
   viewsIncrementInputSchema,
@@ -38,6 +41,14 @@ export const visitsNotifyContract = apiProcedure
   .input(visitsNotifyInputSchema)
   .output(visitsNotifyOutputSchema);
 
+export const visitsPublicKeyContract = apiProcedure
+  .input(visitsPublicKeyInputSchema)
+  .output(visitsPublicKeyOutputSchema);
+
+export const visitsEncryptedContract = apiProcedure
+  .input(visitsEncryptedInputSchema)
+  .output(visitsNotifyOutputSchema);
+
 export const contract = {
   comments: {
     list: commentsListContract,
@@ -51,6 +62,8 @@ export const contract = {
     increment: viewsIncrementContract,
   },
   visits: {
+    publicKey: visitsPublicKeyContract,
+    notifyEncrypted: visitsEncryptedContract,
     notify: visitsNotifyContract,
   },
 };

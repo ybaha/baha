@@ -35,6 +35,7 @@ it("persists sanitized visit rows with timestamptz accuracy", { timeout: 20000 }
     const visitId = "visit-integration-1";
     const inserted = await recorder.record({
       id: visitId,
+      attemptId: "owner-a",
       payload: {
         ...basePayload,
         pageUrl: "https://ybaha.com/home?token=secret#frag",
@@ -52,6 +53,7 @@ it("persists sanitized visit rows with timestamptz accuracy", { timeout: 20000 }
 
     const duplicate = await recorder.record({
       id: visitId,
+      attemptId: "duplicate-owner",
       payload: basePayload,
       trustedIp: "203.0.113.8",
       receivedAt,
@@ -89,8 +91,11 @@ it("persists sanitized visit rows with timestamptz accuracy", { timeout: 20000 }
       visited: "2026-10-08 12:00:00.000",
     });
 
+    assert.equal(await recorder.retryFailed(visitId, "owner-b"), false);
+    assert.equal(await recorder.retryFailed(visitId, "owner-b", "owner-a"), true);
+
     const sentAt = new Date("2026-10-08T12:00:05.000Z");
-    await recorder.setNotificationStatus(visitId, "sent", sentAt);
+    await recorder.setNotificationStatus(visitId, "owner-b", "sent", sentAt);
     const { rows: sentRows } = await database.pool.query(
       `SELECT "notificationStatus",
         to_char("notifiedAt" AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI:SS.MS') AS notified
@@ -102,8 +107,11 @@ it("persists sanitized visit rows with timestamptz accuracy", { timeout: 20000 }
       notified: "2026-10-08 12:00:05.000",
     });
 
+    assert.equal(await recorder.retryFailed(visitId, "owner-c"), false);
+    assert.equal(await recorder.retryFailed(visitId, "owner-c", "owner-b"), false);
+
     const failedAt = new Date("2026-10-08T12:00:06.000Z");
-    await recorder.setNotificationStatus(visitId, "failed", failedAt, "telegram_error");
+    await recorder.setNotificationStatus(visitId, "owner-b", "failed", failedAt, "telegram_error");
     const { rows: failedRows } = await database.pool.query(
       `SELECT "notificationStatus", "failureCode",
         to_char("notifiedAt" AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI:SS.MS') AS notified
@@ -115,6 +123,19 @@ it("persists sanitized visit rows with timestamptz accuracy", { timeout: 20000 }
       failureCode: "telegram_error",
       notified: "2026-10-08 12:00:05.000",
     });
+    const secondProcess = createVisitRecorder(database.db);
+    const claims = await Promise.all([
+      recorder.retryFailed(visitId, "owner-c"), secondProcess.retryFailed(visitId, "owner-d"),
+    ]);
+    assert.equal(claims.filter(Boolean).length, 1);
+    // A lost failure-status acknowledgement must not let the old owner steal the new pending attempt.
+    assert.equal(await recorder.retryFailed(visitId, "stale-recovery", "owner-b"), false);
+    await recorder.setNotificationStatus(visitId, "owner-b", "sent", sentAt);
+    const state = (await database.pool.query(
+      `SELECT "notificationStatus", "notificationAttemptId" FROM "Visit" WHERE id = $1`, [visitId],
+    )).rows[0];
+    assert.equal(state.notificationStatus, "pending");
+    assert.ok(["owner-c", "owner-d"].includes(state.notificationAttemptId));
   } finally {
     if (previous === undefined) delete process.env.TZ;
     else process.env.TZ = previous;

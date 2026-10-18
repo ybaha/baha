@@ -121,7 +121,7 @@ describe("visit notifications (server)", () => {
     const calls = [];
     const transport = async (...args) => {
       calls.push(args);
-      return { ok: true };
+      return Response.json({ ok: true });
     };
     const deps = {
       nodeEnv: "development",

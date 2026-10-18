@@ -32,7 +32,7 @@ it("sends useful homepage context without URL secrets, even when geolocation fai
       require(name) {
         if (name === "react") return { useEffect: (effect) => effect() };
         if (name === "@/lib/preview") return { isVisitNotificationsEnabled: () => true };
-        if (name === "@/lib/api") return { api: { visits: { notify: async (payload) => deliver(payload) } } };
+        if (name === "@/lib/visit-notify") return { notifyEncryptedVisit: async (payload) => deliver(payload) };
         throw new Error(`Unexpected import: ${name}`);
       },
     };

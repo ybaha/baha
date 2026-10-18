@@ -3,6 +3,8 @@ export {
   commentsCreateContract,
   commentsListContract,
   visitsNotifyContract,
+  visitsPublicKeyContract,
+  visitsEncryptedContract,
   viewsGetContract,
   viewsIncrementContract,
   votesToggleContract,
@@ -29,6 +31,8 @@ import type {
   publicCommentSchema,
   visitsNotifyInputSchema,
   visitsNotifyOutputSchema,
+  visitsPublicKeyOutputSchema,
+  visitsEncryptedInputSchema,
   viewsGetOutputSchema,
   viewsIncrementOutputSchema,
   votesToggleOutputSchema,
@@ -48,3 +52,5 @@ export type ViewsMapDto = z.infer<typeof viewsGetOutputSchema>;
 export type ViewIncrementResultDto = z.infer<typeof viewsIncrementOutputSchema>;
 export type VisitNotifyInputDto = z.infer<typeof visitsNotifyInputSchema>;
 export type VisitNotifyResultDto = z.infer<typeof visitsNotifyOutputSchema>;
+export type VisitPublicKeyDto = z.infer<typeof visitsPublicKeyOutputSchema>;
+export type EncryptedVisitDto = z.infer<typeof visitsEncryptedInputSchema>;

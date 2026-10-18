@@ -110,7 +110,8 @@ describe("auth data migration (C1)", () => {
       "0001_comment_post_slug_idx",
     ]);
     assert.equal(tags[2], "0002_better_auth");
-    assert.equal(checksums.length, 3);
+    assert.equal(tags[3], "0003_visits");
+    assert.equal(checksums.length, 4);
   });
 
   it("migrates eligible legacy user data and preserves ids without tokens or sessions", async () => {

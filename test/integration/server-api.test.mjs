@@ -75,7 +75,7 @@ async function startHttpServer(extra = {}) {
       return sessionUserId ? { user: { id: sessionUserId, name: "Test User" } } : null;
     },
     slugManifestPath: join(repoRoot, "server/src/slug-manifest.json"),
-    telegramTransport: extra.telegramTransport ?? (async () => ({ ok: true })),
+    telegramTransport: extra.telegramTransport ?? (async () => Response.json({ ok: true })),
     resolveSocketPeer: () => socketPeer,
     ...extra.app,
   });
@@ -518,7 +518,7 @@ describe("server oRPC HTTP", { timeout: 20_000 }, () => {
     let calls = 0;
     const transport = async () => {
       calls += 1;
-      return { ok: true };
+      return Response.json({ ok: true });
     };
     const started = await startHttpServer({
       env: { NODE_ENV: "production", TELEGRAM_BOT_TOKEN: "test-token" },

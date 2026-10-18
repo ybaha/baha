@@ -12,10 +12,13 @@ describe("static frontend surface", () => {
     assert.equal(existsSync(join(repoRoot, "src/app/api")), false);
   });
 
-  it("homepage uses the RPC visit notifier", () => {
+  it("homepage uses the encrypted RPC visit notifier without plaintext fallback", () => {
     const source = readFileSync(join(repoRoot, "src/app/page.client.tsx"), "utf8");
-    assert.ok(source.includes("api.visits.notify"));
+    const sender = readFileSync(join(repoRoot, "src/lib/visit-notify.ts"), "utf8");
+    assert.ok(source.includes("notifyEncryptedVisit"));
+    assert.ok(sender.includes("api.visits.notifyEncrypted"));
     assert.ok(!source.includes("/api/status"));
+    assert.ok(!sender.includes("api.visits.notify("));
   });
 
   it("build:web does not run prisma generate", () => {

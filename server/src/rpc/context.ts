@@ -20,8 +20,11 @@ export type RpcContext = {
   getSession: SessionResolver;
 };
 
+import type { VisitEventStore } from "../services/visits.js";
+
 export type AppServices = {
   knownSlugs: Set<string>;
   viewsCache: Map<string, { value: number; expiresAt: number }>;
   visitDedupe: Map<string, number>;
+  visitEvents: VisitEventStore;
 };

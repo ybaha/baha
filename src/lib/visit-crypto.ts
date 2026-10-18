@@ -32,8 +32,8 @@ function encodeBase64Url(bytes: Uint8Array): string {
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
-function decodeBase64Url(value: string, exactLength?: number): Uint8Array {
-  if (typeof value !== "string" || value.length === 0 || !BASE64URL_RE.test(value)) {
+function decodeBase64Url(value: string, exactLength?: number): Uint8Array<ArrayBuffer> {
+  if (typeof value !== "string" || value.length === 0 || value.length > 87 || !BASE64URL_RE.test(value)) {
     throw new Error("Invalid public key.");
   }
   const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
@@ -43,7 +43,7 @@ function decodeBase64Url(value: string, exactLength?: number): Uint8Array {
   for (let i = 0; i < binary.length; i++) {
     bytes[i] = binary.charCodeAt(i);
   }
-  if (bytes.length === 0) {
+  if (bytes.length === 0 || encodeBase64Url(bytes) !== value) {
     throw new Error("Invalid public key.");
   }
   if (exactLength !== undefined && bytes.length !== exactLength) {
@@ -59,7 +59,7 @@ function buildAad(
   ephemeralPublicKey: string,
   salt: string,
   iv: string,
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return new TextEncoder().encode(
     JSON.stringify([
       AAD_LABEL,
@@ -73,7 +73,7 @@ function buildAad(
   );
 }
 
-function validatePublicKey(key: VisitPublicKeyDto): Uint8Array {
+function validatePublicKey(key: VisitPublicKeyDto): Uint8Array<ArrayBuffer> {
   if (
     key?.version !== PROTOCOL_VERSION ||
     typeof key.keyId !== "string" ||
@@ -101,7 +101,7 @@ function validateEventId(eventId: string): void {
 
 async function importPeerPublicKey(
   subtle: SubtleCrypto,
-  publicKeyBytes: Uint8Array,
+  publicKeyBytes: Uint8Array<ArrayBuffer>,
 ): Promise<CryptoKey> {
   return subtle.importKey(
     "raw",
@@ -115,7 +115,7 @@ async function importPeerPublicKey(
 async function derivePayloadKey(
   subtle: SubtleCrypto,
   sharedSecret: ArrayBuffer,
-  salt: Uint8Array,
+  salt: Uint8Array<ArrayBuffer>,
 ): Promise<CryptoKey> {
   const ikm = await subtle.importKey("raw", sharedSecret, "HKDF", false, [
     "deriveKey",

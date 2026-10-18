@@ -1,5 +1,5 @@
 import type { VisitNotifyInputDto } from "@baha/contracts";
-import { eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 
 import type { AppDatabase } from "../db/client.js";
 import { visits } from "../db/schema.js";
@@ -15,13 +15,16 @@ export type VisitNotificationStatus =
 export interface VisitRecorder {
   record(input: {
     id: string;
+    attemptId: string;
     payload: VisitNotifyInputDto;
     trustedIp: string;
     receivedAt: Date;
     encrypted: boolean;
   }): Promise<boolean>;
+  retryFailed(id: string, newAttemptId: string, recoverFromAttemptId?: string): Promise<boolean>;
   setNotificationStatus(
     id: string,
+    attemptId: string,
     status: VisitNotificationStatus,
     at: Date,
     failureCode?: string,
@@ -30,7 +33,7 @@ export interface VisitRecorder {
 
 export function createVisitRecorder(db: AppDatabase): VisitRecorder {
   return {
-    async record({ id, payload, trustedIp, receivedAt, encrypted }) {
+    async record({ id, attemptId, payload, trustedIp, receivedAt, encrypted }) {
       const sanitized = sanitizeVisitPayload(payload);
       const visitedAt = new Date(sanitized.timestamp);
       if (Number.isNaN(visitedAt.getTime())) {
@@ -62,6 +65,7 @@ export function createVisitRecorder(db: AppDatabase): VisitRecorder {
           windowSize: sanitized.windowSize,
           timezone: sanitized.timezone,
           encrypted,
+          notificationAttemptId: attemptId,
         })
         .onConflictDoNothing({ target: visits.id })
         .returning({ id: visits.id });
@@ -69,7 +73,21 @@ export function createVisitRecorder(db: AppDatabase): VisitRecorder {
       return row !== undefined;
     },
 
-    async setNotificationStatus(id, status, at, failureCode) {
+    async retryFailed(id, newAttemptId, recoverFromAttemptId) {
+      const [row] = await db.update(visits)
+        .set({ notificationStatus: "pending", notificationAttemptId: newAttemptId, failureCode: null })
+        .where(and(eq(visits.id, id), or(
+          eq(visits.notificationStatus, "failed"),
+          recoverFromAttemptId ? and(
+            eq(visits.notificationStatus, "pending"),
+            eq(visits.notificationAttemptId, recoverFromAttemptId),
+          ) : undefined,
+        )))
+        .returning({ id: visits.id });
+      return row !== undefined;
+    },
+
+    async setNotificationStatus(id, attemptId, status, at, failureCode) {
       await db
         .update(visits)
         .set({
@@ -77,7 +95,7 @@ export function createVisitRecorder(db: AppDatabase): VisitRecorder {
           failureCode: failureCode ?? null,
           ...(status === "sent" ? { notifiedAt: at } : {}),
         })
-        .where(eq(visits.id, id));
+        .where(and(eq(visits.id, id), eq(visits.notificationAttemptId, attemptId)));
     },
   };
 }

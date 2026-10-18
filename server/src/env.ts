@@ -15,6 +15,7 @@ export type ServerEnv = {
   bodyLimitBytes: number;
   telegramBotToken?: string;
   telegramChatId?: string;
+  visitEncryptionSecret?: string;
 };
 
 export type AuthConfig = {
@@ -147,6 +148,11 @@ export function parseServerEnv(
     throw new Error("API_BODY_LIMIT_BYTES must be a positive integer no larger than 16MB");
   }
 
+  const visitEncryptionSecret = env.VISIT_ENCRYPTION_SECRET?.trim() || env.API_AUTH_SECRET?.trim();
+  if (visitEncryptionSecret && visitEncryptionSecret.length < 32) {
+    throw new Error("Visit encryption requires a secret of at least 32 characters");
+  }
+
   return {
     nodeEnv,
     host,
@@ -160,6 +166,7 @@ export function parseServerEnv(
     bodyLimitBytes,
     telegramBotToken: env.TELEGRAM_BOT_TOKEN,
     telegramChatId: env.TELEGRAM_CHAT_ID,
+    visitEncryptionSecret,
   };
 }
 

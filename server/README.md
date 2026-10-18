@@ -38,5 +38,10 @@ Names only; see `.env.example`.
 | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub OAuth |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google OAuth |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Optional visit notifications |
+| `VISIT_ENCRYPTION_SECRET` | Optional independent random 32+ character secret; blank defaults to domain-separated derivation from `API_AUTH_SECRET` |
 
 Integration tests and `createApp` harnesses may inject a session resolver without mounting `/auth/*`.
+
+Visit notifications now include runtime public-key discovery, encrypted submission, and private `Visit` history.
+`/healthz` reports only non-secret visit configuration booleans. Deploy the API and apply `0003_visits` before the new
+static frontend; startup and builds never run migrations. See [the visit rollout and troubleshooting guide](../docs/visit-notifications.md).

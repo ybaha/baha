@@ -2,8 +2,10 @@ import assert from "node:assert/strict";
 import { webcrypto } from "node:crypto";
 import { describe, it } from "node:test";
 
-import { encryptVisit } from "../../src/lib/visit-crypto.ts";
+import { createRequire } from "node:module";
+const { encryptVisit } = createRequire(import.meta.url)("../../src/lib/visit-crypto.ts");
 import { createVisitCipher } from "../../server/src/services/visit-crypto.ts";
+import { parseServerEnv } from "../../server/src/env.ts";
 
 if (!globalThis.crypto) {
   globalThis.crypto = webcrypto;
@@ -54,6 +56,13 @@ function expectInvalid(fn) {
 }
 
 describe("visit-crypto", () => {
+  it("uses the existing auth secret when the optional visit secret is blank", () => {
+    const env = { DATABASE_URL: "postgresql://fixture:fixture@127.0.0.1:1/unused", API_AUTH_SECRET: SECRET_A };
+    assert.equal(parseServerEnv({ ...env, VISIT_ENCRYPTION_SECRET: "  " }).visitEncryptionSecret, SECRET_A);
+    assert.equal(parseServerEnv({ ...env, VISIT_ENCRYPTION_SECRET: SECRET_B }).visitEncryptionSecret, SECRET_B);
+    assert.throws(() => parseServerEnv({ ...env, VISIT_ENCRYPTION_SECRET: "short" }));
+  });
+
   it("roundtrips unicode visit payloads", async () => {
     const now = () => 1_700_000_000_000;
     const { cipher, envelope } = await encryptWithSecret(basePayload, SECRET_A, now);

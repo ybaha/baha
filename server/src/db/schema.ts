@@ -279,6 +279,7 @@ export const visits = pgTable(
     timezone: text("timezone"),
     encrypted: boolean("encrypted").notNull(),
     notificationStatus: text("notificationStatus").notNull().default("pending"),
+    notificationAttemptId: text("notificationAttemptId").notNull(),
     notifiedAt: timestamp("notifiedAt", { withTimezone: true, mode: "date" }),
     failureCode: text("failureCode"),
   },

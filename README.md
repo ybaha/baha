@@ -40,9 +40,20 @@ with a map link, network/ISP, server-observed IP, and inferred browser/device de
 separately if it differs. Browser/device and location details are informational, not verified visitor identities.
 
 Page/referrer URLs omit credentials, query strings, and fragments before transmission; the API sanitizes them again.
-Telegram link previews are disabled. No account/session lookup is added. Older frontends can omit the new optional
-fields. Notifications are still homepage-only and are skipped on localhost, Cloudflare `*.pages.dev` previews, and unless
-the canonical production host (or an explicit flag) is used.
+Telegram link previews are disabled. No account/session lookup is added. The browser encrypts the entire context with
+an ephemeral P-256 ECDH key and AES-256-GCM before calling `visits.notifyEncrypted`; the API decrypts and validates it.
+Its public key is fetched at runtime over HTTPS; no private key or shared secret is shipped in the static frontend.
+Failures are reported as delivery outcomes and retried up to three times with one stable event ID.
+
+Accepted production visits are saved in the private `Visit` table, with sanitized URLs, server-received timestamps,
+separate reported/trusted IPs, and Telegram delivery status. Separate events from the same IP are stored even when their
+alerts are throttled. Missing/unavailable storage does not prevent Telegram delivery. Old clients may still use the
+legacy plaintext RPC during rollout; their rows are explicitly marked `encrypted=false`.
+
+Notifications remain homepage-only and are skipped on localhost, Cloudflare `*.pages.dev` previews, and unless the
+canonical production host (or an explicit flag) is used. **Deploy the API and apply the additive migration before
+publishing the encrypted frontend.** See [visit notifications](docs/visit-notifications.md) for rollout, diagnostics,
+key management, delivery guarantees, and data-retention guidance.
 
 ## Content
 

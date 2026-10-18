@@ -8,6 +8,9 @@ import { ConfigurationError, validateServerStartup } from "./env.js";
 
 async function main() {
   const { serverEnv, authConfig } = validateServerStartup();
+  if (serverEnv.nodeEnv === "production" && !serverEnv.telegramBotToken?.trim()) {
+    console.warn("Visit notifications disabled: TELEGRAM_BOT_TOKEN is not configured");
+  }
 
   const database = createDatabase({ connectionString: serverEnv.databaseUrl });
   const { handler, sessionResolver } = createAuthRuntime({

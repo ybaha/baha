@@ -1,4 +1,7 @@
 import type { VisitNotifyInputDto, VisitNotifyResultDto } from "@baha/contracts";
+import { randomUUID } from "node:crypto";
+import { sanitizeVisitField as sanitizeField, sanitizeVisitPayload, sanitizeVisitUrl } from "./visit-data.js";
+import type { VisitNotificationStatus, VisitRecorder } from "./visit-records.js";
 
 export type TelegramTransport = (
   url: string,
@@ -11,23 +14,14 @@ export type VisitsServiceDeps = {
   chatId?: string;
   transport: TelegramTransport;
   now?: () => Date;
+  recorder?: VisitRecorder;
+  events?: VisitEventStore;
 };
 
 const DEFAULT_CHAT_ID = "1912767327";
 
-function sanitizeField(value: string, max: number): string {
-  return value.replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, " ").slice(0, max);
-}
-
 function pageAddress(value?: string): string | undefined {
-  try {
-    const url = new URL(value ?? "");
-    if (!["http:", "https:"].includes(url.protocol)) return undefined;
-    // Query strings and fragments can contain tokens, emails or private search terms.
-    return sanitizeField(`${url.origin}${url.pathname}`, 700);
-  } catch {
-    return undefined;
-  }
+  return sanitizeVisitUrl(value)?.slice(0, 700);
 }
 
 function describeBrowser(userAgent: string): string {
@@ -116,12 +110,18 @@ export function formatVisitMessage(
   ].join("\n").slice(0, 4000);
 }
 
+export class TelegramDeliveryError extends Error {
+  constructor(readonly failureCode: string) {
+    super("Telegram notification failed");
+  }
+}
+
 export async function sendTelegramVisit(
   deps: VisitsServiceDeps,
   message: string,
-): Promise<void> {
-  if (deps.nodeEnv !== "production" || !deps.botToken) {
-    return;
+): Promise<"sent" | "disabled"> {
+  if (deps.nodeEnv !== "production" || !deps.botToken?.trim()) {
+    return "disabled";
   }
   const chatId = deps.chatId || DEFAULT_CHAT_ID;
   const response = await deps.transport(
@@ -138,8 +138,13 @@ export async function sendTelegramVisit(
     },
   );
   if (!response.ok) {
-    throw new Error("Telegram notification failed");
+    throw new TelegramDeliveryError(`telegram_http_${response.status}`);
   }
+  const result: unknown = await response.json();
+  if (!result || typeof result !== "object" || !("ok" in result) || result.ok !== true) {
+    throw new TelegramDeliveryError("telegram_rejected");
+  }
+  return "sent";
 }
 
 export type VisitDedupeStore = Map<string, number>;
@@ -161,23 +166,110 @@ export function allowVisit(
   return true;
 }
 
+export type VisitEventStore = Map<string, {
+  until: number;
+  pending: boolean;
+  failed: boolean;
+  recovery: { attemptId?: string };
+  result: Promise<VisitNotifyResultDto>;
+}>;
+
+export function createVisitEventStore(): VisitEventStore {
+  return new Map();
+}
+
 export async function notifyVisit(
   deps: VisitsServiceDeps,
   payload: VisitNotifyInputDto,
   trustedIp: string,
   dedupe: VisitDedupeStore,
+  event?: { id: string; encrypted: boolean },
 ): Promise<VisitNotifyResultDto> {
-  if (!allowVisit(dedupe, trustedIp)) {
-    return { status: "ok" };
+  if (deps.nodeEnv !== "production") {
+    return { status: "ok", delivery: "disabled", stored: false };
+  }
+  const receivedAt = deps.now?.() ?? new Date();
+  const id = event?.id ?? randomUUID();
+  const events = deps.events;
+  if (events) {
+    for (const [key, entry] of events) {
+      if (entry.until <= receivedAt.getTime()) events.delete(key);
+    }
+  }
+  const existing = events?.get(id);
+  if (existing && (existing.pending || !existing.failed)) return existing.result;
+  const recovery: { attemptId?: string } = existing?.recovery ?? {};
+  if (events && events.size >= 1000) {
+    // Cache capacity is not a visit limit; DB uniqueness remains the durable guard.
+    const completed = [...events].find(([, entry]) => !entry.pending && !entry.recovery.attemptId);
+    if (completed) events.delete(completed[0]);
+  }
+  const result = processVisit(deps, sanitizeVisitPayload(payload), trustedIp, dedupe, {
+    id, receivedAt, encrypted: event?.encrypted ?? false, recovery,
+  });
+  const entry = {
+    until: receivedAt.getTime() + 300_000, pending: true, failed: false, recovery, result,
+  };
+  if (events && (events.size < 1000 || events.has(id))) events.set(id, entry);
+  const outcome = await result;
+  entry.pending = false;
+  entry.failed = outcome.delivery === "failed";
+  if (!entry.failed) recovery.attemptId = undefined;
+  return outcome;
+}
+
+async function processVisit(
+  deps: VisitsServiceDeps,
+  payload: VisitNotifyInputDto,
+  trustedIp: string,
+  dedupe: VisitDedupeStore,
+  event: { id: string; receivedAt: Date; encrypted: boolean; recovery: { attemptId?: string } },
+): Promise<VisitNotifyResultDto> {
+  const attemptId = randomUUID();
+  let stored = false;
+  try {
+    if (deps.recorder) {
+      const inserted = await deps.recorder.record({
+        id: event.id, attemptId, receivedAt: event.receivedAt, encrypted: event.encrypted, payload, trustedIp,
+      });
+      stored = true;
+      if (!inserted && !await deps.recorder.retryFailed(event.id, attemptId, event.recovery.attemptId)) {
+        return { status: "ok", delivery: "deduplicated", stored };
+      }
+    }
+  } catch {
+    console.error("Visit history write failed; continuing notification delivery");
+  }
+
+  const updateStatus = async (status: VisitNotificationStatus, failureCode?: string) => {
+    if (!stored || !deps.recorder) return true;
+    try {
+      await deps.recorder.setNotificationStatus(event.id, attemptId, status, deps.now?.() ?? new Date(), failureCode);
+      return true;
+    } catch {
+      console.error("Visit notification status could not be saved");
+      return false;
+    }
+  };
+
+  if (!deps.botToken?.trim()) {
+    await updateStatus("skipped", "telegram_not_configured");
+    return { status: "ok", delivery: "disabled", stored };
+  }
+  if (!allowVisit(dedupe, trustedIp, event.receivedAt.getTime())) {
+    await updateStatus("deduplicated");
+    return { status: "ok", delivery: "deduplicated", stored };
   }
   try {
-    await sendTelegramVisit(
-      deps,
-      formatVisitMessage(payload, trustedIp, deps.now?.() ?? new Date()),
-    );
-  } catch {
-    console.error("Visit notification could not be delivered");
+    await sendTelegramVisit(deps, formatVisitMessage(payload, trustedIp, event.receivedAt));
+  } catch (error) {
+    const failureCode = error instanceof TelegramDeliveryError ? error.failureCode : "telegram_transport_failed";
+    console.error(`Visit notification could not be delivered (${failureCode})`);
     dedupe.delete(trustedIp);
+    // Only this process knows a pending row is safe to retry after its failed status write.
+    event.recovery.attemptId = await updateStatus("failed", failureCode) ? undefined : attemptId;
+    return { status: "ok", delivery: "failed", stored };
   }
-  return { status: "ok" };
+  await updateStatus("sent");
+  return { status: "ok", delivery: "sent", stored };
 }

@@ -22,6 +22,7 @@ CREATE TABLE "Visit" (
   "timezone" TEXT,
   "encrypted" boolean NOT NULL,
   "notificationStatus" TEXT NOT NULL DEFAULT 'pending',
+  "notificationAttemptId" TEXT NOT NULL,
   "notifiedAt" TIMESTAMPTZ,
   "failureCode" TEXT,
   CONSTRAINT "Visit_pkey" PRIMARY KEY ("id")

@@ -16,7 +16,7 @@
     "typecheck:web": "node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
     "typecheck:contracts": "npm run typecheck -w @baha/contracts",
     "typecheck:server": "npm run typecheck -w @baha/server",
-    "test": "npm run build:contracts && node --test --test-timeout=30000 test/*.test.cjs test/unit/*.test.cjs test/unit/*.test.mjs",
+    "test": "npm run build:contracts && node --import tsx --test --test-timeout=30000 test/*.test.cjs test/unit/*.test.cjs test/unit/*.test.mjs",
     "test:integration": "npm run build:contracts && npm run generate:legacy-test && node --import tsx --test --test-timeout=60000 test/integration/**/*.test.mjs",
     "test:server": "npm run build:contracts && node --import tsx --test --test-timeout=60000 test/integration/server-*.test.mjs",
     "test:browser": "\"${BROWSER_PYTHON:-python3}\" test/browser/static-export.py",

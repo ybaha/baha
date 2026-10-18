@@ -6,6 +6,10 @@ import { RPCLink } from "@orpc/client/fetch";
 import { SimpleCsrfProtectionLinkPlugin } from "@orpc/client/plugins";
 import { createApp } from "../../server/src/app.ts";
 import { parseServerEnv } from "../../server/src/env.ts";
+import { createRequire } from "node:module";
+import { randomUUID } from "node:crypto";
+const { encryptVisit } = createRequire(import.meta.url)("../../src/lib/visit-crypto.ts");
+const telegramOk = () => Response.json({ ok: true });
 
 const origin = "http://localhost:3100";
 const preview = "https://visit-preview.pages.dev";
@@ -17,7 +21,26 @@ const payload = () => ({
 
 async function fixture(t, transport, overrides = {}) {
   let peer = "203.0.113.10";
+  const rows = new Map();
+  const recorder = {
+    async record(input) {
+      if (rows.has(input.id)) return false;
+      rows.set(input.id, { ...input, notificationStatus: "pending" });
+      return true;
+    },
+    async retryFailed(id, newAttemptId, recoverFromAttemptId) {
+      const row = rows.get(id);
+      if (!row || (row.notificationStatus !== "failed" && !(row.notificationStatus === "pending" && recoverFromAttemptId === row.attemptId))) return false;
+      row.notificationStatus = "pending";
+      row.attemptId = newAttemptId;
+      return true;
+    },
+    async setNotificationStatus(id, attemptId, status) {
+      if (rows.get(id)?.attemptId === attemptId) rows.get(id).notificationStatus = status;
+    },
+  };
   const env = parseServerEnv({
+    API_AUTH_SECRET: "synthetic-visit-encryption-secret-at-least-32-characters",
     NODE_ENV: "production", DATABASE_URL: "postgresql://fixture:fixture@127.0.0.1:1/unused",
     API_READ_ORIGINS: origin, API_WRITE_ORIGINS: origin, API_PREVIEW_READ_ORIGINS: preview,
     TELEGRAM_BOT_TOKEN: "synthetic-visit-fixture-token", TELEGRAM_CHAT_ID: "synthetic-chat",
@@ -28,6 +51,7 @@ async function fixture(t, transport, overrides = {}) {
     database: { db: {}, ping: async () => false, shutdown: async () => {} },
     getSession: async () => { throw new Error("Visit notifications must not resolve sessions"); },
     telegramTransport: transport,
+    visitRecorder: recorder,
     resolveSocketPeer: () => peer,
   });
   let server;
@@ -43,12 +67,12 @@ async function fixture(t, transport, overrides = {}) {
     headers: { origin: requestOrigin },
     plugins: [new SimpleCsrfProtectionLinkPlugin()],
   }));
-  return { client, baseUrl, setPeer: (value) => { peer = value; } };
+  return { client, baseUrl, rows, setPeer: (value) => { peer = value; } };
 }
 
 it("rejects malformed visit fields and dates before delivery", async (t) => {
   let deliveries = 0;
-  const api = await fixture(t, async () => { deliveries += 1; return new Response(); });
+  const api = await fixture(t, async () => { deliveries += 1; return telegramOk(); });
   for (const invalid of [
     { ...payload(), timestamp: "invalid" },
     { ...payload(), userAgent: 42 },
@@ -64,7 +88,7 @@ it("rejects malformed visit fields and dates before delivery", async (t) => {
 
 it("formats, sanitizes and deduplicates using the trusted peer rather than body IP", async (t) => {
   const delivered = [];
-  const api = await fixture(t, async (_url, init) => { delivered.push(JSON.parse(init.body)); return new Response(); });
+  const api = await fixture(t, async (_url, init) => { delivered.push(JSON.parse(init.body)); return telegramOk(); });
   await api.client().visits.notify({ ...payload(), city: "City\nInjected", userAgent: "UA\r\nInjected" });
   await api.client().visits.notify({ ...payload(), ip: "different-reported-ip" });
   assert.equal(delivered.length, 1);
@@ -80,7 +104,7 @@ it("formats, sanitizes and deduplicates using the trusted peer rather than body 
 
 it("delivers richer context without URL secrets and identifies the server-observed IP", async (t) => {
   const delivered = [];
-  const api = await fixture(t, async (_url, init) => { delivered.push(JSON.parse(init.body)); return new Response(); });
+  const api = await fixture(t, async (_url, init) => { delivered.push(JSON.parse(init.body)); return telegramOk(); });
   await api.client().visits.notify({
     ...payload(), pageUrl: "https://ybaha.com/?token=secret#private",
     referrer: "https://example.com/article?email=private", pageTitle: "Baha",
@@ -101,10 +125,10 @@ it("keeps delivery failures best-effort and allows a retry for the same peer", a
   let deliveries = 0;
   const api = await fixture(t, async () => {
     deliveries += 1;
-    return new Response(null, { status: deliveries === 1 ? 503 : 200 });
+    return deliveries === 1 ? new Response(null, { status: 503 }) : telegramOk();
   });
-  assert.deepEqual(await api.client().visits.notify(payload()), { status: "ok" });
-  assert.deepEqual(await api.client().visits.notify(payload()), { status: "ok" });
+  assert.deepEqual(await api.client().visits.notify(payload()), { status: "ok", delivery: "failed", stored: true });
+  assert.deepEqual(await api.client().visits.notify(payload()), { status: "ok", delivery: "sent", stored: true });
   assert.equal(deliveries, 2);
 });
 
@@ -112,21 +136,81 @@ it("aborts stalled Telegram delivery without breaking the visit response", { tim
   const api = await fixture(t, async (_url, init) => new Promise((_resolve, reject) => {
     init.signal.addEventListener("abort", () => reject(init.signal.reason), { once: true });
   }));
-  assert.deepEqual(await api.client().visits.notify(payload()), { status: "ok" });
+  assert.deepEqual(await api.client().visits.notify(payload()), { status: "ok", delivery: "failed", stored: true });
 });
 
 it("does not deliver in development or without an optional bot token", async (t) => {
   let deliveries = 0;
   for (const config of [{ NODE_ENV: "development" }, { TELEGRAM_BOT_TOKEN: "" }]) {
-    const api = await fixture(t, async () => { deliveries += 1; return new Response(); }, config);
-    assert.deepEqual(await api.client().visits.notify(payload()), { status: "ok" });
+    const api = await fixture(t, async () => { deliveries += 1; return telegramOk(); }, config);
+    assert.deepEqual(await api.client().visits.notify(payload()), {
+      status: "ok", delivery: "disabled", stored: config.NODE_ENV !== "development",
+    });
   }
   assert.equal(deliveries, 0);
 });
 
+it("decrypts, validates and records encrypted visits without session lookup", async (t) => {
+  const delivered = [];
+  const api = await fixture(t, async (_url, init) => { delivered.push(JSON.parse(init.body)); return telegramOk(); });
+  const key = await api.client().visits.publicKey({});
+  assert.deepEqual(Object.keys(key).sort(), ["keyId", "publicKey", "serverTime", "version"]);
+  const eventId = randomUUID();
+  const envelope = await encryptVisit({ ...payload(), pageUrl: "https://ybaha.com/?token=secret" }, key, eventId);
+  assert.ok(!JSON.stringify(envelope).includes("secret"));
+  assert.deepEqual(await api.client().visits.notifyEncrypted(envelope), { status: "ok", delivery: "sent", stored: true });
+  await api.client().visits.notifyEncrypted(envelope);
+  assert.equal(delivered.length, 1);
+  assert.equal(api.rows.size, 1);
+  assert.equal(api.rows.get(eventId).encrypted, true);
+  assert.equal(api.rows.get(eventId).payload.pageUrl, "https://ybaha.com/");
+  assert.equal(api.rows.get(eventId).notificationStatus, "sent");
+  const second = await encryptVisit(payload(), key, randomUUID());
+  assert.equal((await api.client().visits.notifyEncrypted(second)).delivery, "deduplicated");
+  assert.equal(api.rows.size, 2);
+});
+
+it("rejects tampered, stale and invalid decrypted visits before recording or sending", async (t) => {
+  let deliveries = 0;
+  const api = await fixture(t, async () => { deliveries++; return telegramOk(); });
+  const key = await api.client().visits.publicKey({});
+  const envelope = await encryptVisit(payload(), key, randomUUID());
+  const wrongPayload = await encryptVisit({ ...payload(), userAgent: 42 }, key, randomUUID());
+  const stale = await encryptVisit(payload(), { ...key, serverTime: key.serverTime - 400000 }, randomUUID());
+  for (const invalid of [
+    { ...envelope, eventId: randomUUID() },
+    { ...envelope, ciphertext: "A".repeat(envelope.ciphertext.length) },
+    wrongPayload, stale,
+  ]) {
+    await assert.rejects(() => api.client().visits.notifyEncrypted(invalid),
+      (error) => isDefinedError(error) && error.code === "VALIDATION");
+  }
+  assert.equal(deliveries, 0);
+  assert.equal(api.rows.size, 0);
+});
+
+it("bounds encrypted request bodies with and without a trailing slash", async (t) => {
+  const api = await fixture(t, async () => telegramOk());
+  for (const suffix of ["", "/"]) {
+    const response = await fetch(`${api.baseUrl}/rpc/visits/notifyEncrypted${suffix}`, {
+      method: "POST", headers: { origin, "content-type": "application/json", "x-csrf-token": "orpc" },
+      body: JSON.stringify({ json: {} }) + " ".repeat(16384),
+    });
+    assert.equal(response.status, 413);
+  }
+});
+
+it("exposes non-secret notification readiness and reports an unconfigured encryption key", async (t) => {
+  const api = await fixture(t, async () => telegramOk(), { API_AUTH_SECRET: "", TELEGRAM_BOT_TOKEN: "" });
+  const health = await (await fetch(`${api.baseUrl}/healthz`)).json();
+  assert.deepEqual(health.visits, { telegramConfigured: false, encryptionConfigured: false, production: true });
+  await assert.rejects(() => api.client().visits.publicKey({}),
+    (error) => isDefinedError(error) && error.code === "UNAVAILABLE");
+});
+
 it("blocks preview notifications and keeps the retired location endpoint inert", async (t) => {
   let deliveries = 0;
-  const api = await fixture(t, async () => { deliveries += 1; return new Response(); });
+  const api = await fixture(t, async () => { deliveries += 1; return telegramOk(); });
   await assert.rejects(() => api.client(preview).visits.notify(payload()),
     (error) => isDefinedError(error) && error.code === "FORBIDDEN" && error.status === 403);
   const gone = await fetch(`${api.baseUrl}/api/send-location`, { method: "POST" });

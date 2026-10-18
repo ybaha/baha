@@ -1,5 +1,6 @@
 import type { VisitNotifyInputDto } from "@baha/contracts";
 
+// eslint-disable-next-line no-control-regex -- Untrusted controls must not reach storage or Telegram.
 const CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g;
 
 export function sanitizeVisitField(value: string, max: number): string {

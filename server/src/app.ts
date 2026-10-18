@@ -28,13 +28,16 @@ import { createMemoizedSessionResolver } from "./lib/session-resolver.js";
 import type { AppServices, RpcContext, SessionResolver } from "./rpc/context.js";
 import { buildRouter } from "./rpc/router.js";
 import { createViewsCache } from "./services/views.js";
-import { createVisitDedupeStore } from "./services/visits.js";
+import { createVisitDedupeStore, createVisitEventStore } from "./services/visits.js";
+import { createVisitCipher } from "./services/visit-crypto.js";
+import { createVisitRecorder, type VisitRecorder } from "./services/visit-records.js";
 
 export const RPC_PREFIX = "/rpc";
 
 function isReadOnlyRpcPath(pathname: string): boolean {
   const canonicalPath = pathname.replace(/\/+$/, "");
-  return canonicalPath === "/rpc/comments/list" || canonicalPath === "/rpc/views/get";
+  return canonicalPath === "/rpc/comments/list" || canonicalPath === "/rpc/views/get"
+    || canonicalPath === "/rpc/visits/publicKey";
 }
 export const CSRF_HEADER_NAME = "x-csrf-token";
 export const CSRF_HEADER_VALUE = "orpc";
@@ -47,6 +50,7 @@ export type CreateAppOptions = {
   slugManifestPath?: string;
   services?: Partial<AppServices>;
   telegramTransport?: typeof fetch;
+  visitRecorder?: VisitRecorder;
   rateLimiter?: MemoryRateLimiter;
   resolveSocketPeer?: (c: Context) => string | undefined;
 };
@@ -65,6 +69,7 @@ export function createApp(options: CreateAppOptions) {
     knownSlugs,
     viewsCache: options.services?.viewsCache ?? createViewsCache(),
     visitDedupe: options.services?.visitDedupe ?? createVisitDedupeStore(),
+    visitEvents: options.services?.visitEvents ?? createVisitEventStore(),
   };
 
   const router = buildRouter({
@@ -72,6 +77,9 @@ export function createApp(options: CreateAppOptions) {
     env: options.env,
     services,
     telegramTransport: options.telegramTransport ?? fetch,
+    visitCipher: options.env.visitEncryptionSecret
+      ? createVisitCipher(options.env.visitEncryptionSecret) : undefined,
+    visitRecorder: options.visitRecorder ?? createVisitRecorder(options.database.db),
   });
 
   const rpcHandler = new RPCHandler(router, {
@@ -158,7 +166,14 @@ export function createApp(options: CreateAppOptions) {
     });
   }
 
-  app.get("/healthz", (c) => c.json({ ok: true }));
+  app.get("/healthz", (c) => c.json({
+    ok: true,
+    visits: {
+      telegramConfigured: Boolean(options.env.telegramBotToken?.trim()),
+      encryptionConfigured: Boolean(options.env.visitEncryptionSecret),
+      production: options.env.nodeEnv === "production",
+    },
+  }));
   app.get("/readyz", async (c) => {
     const ok = await options.database.ping().catch(() => false);
     return c.json({ ok, db: ok }, ok ? 200 : 503);
@@ -174,9 +189,16 @@ export function createApp(options: CreateAppOptions) {
     maxSize: Math.min(8192, options.env.bodyLimitBytes),
     onError: () => orpcErrorResponse("PAYLOAD_TOO_LARGE", "Payload too large."),
   });
-  app.use(`${RPC_PREFIX}/*`, (c, next) =>
-    (c.req.path.replace(/\/+$/, "") === "/rpc/visits/notify" ? limitVisitBody : limitBody)(c, next),
-  );
+  const limitEncryptedVisitBody = bodyLimit({
+    maxSize: Math.min(16384, options.env.bodyLimitBytes),
+    onError: () => orpcErrorResponse("PAYLOAD_TOO_LARGE", "Payload too large."),
+  });
+  app.use(`${RPC_PREFIX}/*`, (c, next) => {
+    const path = c.req.path.replace(/\/+$/, "");
+    const limit = path === "/rpc/visits/notifyEncrypted" ? limitEncryptedVisitBody
+      : path === "/rpc/visits/notify" ? limitVisitBody : limitBody;
+    return limit(c, next);
+  });
 
   app.all(`${RPC_PREFIX}/*`, async (c) => {
     const origin = c.req.header("origin") ?? null;

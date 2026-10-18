@@ -32,7 +32,8 @@ function invalid(): Error {
 }
 
 function decodeBase64Url(value: string, exactLength?: number): Buffer {
-  if (typeof value !== "string" || value.length === 0 || !BASE64URL_RE.test(value)) {
+  const maxLength = exactLength === undefined ? 10944 : Math.ceil(exactLength * 4 / 3);
+  if (typeof value !== "string" || value.length === 0 || value.length > maxLength || !BASE64URL_RE.test(value)) {
     throw invalid();
   }
   let decoded: Buffer;
@@ -41,7 +42,7 @@ function decodeBase64Url(value: string, exactLength?: number): Buffer {
   } catch {
     throw invalid();
   }
-  if (decoded.length === 0) {
+  if (decoded.length === 0 || decoded.toString("base64url") !== value) {
     throw invalid();
   }
   if (exactLength !== undefined && decoded.length !== exactLength) {
@@ -95,13 +96,13 @@ function deriveServerKeyMaterial(secret: string): {
   publicKeyEncoded: string;
 } {
   for (let counter = 0; counter < 16; counter++) {
-    const candidate = hkdfSync(
+    const candidate = Buffer.from(hkdfSync(
       "sha256",
       Buffer.from(secret, "utf8"),
       Buffer.from(SERVER_KEY_SALT, "utf8"),
       Buffer.from(`p256:${counter}`, "utf8"),
       32,
-    );
+    ));
     try {
       const ecdh = createECDH("prime256v1");
       ecdh.setPrivateKey(candidate);

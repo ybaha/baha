@@ -117,4 +117,25 @@ export const visitsNotifyInputSchema = z.object({
 
 export const visitsNotifyOutputSchema = z.object({
   status: z.literal("ok"),
+  delivery: z.enum(["sent", "failed", "disabled", "deduplicated"]).optional(),
+  stored: z.boolean().optional(),
+});
+
+export const visitsPublicKeyInputSchema = z.object({});
+export const visitsPublicKeyOutputSchema = z.object({
+  version: z.literal(1),
+  keyId: z.string().regex(/^[a-f0-9]{32}$/),
+  publicKey: z.string().length(87).regex(/^[A-Za-z0-9_-]+$/),
+  serverTime: z.number().int().nonnegative(),
+});
+
+export const visitsEncryptedInputSchema = z.object({
+  version: z.literal(1),
+  keyId: z.string().regex(/^[a-f0-9]{32}$/),
+  eventId: z.string().uuid(),
+  sentAt: z.number().int().nonnegative(),
+  ephemeralPublicKey: z.string().length(87).regex(/^[A-Za-z0-9_-]+$/),
+  salt: z.string().length(22).regex(/^[A-Za-z0-9_-]+$/),
+  iv: z.string().length(16).regex(/^[A-Za-z0-9_-]+$/),
+  ciphertext: z.string().min(22).max(10944).regex(/^[A-Za-z0-9_-]+$/),
 });

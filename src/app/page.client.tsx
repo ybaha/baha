@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { api } from '@/lib/api';
+import { notifyEncryptedVisit } from '@/lib/visit-notify';
 import { isVisitNotificationsEnabled } from '@/lib/preview';
 
 let visitPending = false;
@@ -43,7 +43,7 @@ export function GeolocationSender() {
         // A blocked location lookup should not prevent the visit notification.
       }
 
-      await api.visits.notify({
+      await notifyEncryptedVisit({
         ...pageContext,
         organization: String(location.org ?? '').slice(0, 200),
         postalCode: String(location.postal ?? '').slice(0, 100),
@@ -67,7 +67,7 @@ export function GeolocationSender() {
 
     void notify()
       .catch(() => {
-        // Notifications are best-effort and must never interrupt the page.
+        console.warn('Visit notification could not be sent after retrying.');
       })
       .finally(() => {
         visitPending = false;

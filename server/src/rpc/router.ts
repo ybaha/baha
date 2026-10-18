@@ -1,11 +1,13 @@
-import { contract } from "@baha/contracts";
+import { contract, visitsNotifyInputSchema } from "@baha/contracts";
 import { implement } from "@orpc/server";
 
 import type { AppDatabase } from "../db/client.js";
 import { throwApiError } from "../lib/api-error.js";
 import type { ServerEnv } from "../env.js";
 import { createComment, listComments } from "../services/comments.js";
-import { notifyVisit, type TelegramTransport } from "../services/visits.js";
+import { notifyVisit, type TelegramTransport, type VisitsServiceDeps } from "../services/visits.js";
+import type { createVisitCipher } from "../services/visit-crypto.js";
+import type { VisitRecorder } from "../services/visit-records.js";
 import { getViews, incrementView } from "../services/views.js";
 import { toggleVote } from "../services/votes.js";
 import type { AppServices, RpcContext, SessionUser } from "./context.js";
@@ -15,6 +17,8 @@ export type RouterDeps = {
   env: ServerEnv;
   services: AppServices;
   telegramTransport: TelegramTransport;
+  visitCipher?: ReturnType<typeof createVisitCipher>;
+  visitRecorder: VisitRecorder;
 };
 
 const base = implement(contract).$context<RpcContext>();
@@ -47,6 +51,14 @@ async function requireUser(context: RpcContext): Promise<SessionUser> {
 export function buildRouter(deps: RouterDeps) {
   const commentsDeps = { db: deps.db, knownSlugs: deps.services.knownSlugs };
   const viewsDeps = { db: deps.db, knownSlugs: deps.services.knownSlugs };
+  const visitsDeps: VisitsServiceDeps = {
+    nodeEnv: deps.env.nodeEnv,
+    botToken: deps.env.telegramBotToken,
+    chatId: deps.env.telegramChatId,
+    transport: deps.telegramTransport,
+    recorder: deps.visitRecorder,
+    events: deps.services.visitEvents,
+  };
 
   return base.router({
     comments: {
@@ -92,17 +104,31 @@ export function buildRouter(deps: RouterDeps) {
       }),
     },
     visits: {
+      publicKey: base.visits.publicKey.handler(async () => {
+        if (!deps.visitCipher) throwApiError("UNAVAILABLE", "Visit encryption is not configured.");
+        return deps.visitCipher.publicKey();
+      }),
+      notifyEncrypted: base.visits.notifyEncrypted.handler(async ({ input, context }) => {
+        if (context.isPreviewOrigin) throwApiError("FORBIDDEN", "Preview origins are read-only.");
+        if (!deps.visitCipher) throwApiError("UNAVAILABLE", "Visit encryption is not configured.");
+        let decrypted: unknown;
+        try {
+          decrypted = deps.visitCipher.decrypt(input);
+        } catch {
+          throwApiError("VALIDATION", "Invalid encrypted visit.");
+        }
+        const parsed = visitsNotifyInputSchema.safeParse(decrypted);
+        if (!parsed.success) throwApiError("VALIDATION", "Invalid visit payload.");
+        return notifyVisit(visitsDeps, parsed.data, context.trustedIp, deps.services.visitDedupe, {
+          id: input.eventId, encrypted: true,
+        });
+      }),
       notify: base.visits.notify.handler(async ({ input, context }) => {
         if (context.isPreviewOrigin) {
           return { status: "ok" };
         }
         return notifyVisit(
-          {
-            nodeEnv: deps.env.nodeEnv,
-            botToken: deps.env.telegramBotToken,
-            chatId: deps.env.telegramChatId,
-            transport: deps.telegramTransport,
-          },
+          visitsDeps,
           input,
           context.trustedIp,
           deps.services.visitDedupe,
