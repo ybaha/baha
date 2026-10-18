@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { userInfo } from "node:os";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
@@ -28,7 +28,20 @@ function run(cmd, stdio = "pipe") {
 }
 
 function runPgCtl(cmd) {
-  execSync(cmd, { stdio: "ignore", env: process.env });
+  try {
+    execFileSync(cmd, { shell: true, stdio: "ignore", env: process.env });
+  } catch (error) {
+    const log = `${dataDir}/server.log`;
+    let detail = "see PostgreSQL log";
+    try {
+      detail = execFileSync("cat", [log], { encoding: "utf8", env: process.env })
+        .toString()
+        .trim();
+    } catch {}
+    throw new Error(
+      `pg_ctl command failed (${cmd}). PostgreSQL log (${log}):\n${detail}`
+    );
+  }
 }
 
 before(async () => {
@@ -43,8 +56,10 @@ before(async () => {
   process.env.PGDATA = dataDir;
 
   run(`initdb -D "${dataDir}" --auth=trust`);
-  runPgCtl(`pg_ctl -D "${dataDir}" -o "-h 127.0.0.1 -p ${port}" -w start`);
-  run(`createdb -h 127.0.0.1 -p ${port} baha_test`);
+  runPgCtl(
+    `pg_ctl -D "${dataDir}" -l "${dataDir}/server.log" -o "-h 127.0.0.1 -p ${port} -k ${dataDir}" -w start`
+  );
+  run(`createdb -h ${dataDir} -p ${port} baha_test`);
 
   databaseUrl = `postgresql://${userInfo().username}@127.0.0.1:${port}/baha_test`;
   assertLoopbackDatabaseUrl(databaseUrl);
