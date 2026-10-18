@@ -49,7 +49,13 @@ async function fixture(t, transport, overrides = {}) {
 it("rejects malformed visit fields and dates before delivery", async (t) => {
   let deliveries = 0;
   const api = await fixture(t, async () => { deliveries += 1; return new Response(); });
-  for (const invalid of [{ ...payload(), timestamp: "invalid" }, { ...payload(), userAgent: 42 }]) {
+  for (const invalid of [
+    { ...payload(), timestamp: "invalid" },
+    { ...payload(), userAgent: 42 },
+    { ...payload(), pageUrl: "x".repeat(2049) },
+    { ...payload(), referrer: 42 },
+    { ...payload(), timezone: "x".repeat(101) },
+  ]) {
     await assert.rejects(() => api.client().visits.notify(invalid),
       (error) => isDefinedError(error) && error.code === "VALIDATION" && error.status === 400);
   }
@@ -70,6 +76,25 @@ it("formats, sanitizes and deduplicates using the trusted peer rather than body 
   api.setPeer("203.0.113.11");
   await api.client().visits.notify(payload());
   assert.equal(delivered.length, 2);
+});
+
+it("delivers richer context without URL secrets and identifies the server-observed IP", async (t) => {
+  const delivered = [];
+  const api = await fixture(t, async (_url, init) => { delivered.push(JSON.parse(init.body)); return new Response(); });
+  await api.client().visits.notify({
+    ...payload(), pageUrl: "https://ybaha.com/?token=secret#private",
+    referrer: "https://example.com/article?email=private", pageTitle: "Baha",
+    timezone: "Europe/Amsterdam", organization: "Example ISP", postalCode: "3011",
+  });
+  assert.equal(delivered.length, 1);
+  const message = delivered[0];
+  assert.match(message.text, /Page: https:\/\/ybaha.com\//);
+  assert.match(message.text, /Referrer: https:\/\/example.com\/article/);
+  assert.match(message.text, /IP \(server\): 203\.0\.113\.10/);
+  assert.match(message.text, /IP \(location lookup\): reported-ip/);
+  assert.match(message.text, /Example ISP/);
+  assert.doesNotMatch(message.text, /secret|private/);
+  assert.deepEqual(message.link_preview_options, { is_disabled: true });
 });
 
 it("keeps delivery failures best-effort and allows a retry for the same peer", async (t) => {

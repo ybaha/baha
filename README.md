@@ -34,8 +34,15 @@ Names only; see `.env.example`. Backend secrets stay in `server/.env.example`.
 ### Homepage visit notifications
 
 The homepage looks up approximate IP location through `ipapi.co` and calls `visits.notify` on the standalone API.
-Telegram delivery, deduplication, and production-only rules are enforced on the server. Notifications are skipped on
-localhost, Cloudflare `*.pages.dev` previews, and unless the canonical production host (or an explicit flag) is used.
+Telegram delivery, deduplication, and production-only rules are enforced on the server. Alerts include the visited
+homepage URL and title, referring page (when shared by the browser), UTC and visitor-local time, approximate location
+with a map link, network/ISP, server-observed IP, and inferred browser/device details. The location lookup's IP is labeled
+separately if it differs. Browser/device and location details are informational, not verified visitor identities.
+
+Page/referrer URLs omit credentials, query strings, and fragments before transmission; the API sanitizes them again.
+Telegram link previews are disabled. No account/session lookup is added. Older frontends can omit the new optional
+fields. Notifications are still homepage-only and are skipped on localhost, Cloudflare `*.pages.dev` previews, and unless
+the canonical production host (or an explicit flag) is used.
 
 ## Content
 

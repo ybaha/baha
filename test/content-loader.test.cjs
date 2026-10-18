@@ -38,6 +38,10 @@ describe("content loader", () => {
     const allSlugs = groups.flatMap((g) => g.items.map((i) => i.slug));
     assert.ok(allSlugs.includes("born"));
     assert.ok(allSlugs.includes("joined-teifi"));
-    assert.equal(allSlugs.length, 15);
+    assert.equal(new Set(allSlugs).size, allSlugs.length);
+    assert.equal(allSlugs.length, loadModule.loadContentIndex().logs.length);
+    assert.equal(groups[0].year, 2026);
+    assert.ok(allSlugs.includes("built-bin"));
+    assert.ok(allSlugs.includes("released-viralty"));
   });
 });

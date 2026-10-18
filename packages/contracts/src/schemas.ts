@@ -93,7 +93,7 @@ export const viewsIncrementOutputSchema = z.object({
 
 const visitField = (max: number) => z.string().max(max);
 
-/** Mirrors `/api/status` visit notification payload (all string fields). */
+/** Optional context fields keep older deployed frontends compatible. */
 export const visitsNotifyInputSchema = z.object({
   ip: visitField(200),
   city: visitField(200),
@@ -106,6 +106,12 @@ export const visitsNotifyInputSchema = z.object({
   vendor: visitField(200),
   screenResolution: visitField(200),
   windowSize: visitField(200),
+  pageUrl: visitField(2048).optional(),
+  referrer: visitField(2048).optional(),
+  pageTitle: visitField(200).optional(),
+  timezone: visitField(100).optional(),
+  organization: visitField(200).optional(),
+  postalCode: visitField(100).optional(),
   timestamp: z.string().datetime(),
 });
 

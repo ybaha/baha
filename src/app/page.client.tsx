@@ -6,6 +6,17 @@ import { isVisitNotificationsEnabled } from '@/lib/preview';
 
 let visitPending = false;
 
+function pageAddress(value: string): string {
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol)
+      ? `${url.origin}${url.pathname}`.slice(0, 2048)
+      : '';
+  } catch {
+    return '';
+  }
+}
+
 export function GeolocationSender() {
   useEffect(() => {
     if (!isVisitNotificationsEnabled() || visitPending) {
@@ -14,6 +25,12 @@ export function GeolocationSender() {
     visitPending = true;
 
     async function notify() {
+      const pageContext = {
+        pageUrl: pageAddress(window.location.href),
+        referrer: pageAddress(document.referrer),
+        pageTitle: document.title.slice(0, 200),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
       let location: Record<string, unknown> = {};
       try {
         const response = await fetch('https://ipapi.co/json/', {
@@ -27,6 +44,9 @@ export function GeolocationSender() {
       }
 
       await api.visits.notify({
+        ...pageContext,
+        organization: String(location.org ?? '').slice(0, 200),
+        postalCode: String(location.postal ?? '').slice(0, 100),
         ip: String(location.ip ?? 'Unknown'),
         city: String(location.city ?? 'Unknown'),
         region: String(location.region ?? 'Unknown'),
